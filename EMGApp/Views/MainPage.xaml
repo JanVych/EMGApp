@@ -1,0 +1,114 @@
+﻿<Page
+    x:Class="EMGApp.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    mc:Ignorable="d">
+
+
+    <Grid ColumnDefinitions="2*,3*" RowDefinitions="Auto,Auto,Auto,*,Auto, Auto" Margin="0,0,0,30">
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" ColumnDefinitions="2*,1*,1*,2*,1*,1*,1*,1*" RowDefinitions="*"
+               BorderThickness="1" BorderBrush="{StaticResource ControlStrongStrokeColorDefaultBrush}" CornerRadius="4">
+            <TextBlock Text="{x:Bind ViewModel.CurrentPatient.FullName}" Grid.Column="0" Margin="5,5,5,5"/>
+            <StackPanel Grid.Column="1" Margin="5,5,5,5" Orientation="Horizontal">
+                <TextBlock Text="Age:"/>
+                <TextBlock Text="{x:Bind ViewModel.CurrentPatient.Age}" Margin="5,0,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2" Margin="5,5,5,5" Orientation="Horizontal">
+                <TextBlock Text="Gender:"/>
+                <TextBlock Text="{x:Bind ViewModel.CurrentPatient.GenderString}" Margin="5,0,0,0"/>
+            </StackPanel>
+            <TextBlock Text="{x:Bind ViewModel.CurrentPatient.Address}" Grid.Column="3" Margin="5,5,5,5"/>
+            <StackPanel Grid.Column="4" Margin="5,5,5,5" Orientation="Horizontal">
+                <TextBlock Text="Weight:"/>
+                <TextBlock Text="{x:Bind ViewModel.CurrentPatient.Weight}" Margin="5,0,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Column="5" Margin="5,5,5,5" Orientation="Horizontal">
+                <TextBlock Text="Height:"/>
+                <TextBlock Text="{x:Bind ViewModel.CurrentPatient.Height}" Margin="5,0,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Column="6" Margin="5,5,5,5" Orientation="Horizontal">
+                <TextBlock Text="Condition:"/>
+                <TextBlock Text="{x:Bind ViewModel.CurrentPatient.Condition}" Margin="5,0,0,0"/>
+            </StackPanel>
+        </Grid>
+        
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="*,*,*,*,*" RowDefinitions="*" Margin="0,10,0,0"
+              BorderThickness="1" BorderBrush="{StaticResource ControlStrongStrokeColorDefaultBrush}" CornerRadius="4">
+            <StackPanel Grid.Column="0"  Margin="5,5,5,5" Orientation="Horizontal">
+                <TextBlock Text="Device:"/>
+                <TextBlock Text="{x:Bind ViewModel.DeviceName}" Margin="5,0,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Margin="5,5,5,5" Orientation="Horizontal">
+                <TextBlock Text="BufferInMilliseconds:"/>
+                <TextBlock Text="{x:Bind ViewModel.BufferInMilliseconds}" Margin="5,0,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2"  Margin="5,5,5,5" Orientation="Horizontal">
+                <TextBlock Text="SampleRate:"/>
+                <TextBlock Text="{x:Bind ViewModel.SampleRate}" Margin="5,0,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Column="3"  Margin="5,5,5,5" Orientation="Horizontal">
+                <TextBlock Text="Window size:"/>
+                <TextBlock Text="{x:Bind ViewModel.WindowSize}" Margin="5,0,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Column="5"   Margin="5,5,5,5" Orientation="Horizontal">
+                <TextBlock Text="Measurement time:"/>
+                <TextBlock Text="{x:Bind ViewModel.DataLenght}" Margin="5,0,0,0"/>
+            </StackPanel>
+        </Grid>
+        
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,10">
+            <TextBlock Text="Measured muscle" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <ComboBox Margin="10,0,0,0" Height="35" SelectedIndex="{x:Bind ViewModel.MuscleSelectedIndex, Mode=TwoWay}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" PlaceholderText="chose">
+                <x:String>muscle1</x:String>
+                <x:String>muscle2</x:String>
+                <x:String>muscle3</x:String>
+                <x:String>muscle4</x:String>
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                        <Core:InvokeCommandAction Command="{x:Bind ViewModel.MuscleSelectionChangedCommand}"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+            </ComboBox>
+            <ToggleSwitch HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="10,0,0,0" OffContent="Left" OnContent="Right"
+                          IsOn="{x:Bind ViewModel.Side, Mode=TwoWay}"/>
+        </StackPanel>
+        
+        <lvc:CartesianChart x:Name="CaCHart1" Grid.Row="3" Grid.Column="0"
+                            XAxes="{x:Bind ViewModel.XAxes1}" YAxes="{x:Bind ViewModel.YAxes1}"
+                            Series="{x:Bind ViewModel.Series1}" Margin="0,0,0,0"/>
+        <lvc:CartesianChart x:Name="CaCHart2" Grid.Row="3" Grid.Column="1"
+                            XAxes="{x:Bind ViewModel.XAxes2}" YAxes="{x:Bind ViewModel.YAxes2}"
+                            Series="{x:Bind ViewModel.Series2}" Margin="0,0,0,0"/>
+
+        <Slider Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="20,20,20,20"/>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <AppBarButton Icon="Play" Label="Start" Grid.Column="1" HorizontalAlignment="Center" 
+                Command="{x:Bind ViewModel.StartButtonCommand}" VerticalAlignment="Center" Margin="0,0,0,0"/>
+            <AppBarButton Icon="Pause" Label="Pause"  Grid.Column="1" HorizontalAlignment="Center" 
+                Command="{x:Bind ViewModel.StopButtonCommand}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <AppBarButton Icon="Refresh" Label="Reset"  Grid.Column="1" HorizontalAlignment="Center" 
+                Command="{x:Bind ViewModel.StopButtonCommand}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+
+            <AppBarButton Icon="Save" Label="Save" Grid.Column="2" HorizontalAlignment="Center" 
+                Command="{x:Bind ViewModel.SaveButtonCommand}" VerticalAlignment="Center" Margin="30,0,0,0"/>
+            <AppBarButton Icon="Setting" Label="Change" Command="{x:Bind ViewModel.ChangeSettingsCommand}"
+                      HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,0,0,0"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="Slope" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <NumberBox Value="{x:Bind ViewModel.Slope, Mode=TwoWay}" Width="150"  Height="35" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock Text="Hz/s" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock Text="Shift" Margin="30,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <NumberBox Value="{x:Bind ViewModel.Shift, Mode=TwoWay}" Width="150"  Height="35" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock Text="Hz" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</Page>

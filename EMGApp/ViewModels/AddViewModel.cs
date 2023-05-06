@@ -29,16 +29,15 @@ public partial class AddViewModel : ObservableRecipient
     [ObservableProperty]
     private string? address;
 
-    public ICommand NewButtonCommand
-    { get; }
+
     public AddViewModel(IDataService dataService, ILocalSettingsService localSettingsService)
     {
         _dataService = dataService;
         _localSettingsService = localSettingsService;
-        NewButtonCommand = new RelayCommand(NewButtonClick);
     }
 
-    public void NewButtonClick()
+    [RelayCommand]
+    public void NewButton()
     {
         Description ??= string.Empty;
         Condition ??= string.Empty;

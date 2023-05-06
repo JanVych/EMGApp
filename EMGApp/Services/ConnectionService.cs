@@ -13,7 +13,6 @@ using NAudio.CoreAudioApi;
 namespace EMGApp.Services;
 public class ConnectionService : IConnectionService
 {
-    private readonly IDataService IDataService;
     private WaveInEvent? Wawe 
     { 
         get; set; 
@@ -39,7 +38,6 @@ public class ConnectionService : IConnectionService
 
     public ConnectionService(IDataService iDataService)
     {
-        IDataService = iDataService;
         CurrentMeasurement = new MeasurementGroup(0, 1000, 100, 1024, true, 1_048_576, 0);
         CurrentMeasurement.MeasurementsData.Add(new MeasurementData(0, 0, CurrentMeasurement.MaxDataLength));
         IsRecording = false;

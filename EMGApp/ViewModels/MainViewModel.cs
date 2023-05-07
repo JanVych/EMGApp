@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.Services;
 using System.Diagnostics;
@@ -17,7 +16,7 @@ namespace EMGApp.ViewModels;
 
 public partial class MainViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly IConnectionService _connectionService;
+    private readonly IMeasurementService _measurementService;
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
     public ISeries[] Series1 { get; set; } =
@@ -98,28 +97,28 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private bool side = false;
 
-    public MainViewModel(IConnectionService connectionService, IDataService dataService, INavigationService navigationService)
+    public MainViewModel(IMeasurementService connectionService, IDataService dataService, INavigationService navigationService)
     {
-        _connectionService = connectionService;
+        _measurementService = connectionService;
         _dataService = dataService;
         _navigationService = navigationService;
-        BufferInMilliseconds = _connectionService.CurrentMeasurement.BufferMilliseconds.ToString();
-        SampleRate = _connectionService.CurrentMeasurement.SampleRate.ToString();
-        WindowSize = _connectionService.CurrentMeasurement.WindowSize.ToString();
-        DataLenght = _connectionService.CurrentMeasurement.MaxDataLength.ToString();
-        DeviceName = _connectionService.GetListOfDevices()[_connectionService.CurrentMeasurement.DeviceNumber];
+        BufferInMilliseconds = _measurementService.CurrentMeasurement.BufferMilliseconds.ToString();
+        SampleRate = _measurementService.CurrentMeasurement.SampleRate.ToString();
+        WindowSize = _measurementService.CurrentMeasurement.WindowSize.ToString();
+        DataLenght = _measurementService.CurrentMeasurement.MaxDataLength.ToString();
+        DeviceName = _measurementService.GetListOfDevices()[_measurementService.CurrentMeasurement.DeviceNumber];
 
         CurrentPatient = _dataService.Patients.FirstOrDefault(p => p.PatientId == _dataService.CurrentPatientId);
 
-        _connectionService.SelectMeasuredMuscle(MuscleSelectedIndex, Side ? 1 : 0);
+        _measurementService.SelectMeasuredMuscle(MuscleSelectedIndex, Side ? 1 : 0);
     }
-    public void OnNavigatedTo(object parameter) => _connectionService.DataAvailable += DataAvailable;
-    public void OnNavigatedFrom() => _connectionService.DataAvailable -= DataAvailable;
+    public void OnNavigatedTo(object parameter) => _measurementService.DataAvailable += DataAvailable;
+    public void OnNavigatedFrom() => _measurementService.DataAvailable -= DataAvailable;
 
     private void DataAvailable(object? sender, DataAvaiableArgs args)
     {
         ObservablePoint[] chartData = new ObservablePoint[args.Size];
-        double fconst = (double)_connectionService.CurrentMeasurement.SampleRate / (double)_connectionService.CurrentMeasurement.WindowSize;
+        double fconst = (double)_measurementService.CurrentMeasurement.SampleRate / (double)_measurementService.CurrentMeasurement.WindowSize;
 
         if (args.Data != null)
         {
@@ -131,20 +130,20 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
 
         Series1[0].Values = chartData;
-        Series2[0].Values = _connectionService.CurrentMeasurement.MeasurementsData[_connectionService.CMIndex].MaxValues.ToArray();
+        Series2[0].Values = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex].MaxValues.ToArray();
 
     }
     [RelayCommand]
     private void ChangeSettings() => _navigationService.NavigateTo(typeof(SetupViewModel).FullName!);
     [RelayCommand]
-    private void StartButton() => _connectionService.StartRecording();
+    private void StartButton() => _measurementService.StartRecording();
     [RelayCommand]
     private void SaveButton() {}
     [RelayCommand]
     private void StopButton()
     {
-        _connectionService?.StopRecording();
-        MeasurementData data = _connectionService.CurrentMeasurement.MeasurementsData[_connectionService.CMIndex];
+        _measurementService?.StopRecording();
+        MeasurementData data = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex];
         Slope = data.Slope;
         Shift = data.Shift;
         ObservablePoint pointA = new ObservablePoint(0, data.Shift);
@@ -153,5 +152,5 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private void MuscleSelectionChanged() => _connectionService.SelectMeasuredMuscle(MuscleSelectedIndex,Side ? 1 : 0);
+    private void MuscleSelectionChanged() => _measurementService.SelectMeasuredMuscle(MuscleSelectedIndex,Side ? 1 : 0);
 }

@@ -11,7 +11,7 @@ namespace EMGApp.ViewModels;
 
 public partial class SetupViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly IConnectionService _connectionService;
+    private readonly IMeasurementService _connectionService;
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
 
@@ -45,7 +45,7 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     {
         get;
     }
-    public SetupViewModel(IConnectionService connectionService, IDataService dataService, INavigationService navigationService)
+    public SetupViewModel(IMeasurementService connectionService, IDataService dataService, INavigationService navigationService)
     {
         _connectionService = connectionService;
         _dataService = dataService;

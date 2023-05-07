@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EMGApp.Contracts.Services;
+﻿using EMGApp.Contracts.Services;
 using EMGApp.Models;
 using NAudio.Wave;
 using System.Diagnostics;
@@ -11,7 +6,7 @@ using EMGApp.Events;
 using NAudio.CoreAudioApi;
 
 namespace EMGApp.Services;
-public class ConnectionService : IConnectionService
+public class MeasurementService : IConnectionService
 {
     private WaveInEvent? Wawe 
     { 
@@ -36,7 +31,7 @@ public class ConnectionService : IConnectionService
         get; set; 
     }
 
-    public ConnectionService(IDataService iDataService)
+    public MeasurementService(IDataService iDataService)
     {
         CurrentMeasurement = new MeasurementGroup(0, 1000, 100, 1024, true, 1_048_576, 0);
         CurrentMeasurement.MeasurementsData.Add(new MeasurementData(0, 0, CurrentMeasurement.MaxDataLength));
@@ -64,7 +59,7 @@ public class ConnectionService : IConnectionService
         }
         Debug.WriteLine($"waveIn index:{CurrentMeasurement.DataIndex}");
 
-        DataAvaiableArgs args = new DataAvaiableArgs(CalculateData(), CurrentMeasurement.MaxFrequencyIndex);
+        var args = new DataAvaiableArgs(CalculateData(), CurrentMeasurement.MaxFrequencyIndex);
         DataAvailable?.Invoke(this, args);
     }
 

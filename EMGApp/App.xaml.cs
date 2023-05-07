@@ -68,8 +68,11 @@ public partial class App : Application
             // Core Services
             services.AddSingleton<IFileService, FileService>();
 
-            // My Services
-            services.AddSingleton<IConnectionService, ConnectionService>();
+            // Database service
+            services.AddSingleton<IDatabaseService, DatabaseService>();
+            // Connection service
+            services.AddSingleton<IMeasurementService, MeasurementService>();
+            // Data service
             services.AddSingleton<IDataService, DataService>();
 
             // Views and ViewModels
@@ -107,6 +110,6 @@ public partial class App : Application
         base.OnLaunched(args);
 
         await App.GetService<IActivationService>().ActivateAsync(args);
-        App.GetService<IDataService>();
+        App.GetService<IDatabaseService>();
     }
 }

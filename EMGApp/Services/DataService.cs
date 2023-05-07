@@ -1,9 +1,7 @@
-﻿using System;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 using System.Diagnostics;
 using EMGApp.Contracts.Services;
 using EMGApp.Models;
-using EMGApp.Views;
 using Windows.Storage;
 
 namespace EMGApp.Services;

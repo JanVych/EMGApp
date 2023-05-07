@@ -6,7 +6,7 @@ using EMGApp.Events;
 using NAudio.CoreAudioApi;
 
 namespace EMGApp.Services;
-public class MeasurementService : IConnectionService
+public class MeasurementService : IMeasurementService
 {
     private WaveInEvent? Wawe 
     { 

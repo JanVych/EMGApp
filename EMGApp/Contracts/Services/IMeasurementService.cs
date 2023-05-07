@@ -7,7 +7,7 @@ using EMGApp.Events;
 using EMGApp.Models;
 
 namespace EMGApp.Contracts.Services;
-public interface IConnectionService
+public interface IMeasurementService
 {
     public MeasurementGroup CurrentMeasurement
     {

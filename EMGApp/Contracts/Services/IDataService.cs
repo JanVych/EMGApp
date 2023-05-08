@@ -11,10 +11,11 @@ public interface IDataService
     {
         get; 
     }
-    public int? CurrentPatientId
+    public long? CurrentPatientId
     {
         get; set;
     }
     public void AddPatient(Patient patient);
     public void AddMeasurement(MeasurementGroup measurement);
+    public void RemovePatient(Patient patient);
 }

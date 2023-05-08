@@ -3,7 +3,7 @@
 namespace EMGApp.Models;
 public class Patient
 {
-    public int? PatientId { get; set; }
+    public long? PatientId { get; set; }
     public string Name { get; set; }
     public string Surname {get; set; }
     public int Age { get; set; }
@@ -11,7 +11,7 @@ public class Patient
     public string Address { get; set; }
     public int Weight { get; set; }
     public int Height { get; set; }
-    public string Condition { get; set; }
+    public int Condition { get; set; }
     public string Description { get; set; }
 
     public string GenderString
@@ -56,7 +56,7 @@ public class Patient
             return str.ToString();
         }
     }
-    public Patient(int? id, string name,string surname, int age, int gender, string address, int weight, int height, string condition, string destription)
+    public Patient(long? id, string name,string surname, int age, int gender, string address, int weight, int height, int condition, string destription)
     {
         PatientId = id;
         Name = name;

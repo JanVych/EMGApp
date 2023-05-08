@@ -21,26 +21,28 @@ public partial class PatientsViewModel : ObservableRecipient
     { 
         get; set; 
     }
-    [ObservableProperty]
-    private List<MeasurementGroup> measurements;
+    public List<MeasurementGroup> Measurements;
 
-    public ICommand PatientSelectionChangedCommand
-    {
-        get;
-    }
+
     public PatientsViewModel(IDataService dataService)
     {
         _dataService = dataService;
         Patients = _dataService.Patients;
         Measurements = new List<MeasurementGroup>();
-        PatientSelectionChangedCommand = new RelayCommand(PatientSelectionChanged);
         PatientSelectionChanged();
     }
+    [RelayCommand]
     private void PatientSelectionChanged()
     {
-        Measurements.Clear();
         Measurements = _dataService.Measurements.FindAll(item => item.PatientId == Patients[SelectedPatientIndex].PatientId);
     }
 
+    [RelayCommand]
+    private void DeletePatientButton()
+    {
+        _dataService.RemovePatient(Patients[SelectedPatientIndex]);
+        Patients = _dataService.Patients;
+        PatientSelectionChanged();
+    }
 
 }

@@ -7,19 +7,15 @@ using System.Threading.Tasks;
 namespace EMGApp.Models;
 public class MeasurementGroup
 {
-    public int? MeasurementId
+    public long? MeasurementId
     {
         get; set;
     }
-    public int? PatientId
+    public long? PatientId
     {
         get; set;
     }
-    public int MeasurementType
-    {
-        get; set; 
-    }
-    public string? DateTime
+    public DateTime? DateTime
     {
         get; set;
     }
@@ -43,9 +39,34 @@ public class MeasurementGroup
     {
         get; set;
     }
+    public int MeasurementType
+    {
+        get; set;
+    }
+    public int Force
+    {
+        get; set;
+    }
+    public int DominantFrequencyCalculationType
+    {
+        get; set;
+    }
+    public int NotchFilter
+    {
+        get; set;
+    }
+    public int LowPassFilter
+    {
+        get; set;
+    }
+    public int HighPassFilter
+    {
+        get; set;
+    }
 
     //not in DB
     public int MaxFrequencyIndex => (int)Math.Round((double)WindowSize / (double)SampleRate * 120);
+    public string? DateTimeString => DateTime.ToString();
     public int DataIndex 
     { 
         get; set; 
@@ -60,26 +81,36 @@ public class MeasurementGroup
         get; set; 
     } = new List<MeasurementData>();
 
-    public MeasurementGroup(int masurementType, int sampleRate, int bufferMilliseconds, int windowSize, bool measurementTimeFixed , int maxDataLength, int deviceNumber)
+    public MeasurementGroup(int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix , int maxDataLength, int masurementType, int force, int dFCType, int nFilter, int lPFilter, int hPFilter, int deviceNumber)
     {
         MeasurementType = masurementType;
         SampleRate = sampleRate;
         BufferMilliseconds = bufferMilliseconds;
         WindowSize = windowSize;
         MaxDataLength = maxDataLength;
-        MeasurementTimeFixed = measurementTimeFixed;
+        MeasurementTimeFixed = mTFix;
         DeviceNumber = deviceNumber;
+        Force = force;
+        DominantFrequencyCalculationType = dFCType;
+        NotchFilter = nFilter;
+        LowPassFilter = lPFilter;
+        HighPassFilter = hPFilter;
     }
-    public MeasurementGroup(int measurementId, int patientId, int masurementType, string date_time, int sampleRate, int bufferMilliseconds, int windowSize, bool measurementTimeFixed, int maxDataLength)
+    public MeasurementGroup(long measurementId, long patientId, DateTime dateTime, int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix, int maxDataLength, int masurementType, int force, int dFCType, int nFilter, int lPFilter, int hPFilter)
     {
         MeasurementId = measurementId;
         PatientId = patientId;
         MeasurementType = masurementType;
-        DateTime = date_time;
+        DateTime = dateTime;
         SampleRate = sampleRate;
         BufferMilliseconds = bufferMilliseconds;
         WindowSize = windowSize;
-        MeasurementTimeFixed = measurementTimeFixed;
+        MeasurementTimeFixed = mTFix;
         MaxDataLength = maxDataLength;
+        Force = force;
+        DominantFrequencyCalculationType = dFCType;
+        NotchFilter = nFilter;
+        LowPassFilter = lPFilter;
+        HighPassFilter = hPFilter;
     }
 }

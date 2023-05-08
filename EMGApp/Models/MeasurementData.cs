@@ -8,11 +8,11 @@ using FftSharp;
 namespace EMGApp.Models;
 public class MeasurementData
 {
-    public int? MeasurementDataId
+    public long? MeasurementDataId
     {
         get; set; 
     }
-    public int? MeasurementId
+    public long? MeasurementId
     {
         get; set; 
     }
@@ -36,7 +36,7 @@ public class MeasurementData
     {
         get; set;
     } = 0;
-    public double Shift
+    public double StartFrequency
     {
         get; set;
     } = 0;

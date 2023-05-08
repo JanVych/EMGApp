@@ -28,7 +28,7 @@
         <NumberBox Value="{x:Bind ViewModel.Height, Mode=TwoWay}" Grid.Row="1" Grid.Column="1" Header="Height"
                     HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="180"/>
 
-        <ComboBox SelectedValue="{x:Bind ViewModel.Condition, Mode=TwoWay}" Grid.Row="2"  Grid.Column="1" Header="Condition" 
+        <ComboBox SelectedIndex="{x:Bind ViewModel.Condition, Mode=TwoWay}" Grid.Row="2"  Grid.Column="1" Header="Condition" 
                    HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="180" PlaceholderText="chose">
             <x:String>c1</x:String>
             <x:String>c2</x:String>

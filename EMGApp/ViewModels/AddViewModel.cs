@@ -25,7 +25,7 @@ public partial class AddViewModel : ObservableRecipient
     [ObservableProperty]
     private int height;
     [ObservableProperty]
-    private string? condition;
+    private int condition;
     [ObservableProperty]
     private string? address;
 
@@ -40,7 +40,6 @@ public partial class AddViewModel : ObservableRecipient
     public void NewButton()
     {
         Description ??= string.Empty;
-        Condition ??= string.Empty;
         Address ??= string.Empty;
         if(Name == null || Name == string.Empty || Surname == null || Surname == string.Empty) { return; }
         var p = new Patient(null, Name, Surname, Age, GenderIndex, Address, Weight, Height, Condition, Description);

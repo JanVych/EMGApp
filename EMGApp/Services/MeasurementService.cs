@@ -33,7 +33,7 @@ public class MeasurementService : IMeasurementService
 
     public MeasurementService(IDataService iDataService)
     {
-        CurrentMeasurement = new MeasurementGroup(0, 1000, 100, 1024, true, 1_048_576, 0);
+        CurrentMeasurement = new MeasurementGroup(1000, 100, 1024, true, 1_048_576, 0,0,0,0,0,0,0);
         CurrentMeasurement.MeasurementsData.Add(new MeasurementData(0, 0, CurrentMeasurement.MaxDataLength));
         IsRecording = false;
         
@@ -113,10 +113,10 @@ public class MeasurementService : IMeasurementService
             denominator += Math.Pow((milsec[i] - avrageX), 2);
         }
         var slope = (numerator / denominator) ;
-        CurrentMeasurement.MeasurementsData[CMIndex].Shift = Math.Round(avrageY - slope * avrageX,4);
+        CurrentMeasurement.MeasurementsData[CMIndex].StartFrequency = Math.Round(avrageY - slope * avrageX,4);
         CurrentMeasurement.MeasurementsData[CMIndex].Slope = Math.Round((slope / CurrentMeasurement.BufferMilliseconds) * 1_000_000, 4 );
 
-        Debug.WriteLine("shift:" + CurrentMeasurement.MeasurementsData[CMIndex].Shift.ToString());
+        Debug.WriteLine("shift:" + CurrentMeasurement.MeasurementsData[CMIndex].StartFrequency.ToString());
         Debug.WriteLine("slope:" + CurrentMeasurement.MeasurementsData[CMIndex].Slope.ToString());
         Debug.WriteLine("Size: " + CurrentMeasurement.MeasurementsData[CMIndex].MaxValues.Count.ToString());
     }
@@ -155,7 +155,7 @@ public class MeasurementService : IMeasurementService
 
     public void CreateConnection(int measurmentType, int sampleRate, int bufferMilliseconds, int windowSize, bool MeasurmentTimeFixed, int maxDataLenght, int deviceNumber)
     {
-        CurrentMeasurement = new MeasurementGroup(measurmentType, sampleRate, bufferMilliseconds, windowSize, MeasurmentTimeFixed, maxDataLenght, deviceNumber);
+        CurrentMeasurement = new MeasurementGroup(sampleRate, bufferMilliseconds, windowSize, MeasurmentTimeFixed, maxDataLenght,0,0,0,0,0,0, deviceNumber);
         CMIndex = 0;
         Debug.WriteLine($"New wawe, device number: {deviceNumber}, sample rate: {sampleRate}, buffer size: {bufferMilliseconds} ms, window size: {windowSize}");
         Wawe = new()

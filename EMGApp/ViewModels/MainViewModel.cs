@@ -138,16 +138,16 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void StartButton() => _measurementService.StartRecording();
     [RelayCommand]
-    private void SaveButton() {}
+    private void SaveButton() => _dataService.AddMeasurement(_measurementService.CurrentMeasurement);
     [RelayCommand]
     private void StopButton()
     {
-        _measurementService?.StopRecording();
-        MeasurementData data = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex];
+        _measurementService.StopRecording();
+        var data = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex];
         Slope = data.Slope;
-        Shift = data.Shift;
-        ObservablePoint pointA = new ObservablePoint(0, data.Shift);
-        ObservablePoint pointB = new ObservablePoint(data.MaxValues.Count - 1, data.Shift + data.Slope * data.MaxValues.Count);
+        Shift = data.StartFrequency;
+        var pointA = new ObservablePoint(0, data.StartFrequency);
+        var pointB = new ObservablePoint(data.MaxValues.Count - 1, data.StartFrequency + data.Slope * data.MaxValues.Count);
         Series2[1].Values = new ObservablePoint[] {pointA, pointB};
     }
 

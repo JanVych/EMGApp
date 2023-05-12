@@ -36,7 +36,7 @@
                 <TextBlock Text="{x:Bind ViewModel.CurrentPatient.Condition}" Margin="5,0,0,0"/>
             </StackPanel>
         </Grid>
-        
+
         <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="*,*,*,*,*" RowDefinitions="*" Margin="0,10,0,0"
               BorderThickness="1" BorderBrush="{StaticResource ControlStrongStrokeColorDefaultBrush}" CornerRadius="4">
             <StackPanel Grid.Column="0"  Margin="5,5,5,5" Orientation="Horizontal">
@@ -57,10 +57,10 @@
             </StackPanel>
             <StackPanel Grid.Column="5"   Margin="5,5,5,5" Orientation="Horizontal">
                 <TextBlock Text="Measurement time:"/>
-                <TextBlock Text="{x:Bind ViewModel.DataLenght}" Margin="5,0,0,0"/>
+                <TextBlock Text="{x:Bind ViewModel.DataSize}" Margin="5,0,0,0"/>
             </StackPanel>
         </Grid>
-        
+
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,10">
             <TextBlock Text="Measured muscle" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             <ComboBox Margin="10,0,0,0" Height="35" SelectedIndex="{x:Bind ViewModel.MuscleSelectedIndex, Mode=TwoWay}"
@@ -78,20 +78,21 @@
             <ToggleSwitch HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="10,0,0,0" OffContent="Left" OnContent="Right"
                           IsOn="{x:Bind ViewModel.Side, Mode=TwoWay}"/>
         </StackPanel>
-        
-        <lvc:CartesianChart x:Name="CaCHart1" Grid.Row="3" Grid.Column="0"
-                            XAxes="{x:Bind ViewModel.XAxes1}" YAxes="{x:Bind ViewModel.YAxes1}"
-                            Series="{x:Bind ViewModel.Series1}" Margin="0,0,0,0"/>
-        <lvc:CartesianChart x:Name="CaCHart2" Grid.Row="3" Grid.Column="1"
-                            XAxes="{x:Bind ViewModel.XAxes2}" YAxes="{x:Bind ViewModel.YAxes2}"
-                            Series="{x:Bind ViewModel.Series2}" Margin="0,0,0,0"/>
 
-        <Slider Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="20,20,20,20"/>
+        <lvc:CartesianChart x:Name="CaCHart1" Grid.Row="3" Grid.Column="0"
+                            XAxes="{x:Bind ViewModel.FrequencySpectrumXAxes}" YAxes="{x:Bind ViewModel.FrequencySpectrumYAxes}"
+                            Series="{x:Bind ViewModel.FrequencySpectrumSeries}" Margin="0,0,0,0"/>
+        <lvc:CartesianChart x:Name="CaCHart2" Grid.Row="3" Grid.Column="1"
+                            XAxes="{x:Bind ViewModel.DominantValuesXAxes}" YAxes="{x:Bind ViewModel.DominantValuesYAxes}"
+                            Series="{x:Bind ViewModel.DominantValuesSeries}" Margin="0,0,0,0"/>
+
+        <ProgressBar Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="100,20,100,20" 
+                     Maximum="{x:Bind ViewModel.DataSize}" Value="{x:Bind ViewModel.ProgressBarValue, Mode=TwoWay}"/>
 
         <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
             <AppBarButton Icon="Play" Label="Start" Grid.Column="1" HorizontalAlignment="Center" 
                 Command="{x:Bind ViewModel.StartButtonCommand}" VerticalAlignment="Center" Margin="0,0,0,0"/>
-            <AppBarButton Icon="Pause" Label="Pause"  Grid.Column="1" HorizontalAlignment="Center" 
+            <AppBarButton Icon="Stop" Label="Stop"  Grid.Column="1" HorizontalAlignment="Center" 
                 Command="{x:Bind ViewModel.StopButtonCommand}" VerticalAlignment="Center" Margin="10,0,0,0"/>
             <AppBarButton Icon="Refresh" Label="Reset"  Grid.Column="1" HorizontalAlignment="Center" 
                 Command="{x:Bind ViewModel.StopButtonCommand}" VerticalAlignment="Center" Margin="10,0,0,0"/>

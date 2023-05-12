@@ -1,7 +1,5 @@
 ﻿using System.Data.SQLite;
 using System.Diagnostics;
-using System.Diagnostics.Metrics;
-using System.Security.Cryptography;
 using EMGApp.Contracts.Services;
 using EMGApp.Models;
 using Windows.Storage;
@@ -155,7 +153,7 @@ public class DatabaseService :IDatabaseService
         var parameters = new (string, object)[]
         {
             ("@patient_id", m.PatientId), ("@date_time", m.DateTime),("@sample_rate", m.SampleRate), ("@buffer_in_milliseconds", m.BufferMilliseconds),
-            ("@window_size", m.WindowSize), ("@measurement_time_fixed",m.MeasurementTimeFixed), ("@max_data_length", m.MaxDataLength),
+            ("@window_size", m.WindowSize), ("@measurement_time_fixed",m.MeasurementFixedTime), ("@max_data_length", m.DataSize),
             ("@measurement_type", m.MeasurementType), ("@force",m.Force), ("@dominant_frequency_calculation_type", m.DominantFrequencyCalculationType),
             ("@notch_filter",m.NotchFilter), ("@low_pass_filter", m.LowPassFilter), ("@high_pass_filter", m.HighPassFilter)
         };
@@ -167,8 +165,8 @@ public class DatabaseService :IDatabaseService
         var dataBytes = new byte[mData.Data.Length * sizeof(short)];
         Buffer.BlockCopy(mData.Data, 0, dataBytes, 0, dataBytes.Length);
 
-        var maxValuesBytes = new byte[mData.MaxValues.Count * sizeof(double)];
-        Buffer.BlockCopy(mData.MaxValues.ToArray(), 0, maxValuesBytes, 0, maxValuesBytes.Length);
+        var maxValuesBytes = new byte[mData.DominantValues.Length * sizeof(double)];
+        Buffer.BlockCopy(mData.DominantValues, 0, maxValuesBytes, 0, maxValuesBytes.Length);
 
         var command = @"INSERT INTO measurement_data(measurement_id, musle_type, side, data, max_values, slope, start_frequency)
                 VALUES (@measurement_id, @musle_type, @side, @data, @max_values, @slope, @start_frequency)";

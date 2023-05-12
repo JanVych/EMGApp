@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,11 +32,11 @@ public class MeasurementGroup
     {
         get; set;
     }
-    public bool MeasurementTimeFixed
+    public bool MeasurementFixedTime
     {
         get; set; 
     }
-    public int MaxDataLength
+    public int DataSize
     {
         get; set;
     }
@@ -66,29 +67,26 @@ public class MeasurementGroup
 
     //not in DB
     public int MaxFrequencyIndex => (int)Math.Round((double)WindowSize / (double)SampleRate * 120);
+    public int MeasuremntMaxTime => DataSize / SampleRate;
+    public int DominantValuesSize => DataSize / BufferMilliseconds - (int)Math.Ceiling((double)WindowSize / (double)BufferMilliseconds) + 1;
     public string? DateTimeString => DateTime.ToString();
-    public int DataIndex 
-    { 
-        get; set; 
-    } = 0;
     public int DeviceNumber
     {
         get; set;
     } = 0;
-
     public List<MeasurementData> MeasurementsData
     {
-        get; set; 
+        get; set;
     } = new List<MeasurementData>();
 
-    public MeasurementGroup(int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix , int maxDataLength, int masurementType, int force, int dFCType, int nFilter, int lPFilter, int hPFilter, int deviceNumber)
+    public MeasurementGroup(int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix , int dataSize, int masurementType, int force, int dFCType, int nFilter, int lPFilter, int hPFilter, int deviceNumber)
     {
         MeasurementType = masurementType;
         SampleRate = sampleRate;
         BufferMilliseconds = bufferMilliseconds;
         WindowSize = windowSize;
-        MaxDataLength = maxDataLength;
-        MeasurementTimeFixed = mTFix;
+        DataSize = dataSize;
+        MeasurementFixedTime = mTFix;
         DeviceNumber = deviceNumber;
         Force = force;
         DominantFrequencyCalculationType = dFCType;
@@ -96,7 +94,7 @@ public class MeasurementGroup
         LowPassFilter = lPFilter;
         HighPassFilter = hPFilter;
     }
-    public MeasurementGroup(long measurementId, long patientId, DateTime dateTime, int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix, int maxDataLength, int masurementType, int force, int dFCType, int nFilter, int lPFilter, int hPFilter)
+    public MeasurementGroup(long measurementId, long patientId, DateTime dateTime, int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix, int dataSize, int masurementType, int force, int dFCType, int nFilter, int lPFilter, int hPFilter)
     {
         MeasurementId = measurementId;
         PatientId = patientId;
@@ -105,8 +103,8 @@ public class MeasurementGroup
         SampleRate = sampleRate;
         BufferMilliseconds = bufferMilliseconds;
         WindowSize = windowSize;
-        MeasurementTimeFixed = mTFix;
-        MaxDataLength = maxDataLength;
+        MeasurementFixedTime = mTFix;
+        DataSize = dataSize;
         Force = force;
         DominantFrequencyCalculationType = dFCType;
         NotchFilter = nFilter;

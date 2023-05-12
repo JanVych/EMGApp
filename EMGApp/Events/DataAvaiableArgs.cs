@@ -7,11 +7,22 @@ using System.Threading.Tasks;
 namespace EMGApp.Events;
 public class DataAvaiableArgs
 {
-    public double[]? Data { get; set; }
-    public int Size { get; set; } = 0;
-    public DataAvaiableArgs(double[]? data, int size)
+    public double[]? Data 
+    { 
+        get; set; 
+    }
+    public double[]? DominantValues
+    {
+        get; set; 
+    }
+    public int Size 
+    { 
+        get; set; 
+    }
+    public DataAvaiableArgs(double[]? data, int size, double[]? dominantValues)
     {
         Data = data;
         Size = size;
+        DominantValues = dominantValues;
     }
 }

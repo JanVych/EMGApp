@@ -1,29 +1,34 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using LiveChartsCore.SkiaSharpView;
+﻿using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore;
+using LiveChartsCore.Kernel.Sketches;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.SkiaSharpView.Painting;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.Services;
 using System.Diagnostics;
-using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using EMGApp.Events;
 using EMGApp.Contracts.ViewModels;
-using LiveChartsCore.Kernel.Sketches;
-using LiveChartsCore.Defaults;
 using EMGApp.Models;
+using Windows.System;
 
 namespace EMGApp.ViewModels;
 
 public partial class MainViewModel : ObservableRecipient, INavigationAware
 {
+    private readonly DispatcherQueue _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private readonly IMeasurementService _measurementService;
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
-    public ISeries[] Series1 { get; set; } =
+    public ISeries[] FrequencySpectrumSeries
+    {
+        get; set;
+    } =
     {
         new LineSeries<ObservablePoint>
         {
-            Values = new ObservablePoint[]{new ObservablePoint(1,1), new ObservablePoint(2,2), new ObservablePoint(3,3)},
+            Values = new ObservablePoint[]{new ObservablePoint(1,1)},
             Stroke = new SolidColorPaint(SKColors.DeepSkyBlue) { StrokeThickness = 2 },
             Fill = null,
             LineSmoothness = 1,
@@ -33,14 +38,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             IsHoverable = false
         }
     };
-    public ISeries[] Series2
+    public ISeries[] DominantValuesSeries
     {
         get; set;
     } =
     {
         new LineSeries<double>
         {
-            Values = new double[]{1,2,3},
+            Values = new double[]{1 },
             Stroke = new SolidColorPaint(SKColors.DeepSkyBlue) { StrokeThickness = 2 },
             Fill = null,
             LineSmoothness = 1,
@@ -52,7 +57,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         },
         new LineSeries<ObservablePoint>
         {
-            Values = new ObservablePoint[] {new ObservablePoint(1,1),},
+            Values = null,
             Stroke = new SolidColorPaint(SKColors.OrangeRed) { StrokeThickness = 2 },
             Fill = null,
             LineSmoothness = 1,
@@ -62,10 +67,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             IsHoverable = false
         }
     };
-    public IEnumerable<ICartesianAxis> XAxes1 { get; set; } = new Axis[] { new Axis { Name = "Hz", NamePaint = new SolidColorPaint(SKColors.Gray) } };
-    public IEnumerable<ICartesianAxis> XAxes2 { get; set; } = new Axis[] { new Axis { Name = "measurements", NamePaint = new SolidColorPaint(SKColors.Gray) } };
-    public IEnumerable<ICartesianAxis> YAxes1 { get; set; } = new Axis[] { new Axis { Name = "µV", NamePaint = new SolidColorPaint(SKColors.Gray) } };
-    public IEnumerable<ICartesianAxis> YAxes2 { get; set; } = new Axis[] { new Axis { Name = "Hz", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    public IEnumerable<ICartesianAxis> FrequencySpectrumXAxes { get; set; } = new Axis[] { new Axis { Name = "Hz", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    public IEnumerable<ICartesianAxis> DominantValuesXAxes { get; set; } = new Axis[] { new Axis { Name = "measurements", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    public IEnumerable<ICartesianAxis> FrequencySpectrumYAxes { get; set; } = new Axis[] { new Axis { Name = "µV", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    public IEnumerable<ICartesianAxis> DominantValuesYAxes { get; set; } = new Axis[] { new Axis { Name = "Hz", NamePaint = new SolidColorPaint(SKColors.Gray) } };
 
     [ObservableProperty]
     private string? bufferInMilliseconds;
@@ -80,7 +85,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private string? windowSize;
 
     [ObservableProperty]
-    private string? dataLenght;
+    private string? dataSize;
 
     [ObservableProperty]
     private Patient? currentPatient;
@@ -97,6 +102,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private bool side = false;
 
+    [ObservableProperty]
+    private int progressBarValue = 0;
+
     public MainViewModel(IMeasurementService connectionService, IDataService dataService, INavigationService navigationService)
     {
         _measurementService = connectionService;
@@ -105,33 +113,39 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         BufferInMilliseconds = _measurementService.CurrentMeasurement.BufferMilliseconds.ToString();
         SampleRate = _measurementService.CurrentMeasurement.SampleRate.ToString();
         WindowSize = _measurementService.CurrentMeasurement.WindowSize.ToString();
-        DataLenght = _measurementService.CurrentMeasurement.MaxDataLength.ToString();
+        DataSize = _measurementService.CurrentMeasurement.DataSize.ToString();
         DeviceName = _measurementService.GetListOfDevices()[_measurementService.CurrentMeasurement.DeviceNumber];
 
         CurrentPatient = _dataService.Patients.FirstOrDefault(p => p.PatientId == _dataService.CurrentPatientId);
 
         _measurementService.SelectMeasuredMuscle(MuscleSelectedIndex, Side ? 1 : 0);
+        RedrawChart();
     }
     public void OnNavigatedTo(object parameter) => _measurementService.DataAvailable += DataAvailable;
     public void OnNavigatedFrom() => _measurementService.DataAvailable -= DataAvailable;
 
     private void DataAvailable(object? sender, DataAvaiableArgs args)
     {
-        ObservablePoint[] chartData = new ObservablePoint[args.Size];
-        double fconst = (double)_measurementService.CurrentMeasurement.SampleRate / (double)_measurementService.CurrentMeasurement.WindowSize;
+        var frequencySpectrumData = new ObservablePoint[args.Size];
+        var fconst = (double)_measurementService.CurrentMeasurement.SampleRate / (double)_measurementService.CurrentMeasurement.WindowSize;
 
         if (args.Data != null)
         {
             for (var i = 0; i < args.Size; i++)
             {
-                chartData[i] = (new ObservablePoint(i * fconst, args.Data[i]));
+                frequencySpectrumData[i] = (new ObservablePoint(i * fconst, args.Data[i]));
             }
-            Debug.WriteLine("points: " + chartData.Length.ToString());
+            Debug.WriteLine("points: " + frequencySpectrumData.Length.ToString());
         }
 
-        Series1[0].Values = chartData;
-        Series2[0].Values = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex].MaxValues.ToArray();
+        FrequencySpectrumSeries[0].Values = frequencySpectrumData;
 
+        DominantValuesSeries[0].Values = args.DominantValues;
+
+        _dispatcherQueue.TryEnqueue(() =>
+        {
+            ProgressBarValue = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex].DataIndex;
+        });
     }
     [RelayCommand]
     private void ChangeSettings() => _navigationService.NavigateTo(typeof(SetupViewModel).FullName!);
@@ -143,14 +157,42 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private void StopButton()
     {
         _measurementService.StopRecording();
-        var data = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex];
-        Slope = data.Slope;
-        Shift = data.StartFrequency;
-        var pointA = new ObservablePoint(0, data.StartFrequency);
-        var pointB = new ObservablePoint(data.MaxValues.Count - 1, data.StartFrequency + data.Slope * data.MaxValues.Count);
-        Series2[1].Values = new ObservablePoint[] {pointA, pointB};
+        RedrawChart();
     }
 
     [RelayCommand]
-    private void MuscleSelectionChanged() => _measurementService.SelectMeasuredMuscle(MuscleSelectedIndex,Side ? 1 : 0);
+    private void MuscleSelectionChanged()
+    {
+        _measurementService.StopRecording();
+        _measurementService.SelectMeasuredMuscle(MuscleSelectedIndex, Side ? 1 : 0);
+        RedrawChart();
+    }
+
+    private void RedrawChart()
+    {
+        var data = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex];
+        Slope = data.Slope;
+        Shift = data.StartFrequency;
+        var dominantValueIndex = data.DataIndex / _measurementService.CurrentMeasurement.BufferMilliseconds;
+        if (Slope != 0)
+        {
+            var pointA = new ObservablePoint(0, data.StartFrequency);
+            var pointB = new ObservablePoint(dominantValueIndex - 1, data.StartFrequency + (data.Slope / 1000_000) * dominantValueIndex);
+            DominantValuesSeries[1].Values = new ObservablePoint[] { pointA, pointB };
+        }
+        else
+        {
+            DominantValuesSeries[1].Values = null;
+        }
+        FrequencySpectrumSeries[0].Values = new ObservablePoint[] { new ObservablePoint(1, 1) };
+        var dominantValues = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex].DominantValues;
+        if (dominantValues.Length != 0)
+        {
+            DominantValuesSeries[0].Values = dominantValues.ToArray();
+        }
+        else
+        {
+            DominantValuesSeries[0].Values = new double[] { 1};
+        }
+    }
 }

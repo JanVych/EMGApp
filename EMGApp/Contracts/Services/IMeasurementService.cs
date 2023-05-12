@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EMGApp.Events;
 using EMGApp.Models;
+using EMGApp.ViewModels;
 
 namespace EMGApp.Contracts.Services;
 public interface IMeasurementService
@@ -22,6 +23,7 @@ public interface IMeasurementService
     {
         get; set;
     }
+
     //public Action? DevicesPropertyChanged
     //{
     //    get; set; 

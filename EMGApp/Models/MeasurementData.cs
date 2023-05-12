@@ -28,10 +28,10 @@ public class MeasurementData
     {
         get; set;
     }
-    public List<double> MaxValues
+    public double[] DominantValues
     {
         get; set;
-    } = new List<double>();
+    }
     public double Slope
     {
         get; set;
@@ -40,11 +40,17 @@ public class MeasurementData
     {
         get; set;
     } = 0;
-
-    public MeasurementData(int musleType, int side, int maxDataLength)
+    //
+    public int DataIndex
+    {
+        get; set;
+    } = 0;
+    public int DominatValuesIndex(int bufferMilliseconds, int windowSize) => DataIndex / bufferMilliseconds - (int)Math.Ceiling((double)windowSize / (double)bufferMilliseconds);
+    public MeasurementData(int musleType, int side, int DataSize, int dominatValuesSize)
     {
         MusleType = musleType;
         Side = side; 
-        Data = new short[maxDataLength];
+        Data = new short[DataSize];
+        DominantValues = new double[dominatValuesSize];
     }
 }

@@ -28,7 +28,7 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     private int windowSize = 1024;
 
     [ObservableProperty]
-    private int measurementTime = 1_048_576;
+    private int measurementTime = 120_000;
 
     [ObservableProperty]
     private int selectedDeviceIndex = 0;

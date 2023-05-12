@@ -20,6 +20,11 @@ public class DataService :IDataService
         get; private set; 
     } = new List<MeasurementGroup>();
 
+    public long? ObservedMeasuremntId
+    {
+        get; set; 
+    }
+
     public DataService(IDatabaseService databaseService)
     {
         _databaseService = databaseService;

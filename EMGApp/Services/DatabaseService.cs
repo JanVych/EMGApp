@@ -153,7 +153,7 @@ public class DatabaseService :IDatabaseService
         var parameters = new (string, object)[]
         {
             ("@patient_id", m.PatientId), ("@date_time", m.DateTime),("@sample_rate", m.SampleRate), ("@buffer_in_milliseconds", m.BufferMilliseconds),
-            ("@window_size", m.WindowSize), ("@measurement_time_fixed",m.MeasurementFixedTime), ("@max_data_length", m.DataSize),
+            ("@window_size", m.WindowLength), ("@measurement_time_fixed",m.MeasurementFixedTime), ("@max_data_length", m.DataSize),
             ("@measurement_type", m.MeasurementType), ("@force",m.Force), ("@dominant_frequency_calculation_type", m.DominantFrequencyCalculationType),
             ("@notch_filter",m.NotchFilter), ("@low_pass_filter", m.LowPassFilter), ("@high_pass_filter", m.HighPassFilter)
         };

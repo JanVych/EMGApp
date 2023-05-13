@@ -112,7 +112,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         _navigationService = navigationService;
         BufferInMilliseconds = _measurementService.CurrentMeasurement.BufferMilliseconds.ToString();
         SampleRate = _measurementService.CurrentMeasurement.SampleRate.ToString();
-        WindowSize = _measurementService.CurrentMeasurement.WindowSize.ToString();
+        WindowSize = _measurementService.CurrentMeasurement.WindowLength.ToString();
         DataSize = _measurementService.CurrentMeasurement.DataSize.ToString();
         DeviceName = _measurementService.GetListOfDevices()[_measurementService.CurrentMeasurement.DeviceNumber];
 
@@ -127,7 +127,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private void DataAvailable(object? sender, DataAvaiableArgs args)
     {
         var frequencySpectrumData = new ObservablePoint[args.Size];
-        var fconst = (double)_measurementService.CurrentMeasurement.SampleRate / (double)_measurementService.CurrentMeasurement.WindowSize;
+        var fconst = (double)_measurementService.CurrentMeasurement.SampleRate / (double)_measurementService.CurrentMeasurement.WindowLength;
 
         if (args.Data != null)
         {

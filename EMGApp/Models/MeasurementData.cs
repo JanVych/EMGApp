@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FftSharp;
-
-namespace EMGApp.Models;
+﻿namespace EMGApp.Models;
 public class MeasurementData
 {
     public long? MeasurementDataId
@@ -45,12 +38,12 @@ public class MeasurementData
     {
         get; set;
     } = 0;
-    public int DominatValuesIndex(int bufferMilliseconds, int windowSize) => DataIndex / bufferMilliseconds - (int)Math.Ceiling((double)windowSize / (double)bufferMilliseconds);
-    public MeasurementData(int musleType, int side, int DataSize, int dominatValuesSize)
+    public int DominatValuesIndex(int numberOfSamplesOnWindowShift, int windowSize) => DataIndex / numberOfSamplesOnWindowShift - (int)Math.Ceiling((double)windowSize / (double)numberOfSamplesOnWindowShift);
+    public MeasurementData(int musleType, int side, int dataSize, int dominatValuesSize)
     {
         MusleType = musleType;
         Side = side; 
-        Data = new short[DataSize];
+        Data = new short[dataSize];
         DominantValues = new double[dominatValuesSize];
     }
 }

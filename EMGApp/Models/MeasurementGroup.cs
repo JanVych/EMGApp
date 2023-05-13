@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EMGApp.Models;
+﻿namespace EMGApp.Models;
 public class MeasurementGroup
 {
     public long? MeasurementId
@@ -28,7 +21,7 @@ public class MeasurementGroup
     {
         get; set;
     }
-    public int WindowSize
+    public int WindowLength
     {
         get; set;
     }
@@ -66,9 +59,10 @@ public class MeasurementGroup
     }
 
     //not in DB
-    public int MaxFrequencyIndex => (int)Math.Round((double)WindowSize / (double)SampleRate * 120);
+    public int WindowRealSize => (int)Math.Round((double)WindowLength / (double)SampleRate * 120);
     public int MeasuremntMaxTime => DataSize / SampleRate;
-    public int DominantValuesSize => DataSize / BufferMilliseconds - (int)Math.Ceiling((double)WindowSize / (double)BufferMilliseconds) + 1;
+    public int NumberOfSamplesOnWindowShift => BufferMilliseconds * SampleRate / 1000;
+    public int DominantValuesSize => DataSize / NumberOfSamplesOnWindowShift - (int)Math.Ceiling((double)WindowLength / (double)NumberOfSamplesOnWindowShift) + 1;
     public string? DateTimeString => DateTime.ToString();
     public int DeviceNumber
     {
@@ -84,7 +78,7 @@ public class MeasurementGroup
         MeasurementType = masurementType;
         SampleRate = sampleRate;
         BufferMilliseconds = bufferMilliseconds;
-        WindowSize = windowSize;
+        WindowLength = windowSize;
         DataSize = dataSize;
         MeasurementFixedTime = mTFix;
         DeviceNumber = deviceNumber;
@@ -102,7 +96,7 @@ public class MeasurementGroup
         DateTime = dateTime;
         SampleRate = sampleRate;
         BufferMilliseconds = bufferMilliseconds;
-        WindowSize = windowSize;
+        WindowLength = windowSize;
         MeasurementFixedTime = mTFix;
         DataSize = dataSize;
         Force = force;

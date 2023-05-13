@@ -40,37 +40,39 @@ public class MeasurementService : IMeasurementService
     }
     private void WaveIn_DataAvailable(object? sender, WaveInEventArgs e)
     {
-        var data = CurrentMeasurement.MeasurementsData[CMIndex];
+        var rawData = CurrentMeasurement.MeasurementsData[CMIndex];
         for (var i = 0; i < e.Buffer.Length / 2; i++)
         {
-            if (data.DataIndex >= CurrentMeasurement.DataSize)
+            if (rawData.DataIndex >= CurrentMeasurement.DataSize)
             {
                 Debug.WriteLine("Buffer is full");
                 StopRecording();
                 return;
             }
-            CurrentMeasurement.MeasurementsData[CMIndex].Data[data.DataIndex] = BitConverter.ToInt16(e.Buffer, i * 2);
-            data.DataIndex++;
+            CurrentMeasurement.MeasurementsData[CMIndex].Data[rawData.DataIndex] = BitConverter.ToInt16(e.Buffer, i * 2);
+            rawData.DataIndex++;
         }
 
-        if (data.DataIndex - CurrentMeasurement.WindowSize < 0)
+        if (rawData.DataIndex - CurrentMeasurement.WindowLength < 0)
         {
-            Debug.WriteLine($"waveIn index:{data.DataIndex}");
+            Debug.WriteLine($"waveIn index:{rawData.DataIndex}");
             Debug.WriteLine("Not enough data for window");
             return;
         }
-        Debug.WriteLine($"waveIn index:{data.DataIndex}");
+        Debug.WriteLine($"waveIn index:{rawData.DataIndex}");
 
-        var args = CalculateData(CurrentMeasurement, CMIndex);
-        DataAvailable?.Invoke(this, args);
+        var data = CalculateData(CurrentMeasurement, CMIndex);
+        var dominantValues = CalculateDominantValues(CurrentMeasurement, CMIndex, data);
+
+        DataAvailable?.Invoke(this, new DataAvaiableArgs(data, CurrentMeasurement.WindowRealSize, dominantValues));
     }
 
-    private DataAvaiableArgs CalculateData(MeasurementGroup measurement, int mIndex)
+    private double[] CalculateData(MeasurementGroup measurement, int mIndex)
     {
         var mData = measurement.MeasurementsData[mIndex];
-        var startIndex = mData.DataIndex - measurement.WindowSize;
+        var startIndex = mData.DataIndex - measurement.WindowLength;
         var rawDataIndex = 0;
-        var rawData = new double[measurement.WindowSize];
+        var rawData = new double[measurement.WindowLength];
 
         for (; startIndex < mData.DataIndex; startIndex++)
         {
@@ -83,37 +85,37 @@ public class MeasurementService : IMeasurementService
 
         var fftComplex = FftSharp.Transform.FFT(rawData);
 
-        var data = new double[measurement.MaxFrequencyIndex];
-        for (var i = 0; i < measurement.MaxFrequencyIndex; i++)
+        var data = new double[measurement.WindowRealSize];
+        for (var i = 0; i < measurement.WindowRealSize; i++)
         {
             data[i] = Math.Sqrt(fftComplex[i].Real * fftComplex[i].Real + fftComplex[i].Imaginary * fftComplex[i].Imaginary) / 10;
         }
 
         HighPassFilter(measurement, data, 6);
+        LowPassFilter(measurement, data, 100);
         NotchFilter(measurement, data, 50);
+        Debug.WriteLine("Data Calculated");
 
+        return data;
+    }
 
-        var dominatValuesIndex = mData.DominatValuesIndex(measurement.BufferMilliseconds, measurement.WindowSize);
-        var dominantValue = CalculateMeanValue(data);
-        mData.DominantValues[dominatValuesIndex] = dominantValue;
-
+    public double[] CalculateDominantValues(MeasurementGroup measurement, int mIndex, double[] data)
+    {
+        var mData = measurement.MeasurementsData[mIndex];
+        var dominatValuesIndex = mData.DominatValuesIndex(measurement.NumberOfSamplesOnWindowShift, measurement.WindowLength);
+        mData.DominantValues[dominatValuesIndex] = CalculateMeanValue(data);
         var dominantValues = new double[dominatValuesIndex];
         for (var i = 0; i <= dominatValuesIndex - 1; i++)
         {
             dominantValues[i] = mData.DominantValues[i];
         }
-       
         Debug.WriteLine("Dominat value added on index:" + dominatValuesIndex.ToString());
-
-
-
-        Debug.WriteLine("Data Calculated");
-        return new DataAvaiableArgs(data, measurement.MaxFrequencyIndex, dominantValues);
+        return dominantValues;
     }
     public void CalculateSLopeShift(MeasurementGroup measurement, int mIndex)
     {
         var mData = measurement.MeasurementsData[mIndex];
-        var dominatValuesLength = mData.DominatValuesIndex(measurement.BufferMilliseconds, measurement.WindowSize);
+        var dominatValuesLength = mData.DominatValuesIndex(measurement.NumberOfSamplesOnWindowShift, measurement.WindowLength);
         var dominantValues = new double[dominatValuesLength];
         var milsec = new double[dominatValuesLength];
         for (var i = 0; i < dominatValuesLength; i++)
@@ -148,33 +150,32 @@ public class MeasurementService : IMeasurementService
     {
         double sum = 0;
         double sumI = 0;
-        for (var i = 0; i < CurrentMeasurement.MaxFrequencyIndex; i++)
+        for (var i = 0; i < CurrentMeasurement.WindowRealSize; i++)
         {
             sum += data[i];
             sumI += data[i] * i;
         }
-        double mean = (1 / sum) * ((double)CurrentMeasurement.SampleRate / (double)CurrentMeasurement.WindowSize) * sumI;
+        double mean = (1 / sum) * ((double)CurrentMeasurement.SampleRate / (double)CurrentMeasurement.WindowLength) * sumI;
         return mean;
     }
     private void NotchFilter(MeasurementGroup measurement, double[] data, double frequency)
     {
-        var i = (int)Math.Round((double)measurement.WindowSize / (double)measurement.SampleRate * frequency);
+        var i = (int)Math.Round((double)measurement.WindowLength / (double)measurement.SampleRate * frequency);
         data[i] = 0;
         data[i + 1] = 0;
         data[i - 1] = 0;
     }
-    // TO DO
-    //private void LowPassFilter(MeasurementGroup measurement, double[] data, int cornerFrequency)
-    //{
-    //    var f = cornerFrequency * measurement.WindowSize / measurement.SampleRate;
-    //    for (var i = 0; i < f; i++)
-    //    {
-    //        data[i] = 0;
-    //    }
-    //}
+    private void LowPassFilter(MeasurementGroup measurement, double[] data, int cornerFrequency)
+    {
+        var f = cornerFrequency * measurement.WindowLength / measurement.SampleRate;
+        for (var i = measurement.WindowRealSize - 1; i > f; i--)
+        {
+            data[i] = 0;
+        }
+    }
     private void HighPassFilter(MeasurementGroup measurement, double[] data, int cornerFrequency)
     {
-        var f = cornerFrequency * measurement.WindowSize / measurement.SampleRate;
+        var f = cornerFrequency * measurement.WindowLength / measurement.SampleRate;
         for (var i = 0; i < f; i++)
         {
             data[i] = 0;

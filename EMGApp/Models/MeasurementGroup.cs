@@ -73,7 +73,8 @@ public class MeasurementGroup
         get; set;
     } = new List<MeasurementData>();
 
-    public MeasurementGroup(int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix , int dataSize, int masurementType, int force, int dFCType, int nFilter, int lPFilter, int hPFilter, int deviceNumber)
+    public MeasurementGroup(int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix , int dataSize, int masurementType,
+        int force, int dFCType, int nFilter, int lPFilter, int hPFilter, int deviceNumber)
     {
         MeasurementType = masurementType;
         SampleRate = sampleRate;
@@ -88,7 +89,8 @@ public class MeasurementGroup
         LowPassFilter = lPFilter;
         HighPassFilter = hPFilter;
     }
-    public MeasurementGroup(long measurementId, long patientId, DateTime dateTime, int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix, int dataSize, int masurementType, int force, int dFCType, int nFilter, int lPFilter, int hPFilter)
+    public MeasurementGroup(long measurementId, long patientId, DateTime dateTime, int sampleRate, int bufferMilliseconds,
+        int windowSize, bool mTFix, int dataSize, int masurementType, int force, int dFCType, int nFilter, int lPFilter, int hPFilter)
     {
         MeasurementId = measurementId;
         PatientId = patientId;

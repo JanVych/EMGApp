@@ -33,4 +33,5 @@ public interface IMeasurementService
     public void SelectMeasuredMuscle(int muscleType, int side);
     public void StartRecording();
     public void StopRecording();
+    public double[] CalculateFrequencySpecturm(MeasurementGroup measurement, int mIndex);
 }

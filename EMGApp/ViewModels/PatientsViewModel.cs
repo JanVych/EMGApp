@@ -4,12 +4,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.Services;
 using EMGApp.Models;
+using EMGApp.Services;
 
 namespace EMGApp.ViewModels;
 
 public partial class PatientsViewModel : ObservableRecipient
 {
     private readonly IDataService _dataService;
+    private readonly INavigationService _navigationService;
 
     [ObservableProperty]
     private int selectedPatientIndex;
@@ -17,19 +19,22 @@ public partial class PatientsViewModel : ObservableRecipient
     [ObservableProperty]
     private int selectedMeasurmentIndex;
 
-    public List<Patient> Patients  
-    { 
-        get; set; 
-    }
-    public List<MeasurementGroup> Measurements;
+    [ObservableProperty]
+    public List<Patient> patients;
+
+    [ObservableProperty]
+    public List<MeasurementGroup> measurements;
 
 
-    public PatientsViewModel(IDataService dataService)
+
+    public PatientsViewModel(IDataService dataService, INavigationService navigationService)
     {
         _dataService = dataService;
+        _navigationService = navigationService;
         Patients = _dataService.Patients;
         Measurements = new List<MeasurementGroup>();
         PatientSelectionChanged();
+        
     }
     [RelayCommand]
     private void PatientSelectionChanged()
@@ -40,9 +45,31 @@ public partial class PatientsViewModel : ObservableRecipient
     [RelayCommand]
     private void DeletePatientButton()
     {
-        _dataService.RemovePatient(Patients[SelectedPatientIndex]);
-        Patients = _dataService.Patients;
-        PatientSelectionChanged();
+        if (SelectedPatientIndex >= 0)
+        {
+            _dataService.RemovePatient(Patients[SelectedPatientIndex]);
+            SelectedPatientIndex--;
+            Patients = _dataService.Patients;
+            PatientSelectionChanged();
+        }
+    }
+    [RelayCommand]
+    private void AddPatientButton()
+    {
+        _navigationService.NavigateTo(typeof(AddViewModel).FullName!);
+    }
+    [RelayCommand]
+    private void MeasurementDetailButton()
+    {
+        if ((SelectedPatientIndex >= 0 && SelectedMeasurmentIndex < Measurements.Count))
+        {
+            _dataService.ObservedMeasuremntId = Measurements[SelectedMeasurmentIndex].MeasurementId;
+            _navigationService.NavigateTo(typeof(MeasurementsViewModel).FullName!);
+        }
+    }
+    [RelayCommand]
+    private void EditPatientButton()
+    {
     }
 
 }

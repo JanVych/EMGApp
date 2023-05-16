@@ -11,10 +11,10 @@
 
     <Grid RowDefinitions="auto,auto,*" ColumnDefinitions="2*,1*" Margin="0,0,0,20">
         <StackPanel Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent" Orientation="Horizontal">
-            <AppBarButton Icon="Add" Label="Add"/>
-            <AppBarButton Icon="Edit" Label="Edit"/>
+            <AppBarButton Icon="Add" Label="Add" Command="{x:Bind ViewModel.AddPatientButtonCommand}"/>
+            <AppBarButton Icon="Edit" Label="Edit" Command="{x:Bind ViewModel.EditPatientButtonCommand}"/>
             <AppBarButton Icon="Delete" Label="Delete" Command="{x:Bind ViewModel.DeletePatientButtonCommand}"/>
-            <AppBarButton Icon="Zoom" Label="Detail"/>
+            <AppBarButton Icon="Zoom" Label="Measurement" Command="{x:Bind ViewModel.MeasurementDetailButtonCommand}"/>
         </StackPanel>
         <Grid ColumnDefinitions="auto,auto,auto" 
                Grid.ColumnSpan="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -27,7 +27,7 @@
             <TextBox Grid.Column="2" Width="200" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,10,0,10"/>
         </Grid>
         
-        <ListView ItemsSource="{x:Bind ViewModel.Patients}" SelectedIndex="{x:Bind ViewModel.SelectedPatientIndex, Mode=TwoWay}"
+        <ListView ItemsSource="{x:Bind ViewModel.Patients, Mode=TwoWay}" SelectedIndex="{x:Bind ViewModel.SelectedPatientIndex, Mode=TwoWay}"
                   BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="0" BorderThickness="1">
             

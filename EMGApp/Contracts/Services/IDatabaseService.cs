@@ -13,5 +13,6 @@ public interface IDatabaseService
     public long GetLastInsertedRowId(string tableName);
     public List<Patient> GetPatients();
     public List<MeasurementGroup> GetMeasurements();
+    public List<MeasurementData> GetMeasurementData(long? measurmentId);
     public void Delete(string tableName, string columnName, object columnId);
 }

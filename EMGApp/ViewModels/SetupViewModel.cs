@@ -41,17 +41,13 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
 
     public List<Patient> Patients { get; set; }
 
-    public ICommand ConnectButtonCommand
-    {
-        get;
-    }
+
     public SetupViewModel(IMeasurementService connectionService, IDataService dataService, INavigationService navigationService)
     {
         _connectionService = connectionService;
         _dataService = dataService;
         _navigationService = navigationService;
         Patients = _dataService.Patients;
-        ConnectButtonCommand = new RelayCommand(ConnectButtonClick);
         DevicesSelectionChanged();
     }
     partial void OnWindowSizeSliderChanged(int value) => WindowSize = (int)Math.Pow(2, value);
@@ -59,7 +55,9 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     public void OnNavigatedTo(object parameter) { }
 
     private void DevicesSelectionChanged() => Devices = _connectionService.GetListOfDevices();
-    private void ConnectButtonClick()
+
+    [RelayCommand]
+    private void ConnectButton()
     {
         if (Patients.Count <= SelectedPatientIndex) { return; }
         _connectionService.StopRecording();

@@ -5,14 +5,71 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:local1="using:EMGApp.Models"
     mc:Ignorable="d">
 
-    <Grid RowDefinitions="*" ColumnDefinitions="*,*">
-        <lvc:CartesianChart  Grid.Row="0" Grid.Column="0"
+    <Grid RowDefinitions="*, *, auto, auto" ColumnDefinitions="*, *">
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" RowDefinitions="*" ColumnDefinitions="auto, *">
+            <ListView ItemsSource="{x:Bind ViewModel.ObservedMeasurement.MeasurementsData}" SelectedIndex="{x:Bind ViewModel.MeasurementDataIndex, Mode=TwoWay}"
+                  BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" MinWidth="300"
+                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0" BorderThickness="1">
+
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                        <Core:InvokeCommandAction Command="{x:Bind ViewModel.MeasuremntDataSelectionChangedCommand}"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+
+                <ListView.Header>
+                    <Grid ColumnDefinitions="*,*,*" Margin="5,5,5,5">
+                        <TextBlock Text="Muscle" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                        <TextBlock Text="Side" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                        <TextBlock Text="Slope" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    </Grid>
+                </ListView.Header>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local1:MeasurementData">
+                        <Grid ColumnDefinitions="*,*,*">
+                            <TextBlock Grid.Column="0" Text="{x:Bind Path=MuscleString}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{x:Bind Path=SideString}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="{x:Bind Path=SlopeString}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <lvc:CartesianChart Grid.Row="0" Grid.Column="1"
+                            XAxes="{x:Bind ViewModel.DominatValuesXAxes}" YAxes="{x:Bind ViewModel.DominantValuesYAxes}"
+                            Series="{x:Bind ViewModel.DominantValuesSeries}" />
+        </Grid>
+        
+        <lvc:CartesianChart Grid.Row="1" Grid.Column="1"
                             XAxes="{x:Bind ViewModel.FrequencySpectrumXAxes}" YAxes="{x:Bind ViewModel.FrequencySpectrumYAxes}"
                             Series="{x:Bind ViewModel.FrequencySpectrumSeries}" Margin="0,0,0,0"/>
-        <lvc:CartesianChart  Grid.Row="0" Grid.Column="1"
-                            XAxes="{x:Bind ViewModel.MaxValuesXAxes}" YAxes="{x:Bind ViewModel.MaxValuesYAxes}"
-                            Series="{x:Bind ViewModel.MaxValuesSeries}" Margin="0,0,0,0"/>
+        <lvc:CartesianChart Grid.Row="1" Grid.Column="0"
+                            XAxes="{x:Bind ViewModel.InputSignalXAxes}" YAxes="{x:Bind ViewModel.InputSignalYAxes}"
+                            Series="{x:Bind ViewModel.InputSignalSeries}" Margin="0,0,0,0"/>
+
+        <Slider Grid.Row="2" Grid.ColumnSpan="2" 
+                Value="{x:Bind ViewModel.SliderValue, Mode=TwoWay}" Maximum="{x:Bind ViewModel.SliderMaximum, Mode=TwoWay}">
+            <Interactivity:Interaction.Behaviors>
+                <Core:EventTriggerBehavior EventName="ValueChanged">
+                    <Core:InvokeCommandAction Command="{x:Bind ViewModel.SliderValueChangedCommand}"/>
+                </Core:EventTriggerBehavior>
+            </Interactivity:Interaction.Behaviors>
+        </Slider>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <AppBarButton Icon="Play" Label="Start" Grid.Column="1" HorizontalAlignment="Center" 
+                Command="{x:Bind ViewModel.StartButtonCommand}" VerticalAlignment="Center" Margin="0,0,0,0"/>
+            <AppBarButton Icon="Stop" Label="Stop"  Grid.Column="1" HorizontalAlignment="Center" 
+                Command="{x:Bind ViewModel.PauseButtonCommand}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <AppBarButton Icon="Refresh" Label="Reset"  Grid.Column="1" HorizontalAlignment="Center" 
+                Command="{x:Bind ViewModel.ResetButtonCommand}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+        </StackPanel>
+
     </Grid>
 </Page>

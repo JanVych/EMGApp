@@ -59,7 +59,7 @@ public class MeasurementGroup
     }
 
     //not in DB
-    public int WindowRealSize => (int)Math.Round((double)WindowLength / (double)SampleRate * 120);
+    public int FrequencyDataSize => (int)Math.Round((double)WindowLength / (double)SampleRate * 140);
     public int MeasuremntMaxTime => DataSize / SampleRate;
     public int NumberOfSamplesOnWindowShift => BufferMilliseconds * SampleRate / 1000;
     public int DominantValuesSize => DataSize / NumberOfSamplesOnWindowShift - (int)Math.Ceiling((double)WindowLength / (double)NumberOfSamplesOnWindowShift) + 1;

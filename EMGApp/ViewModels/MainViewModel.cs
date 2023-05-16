@@ -119,7 +119,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         CurrentPatient = _dataService.Patients.FirstOrDefault(p => p.PatientId == _dataService.CurrentPatientId);
 
         _measurementService.SelectMeasuredMuscle(MuscleSelectedIndex, Side ? 1 : 0);
-        RedrawChart();
+        UpdateCharts();
     }
     public void OnNavigatedTo(object parameter) => _measurementService.DataAvailable += DataAvailable;
     public void OnNavigatedFrom() => _measurementService.DataAvailable -= DataAvailable;
@@ -157,7 +157,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private void StopButton()
     {
         _measurementService.StopRecording();
-        RedrawChart();
+        UpdateCharts();
     }
 
     [RelayCommand]
@@ -165,10 +165,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         _measurementService.StopRecording();
         _measurementService.SelectMeasuredMuscle(MuscleSelectedIndex, Side ? 1 : 0);
-        RedrawChart();
+        UpdateCharts();
+        ProgressBarValue = 0;
     }
 
-    private void RedrawChart()
+    private void UpdateCharts()
     {
         var data = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex];
         Slope = data.Slope;

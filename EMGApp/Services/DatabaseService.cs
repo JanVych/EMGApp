@@ -1,4 +1,5 @@
-﻿using System.Data.SQLite;
+﻿using System.Data;
+using System.Data.SQLite;
 using System.Diagnostics;
 using EMGApp.Contracts.Services;
 using EMGApp.Models;
@@ -165,15 +166,15 @@ public class DatabaseService :IDatabaseService
         var dataBytes = new byte[mData.Data.Length * sizeof(short)];
         Buffer.BlockCopy(mData.Data, 0, dataBytes, 0, dataBytes.Length);
 
-        var maxValuesBytes = new byte[mData.DominantValues.Length * sizeof(double)];
-        Buffer.BlockCopy(mData.DominantValues, 0, maxValuesBytes, 0, maxValuesBytes.Length);
+        var dominantValuesBytes = new byte[mData.DominantValues.Length * sizeof(double)];
+        Buffer.BlockCopy(mData.DominantValues, 0, dominantValuesBytes, 0, dominantValuesBytes.Length);
 
         var command = @"INSERT INTO measurement_data(measurement_id, musle_type, side, data, max_values, slope, start_frequency)
                 VALUES (@measurement_id, @musle_type, @side, @data, @max_values, @slope, @start_frequency)";
         var parameters = new (string, object)[]
         {
-                ("@measurement_id", mData.MeasurementId), ("@musle_type", mData.MusleType), ("@side", mData.Side),
-                ("@data", dataBytes), ("@max_values", maxValuesBytes),
+                ("@measurement_id", mData.MeasurementId), ("@musle_type", mData.MuscleType), ("@side", mData.Side),
+                ("@data", dataBytes), ("@max_values", dominantValuesBytes),
                 ("@slope", mData.Slope), ("@start_frequency", mData.StartFrequency)
         };
         ExecuteNonQuery(command, parameters);
@@ -192,12 +193,12 @@ public class DatabaseService :IDatabaseService
             _database.Open();
             var cmd = new SQLiteCommand(_database);
             cmd.CommandText = "SELECT * FROM patient";
-            var reader = cmd.ExecuteReader();
-            while (reader.Read())
+            var r = cmd.ExecuteReader();
+            while (r.Read())
             {
                 p.Add(new Patient
-                (reader.GetInt64(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4),
-                reader.GetString(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetString(9)));
+                (r.GetInt64(0), r.GetString(1), r.GetString(2), r.GetInt32(3), r.GetInt32(4),
+                r.GetString(5), r.GetInt32(6), r.GetInt32(7), r.GetInt32(8), r.GetString(9)));
             }
         }
         catch (SQLiteException ex)
@@ -218,13 +219,13 @@ public class DatabaseService :IDatabaseService
                             window_size, measurement_time_fixed, max_data_length, measurement_type, force,
                             dominant_frequency_calculation_type, notch_filter, low_pass_filter, high_pass_filter 
                             FROM measurement";
-            var reader = cmd.ExecuteReader();
-            while (reader.Read())
+            var r = cmd.ExecuteReader();
+            while (r.Read())
             {
                 m.Add(new MeasurementGroup
-                (reader.GetInt64(0), reader.GetInt64(1), reader.GetDateTime(2), reader.GetInt32(3), reader.GetInt32(4),
-                reader.GetInt32(5), reader.GetBoolean(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9),
-                reader.GetInt32(10), reader.GetInt32(11), reader.GetInt32(12), reader.GetInt32(13)));
+                (r.GetInt64(0), r.GetInt64(1), r.GetDateTime(2), r.GetInt32(3), r.GetInt32(4),
+                r.GetInt32(5), r.GetBoolean(6), r.GetInt32(7), r.GetInt32(8), r.GetInt32(9),
+                r.GetInt32(10), r.GetInt32(11), r.GetInt32(12), r.GetInt32(13)));
             }
         }
         catch (SQLiteException ex)
@@ -241,6 +242,48 @@ public class DatabaseService :IDatabaseService
         var parameters = new (string, object)[] 
         { ("@column_id", columnId) };
         ExecuteNonQuery(command, parameters);
+    }
+
+    public List<MeasurementData> GetMeasurementData(long? measurmentId)
+    {
+        var mdata = new List<MeasurementData>();
+        try
+        {
+            _database.Open();
+            using var cmd = new SQLiteCommand(_database);
+            cmd.CommandText = @"SELECT measurement_id, measurement_data_id, musle_type, side, data, max_values, slope, start_frequency
+                            FROM measurement_data WHERE measurement_id = @measurement_id";
+            cmd.Parameters.AddWithValue("@measurement_id", measurmentId);
+            var r = cmd.ExecuteReader(CommandBehavior.KeyInfo);
+            while (r.Read()) 
+            {
+                var dataBlob = r.GetBlob(4,true);
+                var dataSize = dataBlob.GetCount();
+                var dataBytes = new byte[dataSize];
+                var data = new short[dataSize / sizeof(short)];
+                dataBlob.Read(dataBytes, dataSize, 0);
+                Buffer.BlockCopy(dataBytes, 0, data, 0, dataSize);
+                dataBlob.Dispose();
+
+                var dominatValuesBlob = r.GetBlob(5, true);
+                var dominatValuesSize = dominatValuesBlob.GetCount();
+                var dominatValuesBytes = new byte[dominatValuesSize];
+                var dominatValues = new double[dominatValuesSize / sizeof(double)];
+                dominatValuesBlob.Read(dominatValuesBytes, dominatValuesSize, 0);
+                Buffer.BlockCopy(dominatValuesBytes, 0, dominatValues, 0, dominatValuesSize);
+                dominatValuesBlob.Dispose();
+
+                mdata.Add(new MeasurementData(
+                    r.GetInt64(0), r.GetInt64(1), r.GetInt32(2), r.GetInt32(3), data, dominatValues,
+                    r.GetDouble(6), r.GetDouble(7)));
+            }
+        }
+        catch (SQLiteException ex)
+        {
+            Debug.WriteLine(ex.Message); 
+        }
+        _database.Close();
+        return mdata;
     }
 
     //public short[]? GetMeasurementData(int measurmentId)

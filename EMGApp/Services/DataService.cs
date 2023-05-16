@@ -1,28 +1,42 @@
 ﻿using System.Diagnostics;
 using EMGApp.Contracts.Services;
+using EMGApp.Events;
 using EMGApp.Models;
 
 namespace EMGApp.Services;
-public class DataService :IDataService
+public class DataService : IDataService
 {
     private readonly IDatabaseService _databaseService;
-    public long? CurrentPatientId 
-    { 
-        get; set; 
+    public long? CurrentPatientId
+    {
+        get; set;
     }
-    public List<Patient> Patients 
-    { 
-        get; private set; 
+    public List<Patient> Patients
+    {
+        get; private set;
     } = new List<Patient>();
 
     public List<MeasurementGroup> Measurements
     {
-        get; private set; 
+        get; private set;
     } = new List<MeasurementGroup>();
 
     public long? ObservedMeasuremntId
     {
-        get; set; 
+        get; set;
+    }
+    public int ObservedMeasurementDataIndex
+    {
+        get; set;
+    } = 0;
+    public bool ObservedMeasuremntIsRunning
+    {
+        get; set;
+    } = false;
+
+    public EventHandler<ObservedMeasuremntRunStepArgs>? ObservedMeasuremntRunEvent
+    {
+        get; set;
     }
 
     public DataService(IDatabaseService databaseService)
@@ -56,9 +70,18 @@ public class DataService :IDataService
                 m.MeasurementId = measurement.MeasurementId;
                 _databaseService.InsertMeasurementData(m);
                 m.MeasurementDataId = _databaseService.GetLastInsertedRowId("measurement_data");
-            } 
+            }
         }
         Measurements = _databaseService.GetMeasurements();
+    }
+
+    public List<MeasurementData> GetMeasurementData(MeasurementGroup measurement)
+    {
+        if (measurement.MeasurementId != null)
+        {
+            return _databaseService.GetMeasurementData(measurement.MeasurementId);
+        }
+        return new List<MeasurementData>();
     }
 
     public void RemovePatient(Patient patient)
@@ -74,6 +97,19 @@ public class DataService :IDataService
         _databaseService.Delete("measurement", "patient_id", patient.PatientId);
         _databaseService.Delete("patient", "patient_id", patient.PatientId);
         Patients = _databaseService.GetPatients();
-        Measurements = _databaseService.GetMeasurements(); 
+        Measurements = _databaseService.GetMeasurements();
+    }
+    public async Task ObservedMeasuremntRunAsync(MeasurementGroup m, int measurementIndex)
+    {
+        ObservedMeasuremntIsRunning = true;
+        var mData = m.MeasurementsData[measurementIndex];
+        while(ObservedMeasuremntIsRunning && mData.DataIndex <= m.DataSize - m.NumberOfSamplesOnWindowShift)
+        {
+            await Task.Delay(m.BufferMilliseconds);
+            mData.DataIndex += m.NumberOfSamplesOnWindowShift;
+            Debug.WriteLine(mData.DataIndex.ToString());
+            ObservedMeasuremntRunEvent?.Invoke(this, new ObservedMeasuremntRunStepArgs(mData.DataIndex));
+        }
+        ObservedMeasuremntIsRunning = false;
     }
 }

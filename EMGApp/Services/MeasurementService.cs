@@ -61,13 +61,13 @@ public class MeasurementService : IMeasurementService
         }
         Debug.WriteLine($"waveIn index:{rawData.DataIndex}");
 
-        var data = CalculateData(CurrentMeasurement, CMIndex);
+        var data = CalculateFrequencySpecturm(CurrentMeasurement, CMIndex);
         var dominantValues = CalculateDominantValues(CurrentMeasurement, CMIndex, data);
 
-        DataAvailable?.Invoke(this, new DataAvaiableArgs(data, CurrentMeasurement.WindowRealSize, dominantValues));
+        DataAvailable?.Invoke(this, new DataAvaiableArgs(data, CurrentMeasurement.FrequencyDataSize, dominantValues));
     }
 
-    private double[] CalculateData(MeasurementGroup measurement, int mIndex)
+    public double[] CalculateFrequencySpecturm(MeasurementGroup measurement, int mIndex)
     {
         var mData = measurement.MeasurementsData[mIndex];
         var startIndex = mData.DataIndex - measurement.WindowLength;
@@ -85,14 +85,14 @@ public class MeasurementService : IMeasurementService
 
         var fftComplex = FftSharp.Transform.FFT(rawData);
 
-        var data = new double[measurement.WindowRealSize];
-        for (var i = 0; i < measurement.WindowRealSize; i++)
+        var data = new double[measurement.FrequencyDataSize];
+        for (var i = 0; i < measurement.FrequencyDataSize; i++)
         {
             data[i] = Math.Sqrt(fftComplex[i].Real * fftComplex[i].Real + fftComplex[i].Imaginary * fftComplex[i].Imaginary) / 10;
         }
 
         HighPassFilter(measurement, data, 6);
-        LowPassFilter(measurement, data, 100);
+        LowPassFilter(measurement, data, 130);
         NotchFilter(measurement, data, 50);
         Debug.WriteLine("Data Calculated");
 
@@ -150,7 +150,7 @@ public class MeasurementService : IMeasurementService
     {
         double sum = 0;
         double sumI = 0;
-        for (var i = 0; i < CurrentMeasurement.WindowRealSize; i++)
+        for (var i = 0; i < CurrentMeasurement.FrequencyDataSize; i++)
         {
             sum += data[i];
             sumI += data[i] * i;
@@ -168,7 +168,7 @@ public class MeasurementService : IMeasurementService
     private void LowPassFilter(MeasurementGroup measurement, double[] data, int cornerFrequency)
     {
         var f = cornerFrequency * measurement.WindowLength / measurement.SampleRate;
-        for (var i = measurement.WindowRealSize - 1; i > f; i--)
+        for (var i = measurement.FrequencyDataSize - 1; i > f; i--)
         {
             data[i] = 0;
         }
@@ -182,9 +182,9 @@ public class MeasurementService : IMeasurementService
         }
     }
 
-    public void CreateConnection(int measurmentType, int sampleRate, int bufferMilliseconds, int windowSize, bool MeasurmentTimeFixed, int maxDataLenght, int deviceNumber)
+    public void CreateConnection(int measurmentType, int sampleRate, int bufferMilliseconds, int windowSize, bool MeasurmentTimeFixed, int dataSize, int deviceNumber)
     {
-        CurrentMeasurement = new MeasurementGroup(sampleRate, bufferMilliseconds, windowSize, MeasurmentTimeFixed, maxDataLenght, 0, 0, 0, 0, 0, 0, deviceNumber);
+        CurrentMeasurement = new MeasurementGroup(sampleRate, bufferMilliseconds, windowSize, MeasurmentTimeFixed, dataSize, 0, 0, 0, 0, 0, 0, deviceNumber);
         CMIndex = 0;
         Debug.WriteLine($"New wawe, device number: {deviceNumber}, sample rate: {sampleRate}, buffer size: {bufferMilliseconds} ms, window size: {windowSize}");
         Wawe = new()
@@ -197,7 +197,7 @@ public class MeasurementService : IMeasurementService
     }
     public void SelectMeasuredMuscle(int muscleType, int side)
     {
-        var index = CurrentMeasurement.MeasurementsData.FindIndex(m => m.MusleType == muscleType && m.Side == side);
+        var index = CurrentMeasurement.MeasurementsData.FindIndex(m => m.MuscleType == muscleType && m.Side == side);
         if (index == -1)
         {
             index = CurrentMeasurement.MeasurementsData.Count;

@@ -14,7 +14,7 @@
         <Grid Grid.Row="0" Grid.ColumnSpan="2" RowDefinitions="*" ColumnDefinitions="auto, *">
             <ListView ItemsSource="{x:Bind ViewModel.ObservedMeasurement.MeasurementsData}" SelectedIndex="{x:Bind ViewModel.MeasurementDataIndex, Mode=TwoWay}"
                   BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" MinWidth="300"
-                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0" BorderThickness="1">
+                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0" BorderThickness="0">
 
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="SelectionChanged">
@@ -33,7 +33,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local1:MeasurementData">
                         <Grid ColumnDefinitions="*,*,*">
-                            <TextBlock Grid.Column="0" Text="{x:Bind Path=MuscleString}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="0" Text="{x:Bind Path=MuscleTypeString}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             <TextBlock Grid.Column="1" Text="{x:Bind Path=SideString}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             <TextBlock Grid.Column="2" Text="{x:Bind Path=SlopeString}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Grid>

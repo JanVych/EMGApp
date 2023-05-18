@@ -64,6 +64,8 @@ public class MeasurementGroup
     public int NumberOfSamplesOnWindowShift => BufferMilliseconds * SampleRate / 1000;
     public int DominantValuesSize => DataSize / NumberOfSamplesOnWindowShift - (int)Math.Ceiling((double)WindowLength / (double)NumberOfSamplesOnWindowShift) + 1;
     public string? DateTimeString => DateTime.ToString();
+    public string? MeasurementTypeString => MeasuremntTypeStrings[MeasurementType];
+    public string? DominantFrequencyCalculationTypeString => DominantFrequencyCalculationTypeStrings[DominantFrequencyCalculationType];
     public int DeviceNumber
     {
         get; set;
@@ -73,6 +75,17 @@ public class MeasurementGroup
         get; set;
     } = new List<MeasurementData>();
 
+    public static readonly Dictionary<int, string> MeasuremntTypeStrings = new()
+    {
+       {0, "Concentric contraction"},
+       {1, "Eccentric contraction"},
+       {2, "Isometric contraction"}
+    };
+    public static readonly Dictionary<int, string> DominantFrequencyCalculationTypeStrings = new()
+    {
+       {0, "Median"},
+       {1, "Mean value"}
+    };
     public MeasurementGroup(int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix , int dataSize, int masurementType,
         int force, int dFCType, int nFilter, int lPFilter, int hPFilter, int deviceNumber)
     {

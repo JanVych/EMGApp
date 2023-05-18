@@ -9,9 +9,9 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     Loaded="OnLoaded">
 
-    <Grid>
+    <Grid >
         <Grid x:Name="AppTitleBar"
-              Canvas.ZIndex="1"
+ 
               Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
               IsHitTestVisible="True"
               VerticalAlignment="Top">
@@ -27,6 +27,7 @@
         </Grid>
         <NavigationView
             x:Name="NavigationViewControl"
+            PaneDisplayMode="Left"
             AlwaysShowHeader="False"
             Canvas.ZIndex="0"
             IsPaneOpen="False"
@@ -35,6 +36,7 @@
             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}"
             IsSettingsVisible="True"
             ExpandedModeThresholdWidth="1280"
+            OpenPaneLength="200"
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged">
             <!--Header="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}"-->
             <NavigationView.MenuItems>

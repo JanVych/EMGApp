@@ -39,22 +39,19 @@ public class MeasurementData
         get; set;
     } = 0;
     public int DominatValuesIndex(int numberOfSamplesOnWindowShift, int windowSize) => DataIndex / numberOfSamplesOnWindowShift - (int)Math.Ceiling((double)windowSize / (double)numberOfSamplesOnWindowShift);
-    public string MuscleTypeString
-    {
-        get; set; 
-    }
-    public string? MuscleString => MuscleTypeStrings[MuscleType];
+
+    public string? MuscleTypeString => MuscleTypeStrings[MuscleType];
     public string? SideString => SideStrings[Side];
     public string? SlopeString => Slope.ToString() + " Hz/s";
 
-    static readonly Dictionary<int, string> MuscleTypeStrings = new()
+    private static readonly Dictionary<int, string> MuscleTypeStrings = new()
     {
        {0, "muscle 1"},
        {1, "muscle 2"},
        {2, "muscle 3"},
        {3, "muscle 4"}
     };
-    static readonly Dictionary<int, string> SideStrings = new()
+    private static readonly Dictionary<int, string> SideStrings = new()
     {
         {0, "right" },
         {1, "left" }

@@ -1,11 +1,8 @@
-﻿using System.Diagnostics;
-using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.Services;
 using EMGApp.Contracts.ViewModels;
 using EMGApp.Models;
-using EMGApp.Services;
 
 namespace EMGApp.ViewModels;
 
@@ -28,7 +25,28 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     private int windowSize = 1024;
 
     [ObservableProperty]
-    private int measurementTime = 120_000;
+    private int measurementTimeInSec = 120;
+
+    [ObservableProperty]
+    private int force;
+
+    [ObservableProperty]
+    private int dominantFrequencyClaculationTypeIndex = 0;
+
+    [ObservableProperty]
+    private int notchFilter;
+
+    [ObservableProperty]
+    private int lowPassFilter;
+
+    [ObservableProperty]
+    private int highPassFilter;
+
+    [ObservableProperty]
+    private bool measurementFixedTime = false;
+
+    [ObservableProperty]
+    private int measurementTypeIndex = 0;
 
     [ObservableProperty]
     private int selectedDeviceIndex = 0;
@@ -41,6 +59,15 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
 
     public List<Patient> Patients { get; set; }
 
+    public Dictionary<int, string> MeasurementTypeStrings
+    {
+        get; set;
+    } = MeasurementGroup.MeasuremntTypeStrings;
+
+    public Dictionary<int, string> DominantFrequencyCalculationTypeStrings
+    {
+        get; set;
+    } = MeasurementGroup.DominantFrequencyCalculationTypeStrings;
 
     public SetupViewModel(IMeasurementService connectionService, IDataService dataService, INavigationService navigationService)
     {
@@ -61,7 +88,7 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     {
         if (Patients.Count <= SelectedPatientIndex) { return; }
         _connectionService.StopRecording();
-        _connectionService.CreateConnection(0, SampleRate, BufferInMilliseconds, WindowSize, true, MeasurementTime, SelectedDeviceIndex);
+        _connectionService.CreateConnection(0, SampleRate, BufferInMilliseconds, WindowSize, true, MeasurementTimeInSec, SelectedDeviceIndex);
         _dataService.CurrentPatientId = Patients[SelectedPatientIndex].PatientId;
         _navigationService.NavigateTo(typeof(MainViewModel).FullName!);
     }

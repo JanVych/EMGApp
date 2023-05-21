@@ -30,6 +30,7 @@ public interface IMeasurementService
     //}
     public string[] GetListOfDevices();
     public void CreateConnection(int measurmentType, int sampleRate, int bufferMilliseconds, int windowSize, bool MeasurmentTimeFixed, int maxDataLenght, int deviceNumber);
+    public void CreateConnection(MeasurementGroup measurement);
     public void SelectMeasuredMuscle(int muscleType, int side);
     public void StartRecording();
     public void StopRecording();

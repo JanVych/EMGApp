@@ -4,98 +4,372 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
     xmlns:local1="using:EMGApp.Models"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style x:Key="RelativePanelSettingsCard" TargetType="RelativePanel">
+            <Setter Property="MinHeight" Value="60"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}"/>
+        </Style>
 
-    <Grid RowDefinitions="*" ColumnDefinitions="auto,*" Margin="0,0,0,10">
-        <Border Grid.Row="0" Grid.Column="0" BorderThickness="1" CornerRadius="4" 
-              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-              Background="{ThemeResource ControlFillColorDefaultBrush}">
-            <Grid RowDefinitions="1*,1*,1*,1*,1*,1*,1*,1*,1*,1*" ColumnDefinitions="*" Margin="10,10,10,10">
+        <Style x:Key="StackPanelSettingsCardA" TargetType="StackPanel">
+            <Setter Property="Margin" Value="10,10,10,10"/>
+            <Setter Property="RelativePanel.AlignLeftWithPanel" Value="true"/>
+            <Setter Property="RelativePanel.AlignVerticalCenterWithPanel" Value="False"/>
+        </Style>
 
-                <ComboBox Grid.Row="0" PlaceholderText="select" Width="300"  HorizontalAlignment="Left" VerticalAlignment="Center"
-                          Header="Input device" 
-                          SelectedIndex="{x:Bind ViewModel.SelectedDeviceIndex, Mode=TwoWay}" ItemsSource="{x:Bind ViewModel.Devices, Mode=TwoWay}"/>
+        <Style x:Key="DataGridHeader" TargetType="Grid">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Margin" Value="5,5,10,5"/>
+            <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"/>
+        </Style>
+        <Style x:Key="DataGridHeaderCell" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5,0,5,0"/>
+        </Style>
+        <Style x:Key="DataGridDataCell" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5,0,5,0"/>
+        </Style>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <Slider Width="220" Minimum="9" Maximum="16" StepFrequency="1" IsThumbToolTipEnabled="False" Margin="0,0,20,0"
-                            SmallChange="1" Value="{x:Bind ViewModel.WindowSizeSlider, Mode=TwoWay}" 
-                            Header="Window size" TickPlacement="Outside" TickFrequency="1" />
-                    <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="4" BorderThickness="1" Width="60" Height="35"
-                            HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                        <TextBlock Text="{x:Bind ViewModel.WindowSize, Mode=OneWay}" MaxHeight="35"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                </StackPanel>
+    </Page.Resources>
+
+    <Grid RowDefinitions="*" ColumnDefinitions="4*,5*" Margin="0,0,0,0">
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource AppSetupPageSetingsCardsBreakPoint}"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="device.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="device2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="device2.(RelativePanel.Below)" Value=""/>
+                        <Setter Target="wSize.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="wSize2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="wSize2.(RelativePanel.Below)" Value=""/>
+                        <Setter Target="sRate.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="sRate2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="sRate2.(RelativePanel.Below)" Value=""/>
+                        <Setter Target="wsTime.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="wsTime2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="wsTime2.(RelativePanel.Below)" Value=""/>
+                        <Setter Target="mtFixed.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="mtFixed2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="mtFixed2.(RelativePanel.Below)" Value=""/>
+                        <Setter Target="mTime.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="mTime2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="mTime2.(RelativePanel.Below)" Value=""/>
+                        <Setter Target="dfcType.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="dfcType2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="dfcType2.(RelativePanel.Below)" Value=""/>
+                        <Setter Target="mType.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="mType2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="mType2.(RelativePanel.Below)" Value=""/>
+                        <Setter Target="force.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="force2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="force2.(RelativePanel.Below)" Value=""/>
+                        <Setter Target="nFilter.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="nFilter2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="nFilter2.(RelativePanel.Below)" Value=""/>
+                        <Setter Target="lpFilter.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="lpFilter2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="lpFilter2.(RelativePanel.Below)" Value=""/>
+                        <Setter Target="hpFilter.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="hpFilter2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="hpFilter2.(RelativePanel.Below)" Value=""/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+
+        <ScrollViewer Grid.Row="0" Grid.Column="0" ZoomMode="Disabled"
+                      IsTabStop="True" IsVerticalScrollChainingEnabled="True"
+                      HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
+
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="0,0,20,0" Spacing="8">
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="device" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Device"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="Select input device"/>
+                    </StackPanel>
+                    <ComboBox x:Name="device2" RelativePanel.Below="device" RelativePanel.AlignVerticalCenterWithPanel="True"
+                            Margin="10,10,10,10" PlaceholderText="select" Width="250"
+                            SelectedIndex="{x:Bind ViewModel.SelectedDeviceIndex, Mode=TwoWay}" ItemsSource="{x:Bind ViewModel.Devices, Mode=OneWay}"/>
+                </RelativePanel>
+
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="wSize" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Window size"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="Number of samples for FFT"/>
+                    </StackPanel>
+                    <StackPanel x:Name="wSize2" Margin="10,10,10,10" Orientation="Horizontal"
+                                RelativePanel.Below="wSize" RelativePanel.AlignVerticalCenterWithPanel="True">
+                        <Slider Width="200" Minimum="9" Maximum="16" StepFrequency="1" IsThumbToolTipEnabled="False" Margin="0,0,10,0"
+                                    SmallChange="1" Value="{x:Bind ViewModel.WindowSizeSlider, Mode=TwoWay}" TickPlacement="Outside" TickFrequency="1" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="4" Width="50" Height="35" Margin="0,0,10,0">
+                            <TextBlock Text="{x:Bind ViewModel.WindowSize, Mode=OneWay}" MaxHeight="35"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </RelativePanel>
+
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="sRate" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Sample rate"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal"/>
+                    </StackPanel>
+                    <StackPanel x:Name="sRate2" Margin="10,10,10,10" Orientation="Horizontal"
+                                RelativePanel.Below="sRate" RelativePanel.AlignVerticalCenterWithPanel="True">
+                        <NumberBox Value="{x:Bind ViewModel.SampleRate, Mode=TwoWay}" MaxHeight="35" Minimum="100" Maximum="10000"/>
+                        <TextBlock Text="Hz" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RelativePanel>
+
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="wsTime" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Window shift time"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal"/>
+                    </StackPanel>
+                    <StackPanel x:Name="wsTime2" Margin="10,10,10,10" Orientation="Horizontal"
+                                RelativePanel.Below="wsTime" RelativePanel.AlignVerticalCenterWithPanel="True">
+                        <NumberBox Value="{x:Bind ViewModel.BufferInMilliseconds, Mode=TwoWay}" MaxHeight="35" Minimum="100" Maximum="10000"/>
+                        <TextBlock Text="ms" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RelativePanel>
+
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="dfcType" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Dominant calculation method"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="dsad sdf dsfgdgdfg"/>
+                    </StackPanel>
+                    <ComboBox x:Name="dfcType2" RelativePanel.Below="dfcType" RelativePanel.AlignVerticalCenterWithPanel="True"
+                              Margin="10,10,10,10" PlaceholderText="select" Width="200"
+                              SelectedValuePath="Key" DisplayMemberPath="Value"
+                              SelectedIndex="{x:Bind ViewModel.DominantFrequencyClaculationTypeIndex, Mode=TwoWay}" 
+                              ItemsSource="{x:Bind ViewModel.DominantFrequencyCalculationTypeStrings, Mode=OneTime}"/>
+                </RelativePanel>
+
+                <Border Height="30"/>
+
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="mtFixed" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Fixed measurement time"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal"/>
+                    </StackPanel>
+                    <ToggleSwitch x:Name="mtFixed2" Margin="10,0,10,0"
+                                  RelativePanel.Below="mtFixed" RelativePanel.AlignVerticalCenterWithPanel="True"
+                                  OffContent="No" OnContent="Yes" IsOn="{x:Bind ViewModel.MeasurementFixedTime, Mode=TwoWay}"/>
+                </RelativePanel>
+
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="mTime" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Measurement Time"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal"/>
+                    </StackPanel>
+                    <StackPanel x:Name="mTime2" Margin="10,10,10,10" Orientation="Horizontal"
+                                RelativePanel.Below="mTime" RelativePanel.AlignVerticalCenterWithPanel="True">
+                        <NumberBox Value="{x:Bind ViewModel.MeasurementTime, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="600"/>
+                        <ComboBox MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  SelectedIndex="{x:Bind ViewModel.MeasurementTimeTypeIndex, Mode=TwoWay}">
+                            <x:String>sec</x:String>
+                            <x:String>min</x:String>
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                    <Core:InvokeCommandAction Command="{x:Bind ViewModel.MeasurementTimeTypeChangedCommand}"/>
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                        </ComboBox>
+                    </StackPanel>
+                </RelativePanel>
+
+                <Border Height="30"/>
                 
-                <NumberBox Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                           Header="Smple rate" Value="{x:Bind ViewModel.SampleRate, Mode=TwoWay}" />
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="mType" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Measurement type"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="dsad sdf dsfgdgdfg"/>
+                    </StackPanel>
+                    <ComboBox x:Name="mType2" RelativePanel.Below="mType" RelativePanel.AlignVerticalCenterWithPanel="True"
+                              Margin="10,10,10,10" PlaceholderText="select" Width="200"
+                              SelectedValuePath="Key" DisplayMemberPath="Value"
+                              SelectedIndex="{x:Bind ViewModel.MeasurementTypeIndex, Mode=TwoWay}" 
+                              ItemsSource="{x:Bind ViewModel.MeasurementTypeStrings, Mode=OneTime}"/>
+                </RelativePanel>
 
-                <NumberBox Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                           Header="Window shift time [ms]" Value="{x:Bind ViewModel.BufferInMilliseconds, Mode=TwoWay}"/>
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="force" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Force"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal"/>
+                    </StackPanel>
+                    <StackPanel x:Name="force2" Margin="10,10,10,10" Orientation="Horizontal"
+                                RelativePanel.Below="force" RelativePanel.AlignVerticalCenterWithPanel="True">
+                        <NumberBox Value="{x:Bind ViewModel.Force, Mode=TwoWay}" MaxHeight="35" Minimum="100" Maximum="10000"/>
+                        <TextBlock Text="N" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RelativePanel>
 
-                <ToggleSwitch Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" OffContent="No" OnContent="Yes"
-                              Header="Fixed measurement time" IsOn="{x:Bind ViewModel.MeasurementFixedTime, Mode=TwoWay}"/>
+                <Border Height="20"/>
 
-                <NumberBox Grid.Row="5" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                           Header="Measurement Time [s]" Value="{x:Bind ViewModel.MeasurementTimeInSec, Mode=TwoWay}"/>
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="nFilter" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Notch filter"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal 684dd"/>
+                    </StackPanel>
+                    <StackPanel x:Name="nFilter2" Margin="10,10,10,10" Orientation="Horizontal"
+                                RelativePanel.Below="nFilter" RelativePanel.AlignVerticalCenterWithPanel="True">
+                        <NumberBox Value="{x:Bind ViewModel.NotchFilter, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="140"/>
+                        <TextBlock Text="Hz" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RelativePanel>
 
-                <ComboBox Grid.Row="6" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                          SelectedIndex="{x:Bind ViewModel.DominantFrequencyClaculationTypeIndex, Mode=TwoWay}" SelectedValuePath="Key" DisplayMemberPath="Value"
-                          Header="Dominant malculation method" ItemsSource="{x:Bind ViewModel.DominantFrequencyCalculationTypeStrings, Mode=OneTime}"/>
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="lpFilter" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Low pass filter"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal qqwed wedwed"/>
+                    </StackPanel>
+                    <StackPanel x:Name="lpFilter2" Margin="10,10,10,10" Orientation="Horizontal"
+                                RelativePanel.Below="lpFilter" RelativePanel.AlignVerticalCenterWithPanel="True">
+                        <NumberBox Value="{x:Bind ViewModel.LowPassFilter, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="140"/>
+                        <TextBlock Text="Hz" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RelativePanel>
 
-                <ComboBox Grid.Row="7" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                          SelectedIndex="{x:Bind ViewModel.MeasurementTypeIndex, Mode=TwoWay}" SelectedValuePath="Key" DisplayMemberPath="Value"
-                          Header="Measurement type" ItemsSource="{x:Bind ViewModel.MeasurementTypeStrings, Mode=OneTime}"/>
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="hpFilter" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="High pass filter"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal wedwed"/>
+                    </StackPanel>
+                    <StackPanel x:Name="hpFilter2" Margin="10,10,10,10" Orientation="Horizontal"
+                                RelativePanel.Below="hpFilter" RelativePanel.AlignVerticalCenterWithPanel="True">
+                        <NumberBox Value="{x:Bind ViewModel.HighPassFilter, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="140"/>
+                        <TextBlock Text="Hz" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RelativePanel>
+            </StackPanel>
 
-                <NumberBox Grid.Row="8" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                           Header="Force [N]" Value="{x:Bind ViewModel.Force, Mode=TwoWay}"/>
-                
-                <Button Grid.Row="9" Content="Connect" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Command="{x:Bind ViewModel.ConnectButtonCommand}"/>
-            </Grid>
-        </Border>
-        <Grid Grid.Row="0" Grid.Column="1" Margin="40,0,0,0" ColumnDefinitions="*" RowDefinitions="auto,*"
-              BorderThickness="1" CornerRadius="0" BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
-            
-            <Grid ColumnDefinitions="auto,auto,auto" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <TextBlock Grid.Column="0" Text="Filter" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,10,0,10"/>
-                <ComboBox Grid.Column="1" Width="100" Height="35" SelectedIndex="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,10,0,10">
-                    <x:String>Group</x:String>
+        </ScrollViewer>
+
+        <Grid Grid.Row="0" Grid.Column="1" Margin="5,0,0,0" ColumnDefinitions="*" RowDefinitions="auto,*">
+
+            <Grid Grid.Row="0" ColumnDefinitions="auto,auto,auto,*" 
+                  HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                  BorderThickness="1"
+                  CornerRadius="6"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                  Background="{ThemeResource ControlFillColorDefaultBrush}">
+
+                <TextBlock Grid.Column="0" Text="Filter by" Margin="10,10,0,10"
+                         HorizontalAlignment="Center" VerticalAlignment="Center"
+                         Style="{StaticResource BodyStrongTextBlockStyle}"/>
+
+                <ComboBox Grid.Column="1" Width="120" Height="35" Margin="10,10,0,10"
+                          HorizontalAlignment="Center" VerticalAlignment="Center" 
+                          SelectedItem="{x:Bind ViewModel.SelectedFilterItem, Mode=TwoWay }">
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="SelectionChanged">
+                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.SelectedFilterChangedCommand}"/>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
                     <x:String>Name</x:String>
                     <x:String>Age</x:String>
+                    <x:String>Gender</x:String>
+                    <x:String>Height</x:String>
+                    <x:String>Weight</x:String>
+                    <x:String>Condition</x:String>
+                    <x:String>Address</x:String>
                 </ComboBox>
-                <TextBox Grid.Column="2" Width="200" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,10,0,10"/>
+                <TextBox Grid.Column="2" x:Name="filterTextBox" Width="130" Height="35" Margin="10,10,0,10"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                Visibility="{x:Bind ViewModel.FilterTextBoxkVisibility, Mode=OneWay}">
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="TextChanged">
+                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.PatientsFilterChangedCommand}"
+                                                      CommandParameter="{Binding ElementName=filterTextBox, Path=Text}"/>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                </TextBox>
+                <ComboBox Grid.Column="2" Width="130" x:Name="filterComboBox" Height="35" Margin="10,10,0,10" 
+                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                          ItemsSource="{x:Bind ViewModel.FilterComboBoxItems, Mode=OneWay}"
+                          SelectedItem="{x:Bind ViewModel.FilterComboBoxItem, Mode=TwoWay}"
+                          Visibility="{x:Bind ViewModel.FilterComboBoxVisibility, Mode=OneWay}">
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="SelectionChanged">
+                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.PatientsFilterChangedCommand}"
+                                                      CommandParameter="{Binding ElementName=filterComboBox, Path=SelectedItem}"/>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                </ComboBox>
+                <Button Grid.Column="3" Content="Connect" Margin="10,0,10,0" Height="35"
+                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                        
+                        Command="{x:Bind ViewModel.ConnectButtonCommand}"/>
+
             </Grid>
-            
             <ListView Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                  ItemsSource="{x:Bind ViewModel.Patients, Mode=TwoWay}" 
-                  SelectedIndex="{x:Bind ViewModel.SelectedPatientIndex, Mode=TwoWay}">
+                      ItemsSource="{x:Bind ViewModel.Patients, Mode=OneWay}"
+                      SelectedIndex="{x:Bind ViewModel.SelectedPatientIndex, Mode=TwoWay}">
                 <ListView.Header>
-                    <Grid ColumnDefinitions="1*,1*,1*,1*,3*,1*,1*,1*" Margin="5,5,5,5">
-                        <TextBlock Text="Name" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center"  Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                        <TextBlock Text="Age" Grid.Column="2" HorizontalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                        <TextBlock Text="Gender" Grid.Column="3" HorizontalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                        <TextBlock Text="Address" Grid.Column="4" HorizontalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                        <TextBlock Text="Condition" Grid.Column="5" HorizontalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                        <TextBlock Text="Height" Grid.Column="6" HorizontalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                        <TextBlock Text="Weight" Grid.Column="7" HorizontalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    <Grid Style="{StaticResource DataGridHeader}" Padding="11,0,3,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition MinWidth="60" Width="1*"/>
+                            <ColumnDefinition MinWidth="60" Width="1*"/>
+                            <ColumnDefinition MinWidth="60" Width="1*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Name" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Grid.Column="1" Text="Age" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Grid.Column="2" Text="Gender" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Grid.Column="3" Text="Height" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Grid.Column="4" Text="Weight" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Grid.Column="5" Text="Condition" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Grid.Column="6" Text="Address" Style="{StaticResource DataGridHeaderCell}"/>
+
                     </Grid>
                 </ListView.Header>
 
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local1:Patient">
-                        <Grid ColumnDefinitions="1*,1*,1*,1*,3*,1*,1*,1*">
-                            <TextBlock Grid.Column="0" Text="{x:Bind Path=Name}" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{x:Bind Path=Surname}" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Text="{x:Bind Path=Age }" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="3" Text="{x:Bind Path=GenderString }" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="4" Text="{x:Bind Path=Address}" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="5" Text="{x:Bind Path=Condition}" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="6" Text="{x:Bind Path=Height}" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="7" Text="{x:Bind Path=Weight}" HorizontalAlignment="Center"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition MinWidth="60" Width="1*"/>
+                                <ColumnDefinition MinWidth="60" Width="1*"/>
+                                <ColumnDefinition MinWidth="60" Width="1*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="3*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind Path=FullName}" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind Path=Age }" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="2" Text="{x:Bind Path=GenderString }" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="3" Text="{x:Bind Path=Height}" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="4" Text="{x:Bind Path=Weight}" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="5" Text="{x:Bind Path=ConditionString}" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="6" Text="{x:Bind Path=Address}" Style="{StaticResource DataGridDataCell}"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

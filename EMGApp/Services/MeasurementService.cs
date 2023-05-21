@@ -182,19 +182,22 @@ public class MeasurementService : IMeasurementService
         }
     }
 
-    public void CreateConnection(int measurmentType, int sampleRate, int bufferMilliseconds, int windowSize, bool MeasurmentTimeFixed, int dataSize, int deviceNumber)
+    public void CreateConnection(MeasurementGroup measurement)
     {
-        CurrentMeasurement = new MeasurementGroup(sampleRate, bufferMilliseconds, windowSize, MeasurmentTimeFixed, dataSize, 0, 0, 0, 0, 0, 0, deviceNumber);
+        CurrentMeasurement = measurement;
         CMIndex = 0;
-        Debug.WriteLine($"New wawe, device number: {deviceNumber}, sample rate: {sampleRate}, buffer size: {bufferMilliseconds} ms, window size: {windowSize}");
+        Debug.WriteLine($"New wawe, device number: {measurement.DeviceNumber}, sample rate: {measurement.SampleRate}, buffer size: {measurement.BufferMilliseconds} ms, window size: {measurement.WindowLength}");
         Wawe = new()
         {
-            DeviceNumber = deviceNumber,
-            WaveFormat = new WaveFormat(sampleRate, 16, 1),
-            BufferMilliseconds = bufferMilliseconds
+            DeviceNumber = measurement.DeviceNumber,
+            WaveFormat = new WaveFormat(measurement.SampleRate, 16, 1),
+            BufferMilliseconds = measurement.BufferMilliseconds
         };
         Wawe.DataAvailable += WaveIn_DataAvailable;
     }
+    public void CreateConnection(int measurmentType, int sampleRate, int bufferMilliseconds, int windowSize, bool MeasurmentTimeFixed, int dataSize, int deviceNumber) 
+        => CreateConnection(new MeasurementGroup(sampleRate, bufferMilliseconds, windowSize, MeasurmentTimeFixed, dataSize, 0, 0, 0, 0, 0, 0, deviceNumber));
+    
     public void SelectMeasuredMuscle(int muscleType, int side)
     {
         var index = CurrentMeasurement.MeasurementsData.FindIndex(m => m.MuscleType == muscleType && m.Side == side);

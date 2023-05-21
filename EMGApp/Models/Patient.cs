@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using EMGApp.Views;
+using Windows.ApplicationModel.Payments;
 
 namespace EMGApp.Models;
 public class Patient
@@ -14,45 +16,29 @@ public class Patient
     public int Condition { get; set; }
     public string Description { get; set; }
 
-    public string GenderString
-    {
-        get
-        {
-            if (Gender == 0) { return "M"; }
-            else { return "F"; }
-        }
-    }
+    public string ConditionString => ConditionStrings[Condition];
+    public string GenderString => GenderStrings[Gender];
 
+    public static readonly Dictionary<int, string> ConditionStrings = new()
+    {
+       {0, "condition 1"},
+       {1, "condition 2"},
+       {2, "condition 3"},
+       {3, "condition 4"}
+    };
+    public static readonly Dictionary<int, string> GenderStrings = new()
+    {
+       {0, "M"},
+       {1, "F"},
+    };
     public string FullName
     {
         get
         {
             var str = new StringBuilder();
             str.Append(Name);
-            str.Append(" ");
+            str.Append(' ');
             str.Append(Surname);
-            return str.ToString();
-        }
-    }
-    public string AllString
-    {
-        get
-        {
-            var str = new StringBuilder();
-            str.Append("\tName: ");
-            str.Append(FullName);
-            str.Append("\tAge: ");
-            str.Append(Age);
-            str.Append("\tGender: ");
-            str.Append(GenderString);
-            str.Append("\tAddress: ");
-            str.Append(Address);
-            str.Append("\tWeight: ");
-            str.Append(Weight);
-            str.Append("\tHeight: ");
-            str.Append(Height);
-            str.Append("\tCondition: ");
-            str.Append(Condition);
             return str.ToString();
         }
     }
@@ -68,5 +54,19 @@ public class Patient
         Condition = condition;
         Description = destription;
         Address = address;
+    }
+    public static string GetStringProperty(Patient patient ,string? propertyName)
+    {
+        return propertyName switch
+        {
+            "Name" => patient.FullName,
+            "Age" => patient.Age.ToString(),
+            "Gender" => patient.GenderString,
+            "Address" => patient.Address,
+            "Weight" => patient.Weight.ToString(),
+            "Height" => patient.Height.ToString(),
+            "Condition" => patient.ConditionString,
+            _ => string.Empty,
+        };
     }
 }

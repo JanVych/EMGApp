@@ -29,7 +29,7 @@
             <Setter Property="CornerRadius" Value="4"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="Margin" Value="5,5,10,5"/>
-            <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource ControlAltFillColorSecondaryBrush}"/>
         </Style>
         <Style x:Key="DataGridHeaderCell" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}">
             <Setter Property="HorizontalAlignment" Value="Left"/>

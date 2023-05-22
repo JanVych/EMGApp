@@ -16,7 +16,7 @@ public interface IDataService
     {
         get; set;
     }
-    public long? ObservedMeasuremntId
+    public long? ObservedMeasurementId
     {
         get; set;
     }
@@ -31,6 +31,14 @@ public interface IDataService
     public int ObservedMeasurementDataIndex
     {
         get; set;
+    }
+    public Patient? CurrentPatient
+    {
+        get;
+    }
+    public MeasurementGroup? ObservedMeasurement
+    {
+        get;
     }
     public void AddPatient(Patient patient);
     public void AddMeasurement(MeasurementGroup measurement);

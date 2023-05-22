@@ -17,11 +17,11 @@ public class MeasurementService : IMeasurementService
     {
         get; set;
     }
-    //current measurement group index
-    public int CMIndex
+    //current measurement data index
+    public int CMDataIndex
     {
         get; set;
-    } = 0;
+    } = -1;
     public bool IsRecording
     {
         get; set;
@@ -40,7 +40,7 @@ public class MeasurementService : IMeasurementService
     }
     private void WaveIn_DataAvailable(object? sender, WaveInEventArgs e)
     {
-        var rawData = CurrentMeasurement.MeasurementsData[CMIndex];
+        var rawData = CurrentMeasurement.MeasurementsData[CMDataIndex];
         for (var i = 0; i < e.Buffer.Length / 2; i++)
         {
             if (rawData.DataIndex >= CurrentMeasurement.DataSize)
@@ -49,7 +49,7 @@ public class MeasurementService : IMeasurementService
                 StopRecording();
                 return;
             }
-            CurrentMeasurement.MeasurementsData[CMIndex].Data[rawData.DataIndex] = BitConverter.ToInt16(e.Buffer, i * 2);
+            CurrentMeasurement.MeasurementsData[CMDataIndex].Data[rawData.DataIndex] = BitConverter.ToInt16(e.Buffer, i * 2);
             rawData.DataIndex++;
         }
 
@@ -61,8 +61,8 @@ public class MeasurementService : IMeasurementService
         }
         Debug.WriteLine($"waveIn index:{rawData.DataIndex}");
 
-        var data = CalculateFrequencySpecturm(CurrentMeasurement, CMIndex);
-        var dominantValues = CalculateDominantValues(CurrentMeasurement, CMIndex, data);
+        var data = CalculateFrequencySpecturm(CurrentMeasurement, CMDataIndex);
+        var dominantValues = CalculateDominantValues(CurrentMeasurement, CMDataIndex, data);
 
         DataAvailable?.Invoke(this, new DataAvaiableArgs(data, CurrentMeasurement.FrequencyDataSize, dominantValues));
     }
@@ -91,9 +91,9 @@ public class MeasurementService : IMeasurementService
             data[i] = Math.Sqrt(fftComplex[i].Real * fftComplex[i].Real + fftComplex[i].Imaginary * fftComplex[i].Imaginary) / 10;
         }
 
-        HighPassFilter(measurement, data, 6);
-        LowPassFilter(measurement, data, 130);
-        NotchFilter(measurement, data, 50);
+        HighPassFilter(measurement, data);
+        LowPassFilter(measurement, data);
+        NotchFilter(measurement, data);
         Debug.WriteLine("Data Calculated");
 
         return data;
@@ -155,27 +155,27 @@ public class MeasurementService : IMeasurementService
             sum += data[i];
             sumI += data[i] * i;
         }
-        double mean = (1 / sum) * ((double)CurrentMeasurement.SampleRate / (double)CurrentMeasurement.WindowLength) * sumI;
+        var mean = (1.0 / sum) * ((double)CurrentMeasurement.SampleRate / (double)CurrentMeasurement.WindowLength) * sumI;
         return mean;
     }
-    private void NotchFilter(MeasurementGroup measurement, double[] data, double frequency)
+    private void NotchFilter(MeasurementGroup measurement, double[] data)
     {
-        var i = (int)Math.Round((double)measurement.WindowLength / (double)measurement.SampleRate * frequency);
+        var i = (int)Math.Round((double)measurement.WindowLength / (double)measurement.SampleRate * measurement.NotchFilter);
         data[i] = 0;
         data[i + 1] = 0;
         data[i - 1] = 0;
     }
-    private void LowPassFilter(MeasurementGroup measurement, double[] data, int cornerFrequency)
+    private void LowPassFilter(MeasurementGroup measurement, double[] data)
     {
-        var f = cornerFrequency * measurement.WindowLength / measurement.SampleRate;
+        var f = measurement.LowPassFilter * measurement.WindowLength / measurement.SampleRate;
         for (var i = measurement.FrequencyDataSize - 1; i > f; i--)
         {
             data[i] = 0;
         }
     }
-    private void HighPassFilter(MeasurementGroup measurement, double[] data, int cornerFrequency)
+    private void HighPassFilter(MeasurementGroup measurement, double[] data)
     {
-        var f = cornerFrequency * measurement.WindowLength / measurement.SampleRate;
+        var f = measurement.HighPassFilter * measurement.WindowLength / measurement.SampleRate;
         for (var i = 0; i < f; i++)
         {
             data[i] = 0;
@@ -185,7 +185,6 @@ public class MeasurementService : IMeasurementService
     public void CreateConnection(MeasurementGroup measurement)
     {
         CurrentMeasurement = measurement;
-        CMIndex = 0;
         Debug.WriteLine($"New wawe, device number: {measurement.DeviceNumber}, sample rate: {measurement.SampleRate}, buffer size: {measurement.BufferMilliseconds} ms, window size: {measurement.WindowLength}");
         Wawe = new()
         {
@@ -198,21 +197,21 @@ public class MeasurementService : IMeasurementService
     public void CreateConnection(int measurmentType, int sampleRate, int bufferMilliseconds, int windowSize, bool MeasurmentTimeFixed, int dataSize, int deviceNumber) 
         => CreateConnection(new MeasurementGroup(sampleRate, bufferMilliseconds, windowSize, MeasurmentTimeFixed, dataSize, 0, 0, 0, 0, 0, 0, deviceNumber));
     
-    public void SelectMeasuredMuscle(int muscleType, int side)
+    public void SelectOrAddMuscle(int muscleType, int side)
     {
         var index = CurrentMeasurement.MeasurementsData.FindIndex(m => m.MuscleType == muscleType && m.Side == side);
         if (index == -1)
         {
             index = CurrentMeasurement.MeasurementsData.Count;
             CurrentMeasurement.MeasurementsData.Add(new MeasurementData(muscleType, side, CurrentMeasurement.DataSize, CurrentMeasurement.DominantValuesSize));
+            Debug.WriteLine("new muscle on index:" + index.ToString());
         }
-        CMIndex = index;
-        Debug.WriteLine("new muscle on index:" + index.ToString());
+        CMDataIndex = index;
     }
 
     public void StartRecording()
     {
-        if (!IsRecording && Wawe != null)
+        if (!IsRecording && Wawe != null && CMDataIndex >= 0)
         {
             Wawe.StartRecording();
             IsRecording = true;
@@ -222,31 +221,32 @@ public class MeasurementService : IMeasurementService
 
     public void StopRecording()
     {
-        if (IsRecording && Wawe != null)
+        if (IsRecording && Wawe != null && CMDataIndex >= 0) 
         {
             Wawe.StopRecording();
             IsRecording = false;
             Debug.WriteLine("Recording stop");
-            CalculateSLopeShift(CurrentMeasurement, CMIndex);
+            CalculateSLopeShift(CurrentMeasurement, CMDataIndex);
         }
     }
 
+    
     public string[] GetListOfDevices()
     {
-        //var waveInDevices = WaveIn.DeviceCount;
-        //var devices = new string[waveInDevices];
-        //for (var waveInDevice = 0; waveInDevice < waveInDevices; waveInDevice++)
-        //{
-        //    devices[waveInDevice] = WaveIn.GetCapabilities(waveInDevice).ProductName.ToString();
-        //}
-        //return devices;
-        var MMDEnumerator = new MMDeviceEnumerator();
-        var endpoints = MMDEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
-        var devices = new string[endpoints.Count];
-        for (var device = 0; device < endpoints.Count; device++)
+        var waveInDevices = WaveIn.DeviceCount;
+        var devices = new string[waveInDevices];
+        for (var waveInDevice = 0; waveInDevice < waveInDevices; waveInDevice++)
         {
-            devices[device] = endpoints[device].FriendlyName;
+            devices[waveInDevice] = WaveIn.GetCapabilities(waveInDevice).ProductName.ToString();
         }
         return devices;
+        //var MMDEnumerator = new MMDeviceEnumerator();
+        //var endpoints = MMDEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+        //var devices = new string[endpoints.Count];
+        //for (var device = 0; device < endpoints.Count; device++)
+        //{
+        //    devices[device] = endpoints[device].FriendlyName;
+        //}
+        //return devices;
     }
 }

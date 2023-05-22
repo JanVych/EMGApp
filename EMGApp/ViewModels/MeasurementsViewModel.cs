@@ -127,7 +127,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     {
         _measurementService = measurementService;
         _dataService = dataService;
-        ObservedMeasurement = _dataService.Measurements.Find(m => m.MeasurementId == _dataService.ObservedMeasuremntId);
+        ObservedMeasurement = _dataService.Measurements.Find(m => m.MeasurementId == _dataService.ObservedMeasurementId);
         if (ObservedMeasurement != null) 
         {
             if (ObservedMeasurement.MeasurementsData.Count == 0) 

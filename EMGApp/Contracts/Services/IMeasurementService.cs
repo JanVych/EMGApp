@@ -15,7 +15,7 @@ public interface IMeasurementService
         get;  set;
     }
 
-    public int CMIndex 
+    public int CMDataIndex 
     { 
         get; set; 
     }
@@ -31,7 +31,7 @@ public interface IMeasurementService
     public string[] GetListOfDevices();
     public void CreateConnection(int measurmentType, int sampleRate, int bufferMilliseconds, int windowSize, bool MeasurmentTimeFixed, int maxDataLenght, int deviceNumber);
     public void CreateConnection(MeasurementGroup measurement);
-    public void SelectMeasuredMuscle(int muscleType, int side);
+    public void SelectOrAddMuscle(int muscleType, int side);
     public void StartRecording();
     public void StopRecording();
     public double[] CalculateFrequencySpecturm(MeasurementGroup measurement, int mIndex);

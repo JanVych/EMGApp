@@ -7,10 +7,7 @@ namespace EMGApp.Services;
 public class DataService : IDataService
 {
     private readonly IDatabaseService _databaseService;
-    public long? CurrentPatientId
-    {
-        get; set;
-    }
+
     public List<Patient> Patients
     {
         get; private set;
@@ -21,10 +18,19 @@ public class DataService : IDataService
         get; private set;
     } = new List<MeasurementGroup>();
 
-    public long? ObservedMeasuremntId
+    // Patient selected for measuring
+    public long? CurrentPatientId
     {
         get; set;
     }
+    public Patient? CurrentPatient => Patients.FirstOrDefault(p => p.PatientId == CurrentPatientId);
+
+    // Measurement selected for observimg
+    public long? ObservedMeasurementId
+    {
+        get; set;
+    }
+    public MeasurementGroup? ObservedMeasurement => Measurements.FirstOrDefault(m => m.MeasurementId == ObservedMeasurementId);
     public int ObservedMeasurementDataIndex
     {
         get; set;

@@ -1,4 +1,8 @@
-﻿namespace EMGApp.Models;
+﻿using System.Drawing;
+using ABI.Windows.UI;
+using Microsoft.UI.Xaml;
+
+namespace EMGApp.Models;
 public class MeasurementData
 {
     public long? MeasurementDataId
@@ -44,19 +48,20 @@ public class MeasurementData
     public string? SideString => SideStrings[Side];
     public string? SlopeString => Slope.ToString() + " Hz/s";
 
-    private static readonly Dictionary<int, string> MuscleTypeStrings = new()
+    public static readonly Dictionary<int, string> MuscleTypeStrings = new()
     {
        {0, "muscle 1"},
        {1, "muscle 2"},
        {2, "muscle 3"},
        {3, "muscle 4"}
     };
-    private static readonly Dictionary<int, string> SideStrings = new()
+    public static readonly Dictionary<int, string> SideStrings = new()
     {
         {0, "right" },
         {1, "left" }
     };
-
+    //
+    public bool IsActive = false;
     public MeasurementData(int musleType, int side, int dataSize, int dominatValuesSize)
     {
         MuscleType = musleType;

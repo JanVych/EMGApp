@@ -63,7 +63,7 @@ public partial class PatientsViewModel : ObservableRecipient
     {
         if ((SelectedPatientIndex >= 0 && SelectedMeasurmentIndex < Measurements.Count))
         {
-            _dataService.ObservedMeasuremntId = Measurements[SelectedMeasurmentIndex].MeasurementId;
+            _dataService.ObservedMeasurementId = Measurements[SelectedMeasurmentIndex].MeasurementId;
             _navigationService.NavigateTo(typeof(MeasurementsViewModel).FullName!);
         }
     }

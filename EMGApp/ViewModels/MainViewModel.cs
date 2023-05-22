@@ -12,6 +12,7 @@ using EMGApp.Events;
 using EMGApp.Contracts.ViewModels;
 using EMGApp.Models;
 using Windows.System;
+using EMGApp.Helpers;
 
 namespace EMGApp.ViewModels;
 
@@ -88,22 +89,37 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private string? dataSize;
 
     [ObservableProperty]
-    private Patient? currentPatient;
-
-    [ObservableProperty]
     private double slope;
 
     [ObservableProperty]
     private double shift;
 
+    // new muscle select
     [ObservableProperty]
-    private int muscleSelectedIndex = 0;
+    private int selectedMuscleIndex = 0;
 
     [ObservableProperty]
     private bool side = false;
+    public Dictionary<int, string> MuscleTypeStrings
+    {
+        get; set;
+    } = MeasurementData.MuscleTypeStrings;
 
+    // progress bar
     [ObservableProperty]
     private int progressBarValue = 0;
+
+    [ObservableProperty]
+    private List<MeasurementData>? currentMeasurementData;
+
+    public MeasurementGroup CurrentMeasurement
+    {
+        get; set;
+    }
+    public Patient? CurrentPatient
+    {
+        get; set;
+    }
 
     public MainViewModel(IMeasurementService connectionService, IDataService dataService, INavigationService navigationService)
     {
@@ -114,12 +130,18 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         SampleRate = _measurementService.CurrentMeasurement.SampleRate.ToString();
         WindowSize = _measurementService.CurrentMeasurement.WindowLength.ToString();
         DataSize = _measurementService.CurrentMeasurement.DataSize.ToString();
-        DeviceName = _measurementService.GetListOfDevices()[_measurementService.CurrentMeasurement.DeviceNumber];
 
-        CurrentPatient = _dataService.Patients.FirstOrDefault(p => p.PatientId == _dataService.CurrentPatientId);
 
-        _measurementService.SelectMeasuredMuscle(MuscleSelectedIndex, Side ? 1 : 0);
-        UpdateCharts();
+        CurrentPatient = _dataService.CurrentPatient;
+        CurrentMeasurement = _measurementService.CurrentMeasurement;
+        CurrentMeasurementData = CurrentMeasurement.MeasurementsData;
+        DeviceName = _measurementService.GetListOfDevices()[CurrentMeasurement.DeviceNumber];
+
+        if (CurrentMeasurementData.Count != 0)
+        {
+            UpdateCharts();
+            UpdateProgressBar();
+        }
     }
     public void OnNavigatedTo(object parameter) => _measurementService.DataAvailable += DataAvailable;
     public void OnNavigatedFrom() => _measurementService.DataAvailable -= DataAvailable;
@@ -144,7 +166,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         _dispatcherQueue.TryEnqueue(() =>
         {
-            ProgressBarValue = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex].DataIndex;
+            ProgressBarValue = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMDataIndex].DataIndex;
         });
     }
     [RelayCommand]
@@ -158,42 +180,79 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         _measurementService.StopRecording();
         UpdateCharts();
+        UpdateProgressBar();
     }
-
     [RelayCommand]
-    private void MuscleSelectionChanged()
+    private void ResetButton()
+    {
+    }
+    [RelayCommand]
+    private void AddMuscleButton()
     {
         _measurementService.StopRecording();
-        _measurementService.SelectMeasuredMuscle(MuscleSelectedIndex, Side ? 1 : 0);
+        _measurementService.SelectOrAddMuscle(SelectedMuscleIndex, Side ? 0 : 1);
+        CurrentMeasurementData = null;
+        CurrentMeasurementData = CurrentMeasurement?.MeasurementsData;
         UpdateCharts();
-        ProgressBarValue = 0;
+        UpdateProgressBar();
+    }
+    internal void MuscleButton(int muscletype, int side)
+    {
+        _measurementService.SelectOrAddMuscle(muscletype, side);
+        for(int i = 0; i < CurrentMeasurementData.Count; i++) 
+        {
+            if (CurrentMeasurementData[i].MuscleType != muscletype || CurrentMeasurementData[i].Side != side)
+            {
+                CurrentMeasurementData[i].IsActive = false;
+                Debug.WriteLine(muscletype.ToString() + side.ToString());
+            }
+            else
+            {
+                CurrentMeasurementData[i].IsActive = true;
+            }
+        }
+        CurrentMeasurementData = null;
+        CurrentMeasurementData = CurrentMeasurement?.MeasurementsData;
+        UpdateCharts();
+        UpdateProgressBar();
     }
 
+    private void UpdateProgressBar()
+    {
+        if (CurrentMeasurementData.Count > 0) 
+        {
+            ProgressBarValue = CurrentMeasurementData[_measurementService.CMDataIndex].DataIndex;
+        }
+    }
+    
     private void UpdateCharts()
     {
-        var data = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex];
-        Slope = data.Slope;
-        Shift = data.StartFrequency;
-        var dominantValueIndex = data.DataIndex / _measurementService.CurrentMeasurement.BufferMilliseconds;
-        if (Slope != 0)
+        if (CurrentMeasurementData.Count > 0) 
         {
-            var pointA = new ObservablePoint(0, data.StartFrequency);
-            var pointB = new ObservablePoint(dominantValueIndex - 1, data.StartFrequency + (data.Slope / 1000_000) * dominantValueIndex);
-            DominantValuesSeries[1].Values = new ObservablePoint[] { pointA, pointB };
-        }
-        else
-        {
-            DominantValuesSeries[1].Values = null;
-        }
-        FrequencySpectrumSeries[0].Values = new ObservablePoint[] { new ObservablePoint(1, 1) };
-        var dominantValues = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMIndex].DominantValues;
-        if (dominantValues.Length != 0)
-        {
-            DominantValuesSeries[0].Values = dominantValues.ToArray();
-        }
-        else
-        {
-            DominantValuesSeries[0].Values = new double[] { 1};
+            var data = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMDataIndex];
+            Slope = data.Slope;
+            Shift = data.StartFrequency;
+            var dominantValueIndex = data.DataIndex / _measurementService.CurrentMeasurement.BufferMilliseconds;
+            if (Slope != 0)
+            {
+                var pointA = new ObservablePoint(0, data.StartFrequency);
+                var pointB = new ObservablePoint(dominantValueIndex - 1, data.StartFrequency + (data.Slope / 1000_000) * dominantValueIndex);
+                DominantValuesSeries[1].Values = new ObservablePoint[] { pointA, pointB };
+            }
+            else
+            {
+                DominantValuesSeries[1].Values = null;
+            }
+            FrequencySpectrumSeries[0].Values = new ObservablePoint[] { new ObservablePoint(1, 1) };
+            var dominantValues = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMDataIndex].DominantValues;
+            if (dominantValues.Length != 0)
+            {
+                DominantValuesSeries[0].Values = dominantValues.ToArray();
+            }
+            else
+            {
+                DominantValuesSeries[0].Values = new double[] { 1 };
+            }
         }
     }
 }

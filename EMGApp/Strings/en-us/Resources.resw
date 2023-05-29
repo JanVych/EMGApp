@@ -157,7 +157,7 @@
     <value>Patients</value>
   </data>
   <data name="Shell_Add.Content" xml:space="preserve">
-    <value>Add</value>
+    <value>New patient</value>
   </data>
   <data name="Shell_Setup.Content" xml:space="preserve">
     <value>Setup</value>

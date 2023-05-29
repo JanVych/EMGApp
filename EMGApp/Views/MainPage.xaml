@@ -8,80 +8,130 @@
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:local="using:EMGApp.Views"
     xmlns:local1="using:EMGApp.Models" 
-    xmlns:local2="using:EMGApp.Helpers"
     mc:Ignorable="d">
     
     <Page.Resources>
-        <StackLayout x:Name="VerticalStackLayout" Orientation="Horizontal" Spacing="8"/>
+        <StackLayout x:Name="HorizontalStackLayout" Orientation="Horizontal"/>
+
+        <Style x:Key="AddMuscleTextBlock" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="InfoGrid" TargetType="Grid">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}"/>
+            <Setter Property="Height" Value="60"/>
+        </Style>
+        <Style x:Key="InfoStackPanel" TargetType="StackPanel">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="3,0,3,0"/>
+        </Style>
+        <Style x:Key="DefaultStackPanel" TargetType="StackPanel">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}"/>
+            <Setter Property="Orientation" Value="Horizontal"/>
+            <Setter Property="Padding" Value="10,0,10,0"/>
+            <Setter Property="Height" Value="40"/>
+        </Style>
+        <Style x:Key="InfoTitleTextBlock" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+        <Style x:Key="InfoContentTextBlock" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
     </Page.Resources>
 
-    <Grid ColumnDefinitions="2*,3*" RowDefinitions="Auto,Auto,Auto,*,Auto, Auto" Margin="0,0,0,30">
-        <Grid Grid.Row="0" Grid.ColumnSpan="2" ColumnDefinitions="2*,1*,1*,2*,1*,1*,1*,1*" RowDefinitions="*"
-               BorderThickness="1" BorderBrush="{StaticResource ControlStrongStrokeColorDefaultBrush}" CornerRadius="4">
-            <TextBlock Text="{x:Bind ViewModel.CurrentPatient.FullName}" Grid.Column="0" Margin="5,5,5,5"/>
-            <StackPanel Grid.Column="1" Margin="5,5,5,5" Orientation="Horizontal">
-                <TextBlock Text="Age:"/>
-                <TextBlock Text="{x:Bind ViewModel.CurrentPatient.Age}" Margin="5,0,0,0"/>
-            </StackPanel>
-            <StackPanel Grid.Column="2" Margin="5,5,5,5" Orientation="Horizontal">
-                <TextBlock Text="Gender:"/>
-                <TextBlock Text="{x:Bind ViewModel.CurrentPatient.GenderString}" Margin="5,0,0,0"/>
-            </StackPanel>
-            <TextBlock Text="{x:Bind ViewModel.CurrentPatient.Address}" Grid.Column="3" Margin="5,5,5,5"/>
-            <StackPanel Grid.Column="4" Margin="5,5,5,5" Orientation="Horizontal">
-                <TextBlock Text="Weight:"/>
-                <TextBlock Text="{x:Bind ViewModel.CurrentPatient.Weight}" Margin="5,0,0,0"/>
-            </StackPanel>
-            <StackPanel Grid.Column="5" Margin="5,5,5,5" Orientation="Horizontal">
-                <TextBlock Text="Height:"/>
-                <TextBlock Text="{x:Bind ViewModel.CurrentPatient.Height}" Margin="5,0,0,0"/>
-            </StackPanel>
-            <StackPanel Grid.Column="6" Margin="5,5,5,5" Orientation="Horizontal">
-                <TextBlock Text="Condition:"/>
-                <TextBlock Text="{x:Bind ViewModel.CurrentPatient.Condition}" Margin="5,0,0,0"/>
-            </StackPanel>
+    <Grid RowDefinitions="Auto,Auto,*,Auto, Auto" Margin="0,0,0,10">
+        <Grid Grid.Row="0" ColumnDefinitions="auto,*">
+            <Grid Grid.Column="0" Padding="10,0,10,0"
+                  Style="{StaticResource InfoGrid}">
+                <StackPanel Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="{x:Bind ViewModel.CurrentPatient.FullName}"
+                           Style="{StaticResource InfoTitleTextBlock}"/>
+                    <TextBlock Text="{x:Bind ViewModel.CurrentPatient.IdentificationNumber}"
+                           Style="{StaticResource InfoTitleTextBlock}"/>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Column="1" ColumnDefinitions="*,*,*,*,*,*"
+                  Margin="10,0,0,0"
+                  Style="{StaticResource InfoGrid}">
+                <StackPanel Grid.Column="0" Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="Input device" 
+                               Style="{StaticResource InfoTitleTextBlock}"/>
+                    <TextBlock Text="{x:Bind ViewModel.DeviceName}" 
+                               Style="{StaticResource InfoContentTextBlock}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="Sample rate" 
+                               Style="{StaticResource InfoTitleTextBlock}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind ViewModel.CurrentMeasurement.SampleRate}"
+                               Style="{StaticResource InfoContentTextBlock}"/>
+                        <TextBlock Text=" Hz" Style="{StaticResource InfoContentTextBlock}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="Window shift time" 
+                               Style="{StaticResource InfoTitleTextBlock}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind ViewModel.CurrentMeasurement.WindowShiftMilliseconds}"
+                               Style="{StaticResource InfoContentTextBlock}"/>
+                        <TextBlock Text=" ms" Style="{StaticResource InfoContentTextBlock}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="Measurement time" 
+                               Style="{StaticResource InfoTitleTextBlock}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind ViewModel.CurrentMeasurement.MeasuremntMaxTime}"
+                               Style="{StaticResource InfoContentTextBlock}"/>
+                        <TextBlock Text=" s" Style="{StaticResource InfoContentTextBlock}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="Window lenghth" 
+                               Style="{StaticResource InfoTitleTextBlock}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind ViewModel.CurrentMeasurement.WindowLength}"
+                               Style="{StaticResource InfoContentTextBlock}"/>
+                        <TextBlock Text=" samples" Style="{StaticResource InfoContentTextBlock}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="5" Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="Calculation"
+                               Style="{StaticResource InfoTitleTextBlock}"/>
+                    <TextBlock Text="{x:Bind ViewModel.CurrentMeasurement.DominantFrequencyCalculationTypeString}"
+                               Style="{StaticResource InfoContentTextBlock}"/>
+                </StackPanel>
+            </Grid>
         </Grid>
-
-        <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="*,*,*,*,*" RowDefinitions="*" Margin="0,10,0,0"
-              BorderThickness="1" BorderBrush="{StaticResource ControlStrongStrokeColorDefaultBrush}" CornerRadius="4">
-            <StackPanel Grid.Column="0"  Margin="5,5,5,5" Orientation="Horizontal">
-                <TextBlock Text="Device:"/>
-                <TextBlock Text="{x:Bind ViewModel.DeviceName}" Margin="5,0,0,0"/>
-            </StackPanel>
-            <StackPanel Grid.Column="1" Margin="5,5,5,5" Orientation="Horizontal">
-                <TextBlock Text="BufferInMilliseconds:"/>
-                <TextBlock Text="{x:Bind ViewModel.BufferInMilliseconds}" Margin="5,0,0,0"/>
-            </StackPanel>
-            <StackPanel Grid.Column="2"  Margin="5,5,5,5" Orientation="Horizontal">
-                <TextBlock Text="SampleRate:"/>
-                <TextBlock Text="{x:Bind ViewModel.SampleRate}" Margin="5,0,0,0"/>
-            </StackPanel>
-            <StackPanel Grid.Column="3"  Margin="5,5,5,5" Orientation="Horizontal">
-                <TextBlock Text="Window size:"/>
-                <TextBlock Text="{x:Bind ViewModel.WindowSize}" Margin="5,0,0,0"/>
-            </StackPanel>
-            <StackPanel Grid.Column="5"   Margin="5,5,5,5" Orientation="Horizontal">
-                <TextBlock Text="Measurement time:"/>
-                <TextBlock Text="{x:Bind ViewModel.DataSize}" Margin="5,0,0,0"/>
-            </StackPanel>
-        </Grid>
-
-        <Grid ColumnDefinitions="*, auto" Grid.Row="2" Grid.ColumnSpan="3"
-              HorizontalAlignment="Center" Margin="5,5,5,5">
+        <Grid Grid.Row="1" ColumnDefinitions="*, auto"
+              Margin="0,10,0,0"
+              HorizontalAlignment="Left">
             <ScrollViewer Grid.Column="0"
                           HorizontalScrollBarVisibility="Auto"
-                          VerticalScrollBarVisibility="Auto">
+                          VerticalScrollBarVisibility="Disabled"
+                          VerticalScrollMode="Disabled">
                 <ItemsRepeater x:Name="itemsRepeater"
                                ItemsSource="{x:Bind ViewModel.CurrentMeasurementData, Mode=OneWay}" 
-                               Layout="{StaticResource VerticalStackLayout}">
+                               Layout="{StaticResource HorizontalStackLayout}">
                     <DataTemplate x:DataType="local1:MeasurementData">
                         <Grid>
                             <ToggleButton x:Name="muscleButton"
+                                          Margin="0,0,10,0"
+                                          BorderThickness="1"
+                                          BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
                                           Background="{ThemeResource ControlFillColorDefaultBrush}"
                                           IsChecked="{x:Bind IsActive}"
-                                          Height="60" 
+                                          Height="60"
                                           Click="ToggleButton_Click">
                                 <StackPanel>
                                     <TextBlock x:Name="muscleTypeString" 
@@ -98,8 +148,19 @@
                 </ItemsRepeater>
             </ScrollViewer>
             
-            <Button Grid.Column="1" Height="60" Margin="10,10,10,10">
-                <FontIcon Glyph="&#xE710;"/>
+            <Button Grid.Column="1" Height="60"
+                    BorderThickness="1"
+                    BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
+                    Background="{ThemeResource ControlFillColorDefaultBrush}">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE710;"/>
+                        <StackPanel Margin="10,0,0,0">
+                            <TextBlock Text="Add" Style="{StaticResource AddMuscleTextBlock}"/>
+                            <TextBlock Text="muscle" Style="{StaticResource AddMuscleTextBlock}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Button.Content>
                 <Button.Flyout>
                     <Flyout x:Name="mFlyout" Placement="Bottom">
                         <StackPanel>
@@ -122,58 +183,62 @@
 
             </Button>
         </Grid>
-        
-        
-        
-        <!--<StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,10">
-            <TextBlock Text="Measured muscle" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <ComboBox Margin="10,0,0,0" Height="35" SelectedIndex="{x:Bind ViewModel.MuscleSelectedIndex, Mode=TwoWay}"
-                   HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" PlaceholderText="chose">
-                <x:String>muscle1</x:String>
-                <x:String>muscle2</x:String>
-                <x:String>muscle3</x:String>
-                <x:String>muscle4</x:String>
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="SelectionChanged">
-                        <Core:InvokeCommandAction Command="{x:Bind ViewModel.MuscleSelectionChangedCommand}"/>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-            </ComboBox>
-            <ToggleSwitch HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="10,0,0,0" OffContent="Left" OnContent="Right"
-                          IsOn="{x:Bind ViewModel.Side, Mode=TwoWay}"/>
-        </StackPanel>-->
 
-        <lvc:CartesianChart x:Name="CaCHart1" Grid.Row="3" Grid.Column="0"
+        <Grid Grid.Row="2" ColumnDefinitions="2*,3*">
+            <lvc:CartesianChart Grid.Column="0"
                             XAxes="{x:Bind ViewModel.FrequencySpectrumXAxes}" YAxes="{x:Bind ViewModel.FrequencySpectrumYAxes}"
-                            Series="{x:Bind ViewModel.FrequencySpectrumSeries}" Margin="0,0,0,0"/>
-        <lvc:CartesianChart x:Name="CaCHart2" Grid.Row="3" Grid.Column="1"
+                            Series="{x:Bind ViewModel.FrequencySpectrumSeries}"/>
+            <lvc:CartesianChart Grid.Column="1"
                             XAxes="{x:Bind ViewModel.DominantValuesXAxes}" YAxes="{x:Bind ViewModel.DominantValuesYAxes}"
-                            Series="{x:Bind ViewModel.DominantValuesSeries}" Margin="0,0,0,0"/>
+                            Series="{x:Bind ViewModel.DominantValuesSeries}"/>
+        </Grid>
 
-        <ProgressBar Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="100,20,100,20" 
-                     Maximum="{x:Bind ViewModel.DataSize}" Value="{x:Bind ViewModel.ProgressBarValue, Mode=TwoWay}"/>
+        <Grid Grid.Row="3" ColumnDefinitions="auto,*,auto"
+              HorizontalAlignment="Stretch" Margin="40,15,40,15">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Width="30">
+                <TextBlock Text="{x:Bind ViewModel.ProgressTimeValue, Mode=OneWay}"/>
+                <TextBlock Text=" s"/>
+            </StackPanel>
+            <ProgressBar Grid.Column="1" HorizontalAlignment="Stretch"
+                         Margin="15,0,15,0"
+                         Maximum="{x:Bind ViewModel.CurrentMeasurement.DataSize}" 
+                         Value="{x:Bind ViewModel.ProgressBarValue, Mode=OneWay}"/>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Width="30">
+                <TextBlock Text="{x:Bind ViewModel.CurrentMeasurement.MeasuremntMaxTime}"/>
+                <TextBlock Text=" s"/>
+            </StackPanel>
+        </Grid>
+        
 
-        <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <AppBarButton Icon="Play" Label="Start" Grid.Column="1" HorizontalAlignment="Center" 
+        <Grid Grid.Row="4" ColumnDefinitions="*,auto">
+            <StackPanel Grid.Column="0" Height="60" HorizontalAlignment="Center"
+                        Style="{StaticResource DefaultStackPanel}">
+                <AppBarButton Icon="Play" Label="Start" Grid.Column="1" HorizontalAlignment="Center" 
                 Command="{x:Bind ViewModel.StartButtonCommand}" VerticalAlignment="Center" Margin="0,0,0,0"/>
-            <AppBarButton Icon="Stop" Label="Stop"  Grid.Column="1" HorizontalAlignment="Center" 
+                <AppBarButton Icon="Stop" Label="Stop"  Grid.Column="1" HorizontalAlignment="Center" 
                 Command="{x:Bind ViewModel.StopButtonCommand}" VerticalAlignment="Center" Margin="10,0,0,0"/>
-            <AppBarButton Icon="Refresh" Label="Reset"  Grid.Column="1" HorizontalAlignment="Center" 
+                <AppBarButton Icon="Refresh" Label="Reset"  Grid.Column="1" HorizontalAlignment="Center" 
                 Command="{x:Bind ViewModel.ResetButtonCommand}" VerticalAlignment="Center" Margin="10,0,0,0"/>
 
-            <AppBarButton Icon="Save" Label="Save" Grid.Column="2" HorizontalAlignment="Center" 
+                <AppBarButton Icon="Save" Label="Save" Grid.Column="2" HorizontalAlignment="Center" 
                 Command="{x:Bind ViewModel.SaveButtonCommand}" VerticalAlignment="Center" Margin="30,0,0,0"/>
-            <AppBarButton Icon="Setting" Label="Change" Command="{x:Bind ViewModel.ChangeSettingsCommand}"
+                <AppBarButton Icon="Setting" Label="Change" Command="{x:Bind ViewModel.ChangeSettingsCommand}"
                       HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,0,0,0"/>
-        </StackPanel>
+            </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="Slope" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <NumberBox Value="{x:Bind ViewModel.Slope, Mode=TwoWay}" Width="150"  Height="35" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock Text="Hz/s" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock Text="Shift" Margin="30,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <NumberBox Value="{x:Bind ViewModel.Shift, Mode=TwoWay}" Width="150"  Height="35" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock Text="Hz" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        </StackPanel>
+            <StackPanel Grid.Column="1" Spacing="10" Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel Style="{StaticResource DefaultStackPanel}">
+                    <TextBlock Text="Slope:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind ViewModel.Slope, Mode=OneWay}"  Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Hz/s" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Style="{StaticResource DefaultStackPanel}">
+                    <TextBlock Text="Start frequency:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind ViewModel.StartFrequency, Mode=OneWay}" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Hz" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+           
+        </Grid>
     </Grid>
 </Page>

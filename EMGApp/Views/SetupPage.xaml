@@ -123,7 +123,7 @@
                     </StackPanel>
                     <StackPanel x:Name="wSize2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="wSize" RelativePanel.AlignVerticalCenterWithPanel="True">
-                        <Slider Width="200" Minimum="9" Maximum="16" StepFrequency="1" IsThumbToolTipEnabled="False" Margin="0,0,10,0"
+                        <Slider Width="150" Minimum="9" Maximum="12" StepFrequency="1" IsThumbToolTipEnabled="False" Margin="0,0,20,0"
                                     SmallChange="1" Value="{x:Bind ViewModel.WindowSizeSlider, Mode=TwoWay}" TickPlacement="Outside" TickFrequency="1" />
                         <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                     CornerRadius="4" Width="50" Height="35" Margin="0,0,10,0">
@@ -188,7 +188,7 @@
                     </StackPanel>
                     <StackPanel x:Name="mTime2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="mTime" RelativePanel.AlignVerticalCenterWithPanel="True">
-                        <NumberBox Value="{x:Bind ViewModel.MeasurementTime, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="600"/>
+                        <NumberBox Value="{x:Bind ViewModel.MeasurementTime, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="300"/>
                         <ComboBox MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"
                                   SelectedIndex="{x:Bind ViewModel.MeasurementTimeTypeIndex, Mode=TwoWay}">
                             <x:String>sec</x:String>
@@ -254,7 +254,7 @@
                     </StackPanel>
                 </RelativePanel>
 
-                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}" Margin="0,0,0,30">
                     <StackPanel x:Name="hpFilter" Style="{StaticResource StackPanelSettingsCardA}">
                         <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="High pass filter"/>
                         <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal wedwed"/>
@@ -295,7 +295,6 @@
                     <x:String>Gender</x:String>
                     <x:String>Height</x:String>
                     <x:String>Weight</x:String>
-                    <x:String>Condition</x:String>
                     <x:String>Address</x:String>
                 </ComboBox>
                 <TextBox Grid.Column="2" x:Name="filterTextBox" Width="130" Height="35" Margin="10,10,0,10"
@@ -320,9 +319,11 @@
                         </Core:EventTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </ComboBox>
-                <Button Grid.Column="3" Content="Connect" Margin="10,0,10,0" Height="35"
+                <Button Grid.Column="3" Content="Connect" Margin="10,10,20,10" 
+                        Height="50" Width="100"
                         HorizontalAlignment="Right" VerticalAlignment="Center"
-                        
+                        Foreground="{StaticResource TextOnAccentFillColorPrimaryBrush}"
+                        Background="{StaticResource AccentFillColorDefaultBrush}"
                         Command="{x:Bind ViewModel.ConnectButtonCommand}"/>
 
             </Grid>
@@ -338,16 +339,13 @@
                             <ColumnDefinition MinWidth="60" Width="1*"/>
                             <ColumnDefinition MinWidth="60" Width="1*"/>
                             <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="Name" Style="{StaticResource DataGridHeaderCell}"/>
                         <TextBlock Grid.Column="1" Text="Age" Style="{StaticResource DataGridHeaderCell}"/>
                         <TextBlock Grid.Column="2" Text="Gender" Style="{StaticResource DataGridHeaderCell}"/>
                         <TextBlock Grid.Column="3" Text="Height" Style="{StaticResource DataGridHeaderCell}"/>
                         <TextBlock Grid.Column="4" Text="Weight" Style="{StaticResource DataGridHeaderCell}"/>
-                        <TextBlock Grid.Column="5" Text="Condition" Style="{StaticResource DataGridHeaderCell}"/>
-                        <TextBlock Grid.Column="6" Text="Address" Style="{StaticResource DataGridHeaderCell}"/>
-
+                        <TextBlock Grid.Column="5" Text="Id number" Style="{StaticResource DataGridHeaderCell}"/>
                     </Grid>
                 </ListView.Header>
 
@@ -361,15 +359,13 @@
                                 <ColumnDefinition MinWidth="60" Width="1*"/>
                                 <ColumnDefinition MinWidth="60" Width="1*"/>
                                 <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="3*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="{x:Bind Path=FullName}" Style="{StaticResource DataGridDataCell}"/>
                             <TextBlock Grid.Column="1" Text="{x:Bind Path=Age }" Style="{StaticResource DataGridDataCell}"/>
                             <TextBlock Grid.Column="2" Text="{x:Bind Path=GenderString }" Style="{StaticResource DataGridDataCell}"/>
                             <TextBlock Grid.Column="3" Text="{x:Bind Path=Height}" Style="{StaticResource DataGridDataCell}"/>
                             <TextBlock Grid.Column="4" Text="{x:Bind Path=Weight}" Style="{StaticResource DataGridDataCell}"/>
-                            <TextBlock Grid.Column="5" Text="{x:Bind Path=ConditionString}" Style="{StaticResource DataGridDataCell}"/>
-                            <TextBlock Grid.Column="6" Text="{x:Bind Path=Address}" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="5" Text="{x:Bind Path=IdentificationNumber}" Style="{StaticResource DataGridDataCell}"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

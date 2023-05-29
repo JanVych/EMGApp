@@ -85,21 +85,23 @@ public class DatabaseService :IDatabaseService
     {
         var patienTable = @"CREATE TABLE IF NOT EXISTS patient(
                 patient_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                name TEXT,
-                surname TEXT,
+                first_name TEXT,
+                last_name TEXT,
+                identification_number TEXT,
                 age INTEGER,
                 gender INTEGER,
-                address TEXT,
                 weight INTEGER,
                 height INTEGER,
-                condition INTEGER,
+                address TEXT,
+                email TEXT,
+                phone_number TEXT,
                 description TEXT)";
         var measurementTable = @"CREATE TABLE IF NOT EXISTS measurement(
                 measurement_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 patient_id INTEGER,
                 date_time DATETIME,
                 sample_rate INTEGER,
-                buffer_in_milliseconds INTEGER,
+                window_shift_milliseconds INTEGER,
                 window_size INTEGER,
                 measurement_time_fixed BOOLEAN,
                 max_data_length INTEGER,
@@ -133,13 +135,13 @@ public class DatabaseService :IDatabaseService
     }
     public void InsertPatient(Patient p)
     {
-        var command = @"INSERT INTO patient(name, surname, age, gender, address, weight, height, condition, description) 
-                VALUES (@name, @surname, @age, @gender, @address, @weight, @height, @condition, @description)";
+        var command = @"INSERT INTO patient(first_name, last_name, identification_number, age, gender, weight, height, address, email, phone_number, description) 
+                VALUES (@first_name, @last_name, @identification_number, @age, @gender, @weight, @height, @address, @email, @phone_number, @description)";
         var parameters = new (string, object)[]
         {
-            ("@name", p.Name), ("@surname", p.Surname), ("@age", p.Age),
-            ("@gender", p.Gender), ("@address",p.Address), ("@weight", p.Weight),
-            ("@height", p.Height), ("@condition", p.Condition), ("@description", p.Description)
+            ("@first_name", p.FirstName), ("@last_name", p.LastName), ("@identification_number", p.IdentificationNumber),
+            ("@age", p.Age), ("@gender", p.Gender), ("@weight", p.Weight), ("@height", p.Height), ("@address",p.Address),
+            ("@email",p.Email), ("@phone_number", p.PhoneNumber), ("@description", p.Description)
         };
         ExecuteNonQuery(command, parameters);
     }
@@ -147,13 +149,13 @@ public class DatabaseService :IDatabaseService
     {
 
         if (m.PatientId == null || m.DateTime == null) { return; }
-        var command = @"INSERT INTO measurement(patient_id, date_time, sample_rate, buffer_in_milliseconds, window_size, measurement_time_fixed,
+        var command = @"INSERT INTO measurement(patient_id, date_time, sample_rate, window_shift_milliseconds, window_size, measurement_time_fixed,
                 max_data_length, measurement_type, force, dominant_frequency_calculation_type, notch_filter, low_pass_filter, high_pass_filter)
-                VALUES (@patient_id, @date_time, @sample_rate, @buffer_in_milliseconds, @window_size, @measurement_time_fixed, @max_data_length,
+                VALUES (@patient_id, @date_time, @sample_rate, @window_shift_milliseconds, @window_size, @measurement_time_fixed, @max_data_length,
                 @measurement_type, @force, @dominant_frequency_calculation_type, @notch_filter, @low_pass_filter, @high_pass_filter)";
         var parameters = new (string, object)[]
         {
-            ("@patient_id", m.PatientId), ("@date_time", m.DateTime),("@sample_rate", m.SampleRate), ("@buffer_in_milliseconds", m.BufferMilliseconds),
+            ("@patient_id", m.PatientId), ("@date_time", m.DateTime),("@sample_rate", m.SampleRate), ("@window_shift_milliseconds", m.WindowShiftMilliseconds),
             ("@window_size", m.WindowLength), ("@measurement_time_fixed",m.MeasurementFixedTime), ("@max_data_length", m.DataSize),
             ("@measurement_type", m.MeasurementType), ("@force",m.Force), ("@dominant_frequency_calculation_type", m.DominantFrequencyCalculationType),
             ("@notch_filter",m.NotchFilter), ("@low_pass_filter", m.LowPassFilter), ("@high_pass_filter", m.HighPassFilter)
@@ -197,8 +199,8 @@ public class DatabaseService :IDatabaseService
             while (r.Read())
             {
                 p.Add(new Patient
-                (r.GetInt64(0), r.GetString(1), r.GetString(2), r.GetInt32(3), r.GetInt32(4),
-                r.GetString(5), r.GetInt32(6), r.GetInt32(7), r.GetInt32(8), r.GetString(9)));
+                (r.GetInt64(0), r.GetString(1), r.GetString(2), r.GetString(3), r.GetInt32(4), r.GetInt32(5),
+                r.GetInt32(6), r.GetInt32(7), r.GetString(8), r.GetString(9), r.GetString(10), r.GetString(11)));
             }
         }
         catch (SQLiteException ex)
@@ -215,7 +217,7 @@ public class DatabaseService :IDatabaseService
         {
             _database.Open();
             var cmd = new SQLiteCommand(_database);
-            cmd.CommandText = @"SELECT measurement_id, patient_id, date_time, sample_rate, buffer_in_milliseconds,
+            cmd.CommandText = @"SELECT measurement_id, patient_id, date_time, sample_rate, window_shift_milliseconds,
                             window_size, measurement_time_fixed, max_data_length, measurement_type, force,
                             dominant_frequency_calculation_type, notch_filter, low_pass_filter, high_pass_filter 
                             FROM measurement";

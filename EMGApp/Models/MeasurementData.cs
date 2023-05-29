@@ -42,7 +42,7 @@ public class MeasurementData
     {
         get; set;
     } = 0;
-    public int DominatValuesIndex(int numberOfSamplesOnWindowShift, int windowSize) => DataIndex / numberOfSamplesOnWindowShift - (int)Math.Ceiling((double)windowSize / (double)numberOfSamplesOnWindowShift);
+    public int DominatValuesIndex(int numberOfSamplesOnWindowShift, int windowLength) => DataIndex / numberOfSamplesOnWindowShift - (int)Math.Ceiling((double)windowLength / (double)numberOfSamplesOnWindowShift);
 
     public string? MuscleTypeString => MuscleTypeStrings[MuscleType];
     public string? SideString => SideStrings[Side];
@@ -50,10 +50,10 @@ public class MeasurementData
 
     public static readonly Dictionary<int, string> MuscleTypeStrings = new()
     {
-       {0, "muscle 1"},
-       {1, "muscle 2"},
-       {2, "muscle 3"},
-       {3, "muscle 4"}
+       {0, "tibialis anterior"},
+       {1, "vastus medialis"},
+       {2, "biceps brachii"},
+       {3, "triceps brachii"}
     };
     public static readonly Dictionary<int, string> SideStrings = new()
     {

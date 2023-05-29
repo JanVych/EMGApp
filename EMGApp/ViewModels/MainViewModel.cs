@@ -12,7 +12,7 @@ using EMGApp.Events;
 using EMGApp.Contracts.ViewModels;
 using EMGApp.Models;
 using Windows.System;
-using EMGApp.Helpers;
+using System.Collections.ObjectModel;
 
 namespace EMGApp.ViewModels;
 
@@ -22,6 +22,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private readonly IMeasurementService _measurementService;
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
+
+    private ObservableCollection<ObservablePoint> _dominantValuesPoints = new();
+    private ObservableCollection<ObservablePoint> _regressionLinePoints = new();
+
     public ISeries[] FrequencySpectrumSeries
     {
         get; set;
@@ -34,8 +38,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             Fill = null,
             LineSmoothness = 1,
             GeometrySize = 0,
-            GeometryFill = null,
-            GeometryStroke = null,
             IsHoverable = false
         }
     };
@@ -44,17 +46,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         get; set;
     } =
     {
-        new LineSeries<double>
+        new LineSeries<ObservablePoint>
         {
-            Values = new double[]{1 },
+            Values = null,
             Stroke = new SolidColorPaint(SKColors.DeepSkyBlue) { StrokeThickness = 2 },
             Fill = null,
             LineSmoothness = 1,
             GeometrySize = 0,
-            GeometryFill = null,
-            GeometryStroke = null,
             IsHoverable = false
-
+            
         },
         new LineSeries<ObservablePoint>
         {
@@ -63,36 +63,26 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             Fill = null,
             LineSmoothness = 1,
             GeometrySize = 0,
-            GeometryFill = null,
-            GeometryStroke = null,
             IsHoverable = false
         }
     };
-    public IEnumerable<ICartesianAxis> FrequencySpectrumXAxes { get; set; } = new Axis[] { new Axis { Name = "Hz", NamePaint = new SolidColorPaint(SKColors.Gray) } };
-    public IEnumerable<ICartesianAxis> DominantValuesXAxes { get; set; } = new Axis[] { new Axis { Name = "measurements", NamePaint = new SolidColorPaint(SKColors.Gray) } };
-    public IEnumerable<ICartesianAxis> FrequencySpectrumYAxes { get; set; } = new Axis[] { new Axis { Name = "µV", NamePaint = new SolidColorPaint(SKColors.Gray) } };
-    public IEnumerable<ICartesianAxis> DominantValuesYAxes { get; set; } = new Axis[] { new Axis { Name = "Hz", NamePaint = new SolidColorPaint(SKColors.Gray) } };
-
-    [ObservableProperty]
-    private string? bufferInMilliseconds;
-
-    [ObservableProperty]
-    private string? sampleRate;
+    public IEnumerable<ICartesianAxis> FrequencySpectrumXAxes { get; set; } = new Axis[] 
+    { new Axis { Name = "Hz", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    public IEnumerable<ICartesianAxis> DominantValuesXAxes { get; set; } = new Axis[] 
+    { new Axis { Name = "s", NamePaint = new SolidColorPaint(SKColors.Gray)} };
+    public IEnumerable<ICartesianAxis> FrequencySpectrumYAxes { get; set; } = new Axis[] 
+    { new Axis { Name = "µV", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    public IEnumerable<ICartesianAxis> DominantValuesYAxes { get; set; } = new Axis[] 
+    { new Axis { Name = "Hz", NamePaint = new SolidColorPaint(SKColors.Gray) } };
 
     [ObservableProperty]
     private string? deviceName;
 
     [ObservableProperty]
-    private string? windowSize;
-
-    [ObservableProperty]
-    private string? dataSize;
-
-    [ObservableProperty]
     private double slope;
 
     [ObservableProperty]
-    private double shift;
+    private double startFrequency;
 
     // new muscle select
     [ObservableProperty]
@@ -108,6 +98,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     // progress bar
     [ObservableProperty]
     private int progressBarValue = 0;
+
+    [ObservableProperty]
+    private double progressTimeValue = 0;
 
     [ObservableProperty]
     private List<MeasurementData>? currentMeasurementData;
@@ -126,21 +119,18 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         _measurementService = connectionService;
         _dataService = dataService;
         _navigationService = navigationService;
-        BufferInMilliseconds = _measurementService.CurrentMeasurement.BufferMilliseconds.ToString();
-        SampleRate = _measurementService.CurrentMeasurement.SampleRate.ToString();
-        WindowSize = _measurementService.CurrentMeasurement.WindowLength.ToString();
-        DataSize = _measurementService.CurrentMeasurement.DataSize.ToString();
-
 
         CurrentPatient = _dataService.CurrentPatient;
         CurrentMeasurement = _measurementService.CurrentMeasurement;
         CurrentMeasurementData = CurrentMeasurement.MeasurementsData;
         DeviceName = _measurementService.GetListOfDevices()[CurrentMeasurement.DeviceNumber];
 
+        DominantValuesSeries[0].Values = _dominantValuesPoints;
+        DominantValuesSeries[1].Values = _regressionLinePoints;
+
         if (CurrentMeasurementData.Count != 0)
         {
-            UpdateCharts();
-            UpdateProgressBar();
+           UpdateView();
         }
     }
     public void OnNavigatedTo(object parameter) => _measurementService.DataAvailable += DataAvailable;
@@ -148,39 +138,37 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private void DataAvailable(object? sender, DataAvaiableArgs args)
     {
-        var frequencySpectrumData = new ObservablePoint[args.Size];
-        var fconst = (double)_measurementService.CurrentMeasurement.SampleRate / (double)_measurementService.CurrentMeasurement.WindowLength;
-
-        if (args.Data != null)
-        {
-            for (var i = 0; i < args.Size; i++)
-            {
-                frequencySpectrumData[i] = (new ObservablePoint(i * fconst, args.Data[i]));
-            }
-            Debug.WriteLine("points: " + frequencySpectrumData.Length.ToString());
-        }
-
-        FrequencySpectrumSeries[0].Values = frequencySpectrumData;
-
-        DominantValuesSeries[0].Values = args.DominantValues;
+        FrequencySpectrumSeries[0].Values = args.Data;
+        _dominantValuesPoints.Add(args.DominantValue);
 
         _dispatcherQueue.TryEnqueue(() =>
         {
-            ProgressBarValue = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMDataIndex].DataIndex;
+            UpdateProgressBar();
         });
     }
+
     [RelayCommand]
-    private void ChangeSettings() => _navigationService.NavigateTo(typeof(SetupViewModel).FullName!);
+    private void ChangeSettings()
+    {
+        _measurementService.StopRecording();
+        _navigationService.NavigateTo(typeof(SetupViewModel).FullName!);
+    }
     [RelayCommand]
-    private void StartButton() => _measurementService.StartRecording();
+    private void StartButton()
+    {
+        _regressionLinePoints.Clear();
+        _measurementService.StartRecording();
+    }
     [RelayCommand]
     private void SaveButton() => _dataService.AddMeasurement(_measurementService.CurrentMeasurement);
     [RelayCommand]
     private void StopButton()
     {
-        _measurementService.StopRecording();
-        UpdateCharts();
-        UpdateProgressBar();
+        if (_measurementService.IsRecording)
+        {
+            _measurementService.StopRecording();
+            UpdateView();
+        }
     }
     [RelayCommand]
     private void ResetButton()
@@ -193,66 +181,101 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         _measurementService.SelectOrAddMuscle(SelectedMuscleIndex, Side ? 0 : 1);
         CurrentMeasurementData = null;
         CurrentMeasurementData = CurrentMeasurement?.MeasurementsData;
-        UpdateCharts();
-        UpdateProgressBar();
+        UpdateView();
     }
     internal void MuscleButton(int muscletype, int side)
     {
-        _measurementService.SelectOrAddMuscle(muscletype, side);
-        for(int i = 0; i < CurrentMeasurementData.Count; i++) 
+        if (CurrentMeasurementData != null)
         {
-            if (CurrentMeasurementData[i].MuscleType != muscletype || CurrentMeasurementData[i].Side != side)
+            _measurementService.StopRecording();
+            _measurementService.SelectOrAddMuscle(muscletype, side);
+            for (var i = 0; i < CurrentMeasurementData.Count; i++)
             {
-                CurrentMeasurementData[i].IsActive = false;
-                Debug.WriteLine(muscletype.ToString() + side.ToString());
+                if (CurrentMeasurementData[i].MuscleType != muscletype || CurrentMeasurementData[i].Side != side)
+                {
+                    CurrentMeasurementData[i].IsActive = false;
+                }
+                else
+                {
+                    CurrentMeasurementData[i].IsActive = true;
+                }
             }
-            else
-            {
-                CurrentMeasurementData[i].IsActive = true;
-            }
+            CurrentMeasurementData = null;
+            CurrentMeasurementData = CurrentMeasurement?.MeasurementsData;
+            UpdateView();
         }
-        CurrentMeasurementData = null;
-        CurrentMeasurementData = CurrentMeasurement?.MeasurementsData;
-        UpdateCharts();
-        UpdateProgressBar();
     }
-
     private void UpdateProgressBar()
     {
-        if (CurrentMeasurementData.Count > 0) 
+        if (CurrentMeasurementData != null && CurrentMeasurementData.Count > 0) 
         {
             ProgressBarValue = CurrentMeasurementData[_measurementService.CMDataIndex].DataIndex;
+            ProgressTimeValue = Math.Round((double)ProgressBarValue / CurrentMeasurement.SampleRate, 2);
+            if (ProgressBarValue >= CurrentMeasurement.DataSize)
+            {
+                UpdateSlopeAndStartFrequency();
+                UpdateCharts();
+            }
         }
     }
-    
     private void UpdateCharts()
     {
-        if (CurrentMeasurementData.Count > 0) 
+        //bad
+        FrequencySpectrumSeries[0].Values = new ObservablePoint[]{new ObservablePoint(0,0)};  
+        _dominantValuesPoints.Clear();
+        _regressionLinePoints.Clear();
+        DominantValuesSeries[0] = new LineSeries<ObservablePoint>
         {
-            var data = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMDataIndex];
-            Slope = data.Slope;
-            Shift = data.StartFrequency;
-            var dominantValueIndex = data.DataIndex / _measurementService.CurrentMeasurement.BufferMilliseconds;
-            if (Slope != 0)
+            Values = _dominantValuesPoints,
+            Stroke = new SolidColorPaint(SKColors.DeepSkyBlue) { StrokeThickness = 2 },
+            Fill = null,
+            LineSmoothness = 1,
+            GeometrySize = 0,
+            IsHoverable = false
+
+        };
+        DominantValuesSeries[1] = new LineSeries<ObservablePoint>
+        {
+            Values = _regressionLinePoints,
+            Stroke = new SolidColorPaint(SKColors.OrangeRed) { StrokeThickness = 2 },
+            Fill = null,
+            LineSmoothness = 1,
+            GeometrySize = 0,
+            IsHoverable = false
+        };
+
+        if (CurrentMeasurementData != null && CurrentMeasurementData.Count > 0) 
+        {
+            var data = CurrentMeasurementData[_measurementService.CMDataIndex];
+            var dominantValuesIndex = data.DominatValuesIndex(CurrentMeasurement.NumberOfSamplesOnWindowShift, CurrentMeasurement.WindowLength);
+            var windowShiftSeconds = CurrentMeasurement.WindowShiftSeconds;
+            for (var i = 0; i <= dominantValuesIndex - 1; i++)
             {
-                var pointA = new ObservablePoint(0, data.StartFrequency);
-                var pointB = new ObservablePoint(dominantValueIndex - 1, data.StartFrequency + (data.Slope / 1000_000) * dominantValueIndex);
-                DominantValuesSeries[1].Values = new ObservablePoint[] { pointA, pointB };
+                _dominantValuesPoints.Add(new ObservablePoint((i + 1) * windowShiftSeconds, data.DominantValues[i]));
             }
-            else
+            if (data.Slope != 0)
             {
-                DominantValuesSeries[1].Values = null;
-            }
-            FrequencySpectrumSeries[0].Values = new ObservablePoint[] { new ObservablePoint(1, 1) };
-            var dominantValues = _measurementService.CurrentMeasurement.MeasurementsData[_measurementService.CMDataIndex].DominantValues;
-            if (dominantValues.Length != 0)
-            {
-                DominantValuesSeries[0].Values = dominantValues.ToArray();
-            }
-            else
-            {
-                DominantValuesSeries[0].Values = new double[] { 1 };
+                var index = _dominantValuesPoints.Count - 1;
+                var startP = new ObservablePoint(0, data.StartFrequency);
+                var slopeP = new ObservablePoint(index * CurrentMeasurement.WindowShiftSeconds, data.StartFrequency + (data.Slope / 1000_000) * index);
+                _regressionLinePoints.Add(startP);
+                _regressionLinePoints.Add(slopeP);
             }
         }
+    }
+    private void UpdateSlopeAndStartFrequency()
+    {
+        if (CurrentMeasurementData != null)
+        {
+            var data = CurrentMeasurementData[_measurementService.CMDataIndex];
+            Slope = Math.Round(data.Slope, 4);
+            StartFrequency = Math.Round(data.StartFrequency, 4);  
+        }
+    }
+    private void UpdateView()
+    {
+        UpdateProgressBar();
+        UpdateSlopeAndStartFrequency();
+        UpdateCharts();
     }
 }

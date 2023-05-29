@@ -1,10 +1,7 @@
-﻿using System.Diagnostics;
-
-using EMGApp.Activation;
+﻿using EMGApp.Activation;
 using EMGApp.Contracts.Services;
 using EMGApp.Core.Contracts.Services;
 using EMGApp.Core.Services;
-using EMGApp.Helpers;
 using EMGApp.Models;
 using EMGApp.Services;
 using EMGApp.ViewModels;
@@ -109,7 +106,14 @@ public partial class App : Application
     {
         base.OnLaunched(args);
 
+        MainWindow.Closed += WindowClosed;
+
         await App.GetService<IActivationService>().ActivateAsync(args);
         App.GetService<IDatabaseService>();
+    }
+
+    private void WindowClosed(object sender, WindowEventArgs args)
+    {
+        //Debug.WriteLine("Closing");
     }
 }

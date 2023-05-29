@@ -5,27 +5,57 @@ using Windows.ApplicationModel.Payments;
 namespace EMGApp.Models;
 public class Patient
 {
-    public long? PatientId { get; set; }
-    public string Name { get; set; }
-    public string Surname {get; set; }
-    public int Age { get; set; }
-    public int Gender { get; set; }
-    public string Address { get; set; }
-    public int Weight { get; set; }
-    public int Height { get; set; }
-    public int Condition { get; set; }
-    public string Description { get; set; }
+    public long? PatientId 
+    { 
+        get; set; 
+    }
+    public string FirstName 
+    { 
+        get; set; 
+    }
+    public string LastName 
+    {
+        get; set;
+    }
+    public string IdentificationNumber
+    {
+        get; set;
+    }
+    public int Age 
+    { 
+        get; set; 
+    }
+    public int Gender 
+    { 
+        get; set; 
+    }
+    public int Weight 
+    { 
+        get; set; 
+    }
+    public int Height 
+    { 
+        get; set; 
+    }
+    public string Address
+    {
+        get; set;
+    }
+    public string Email
+    {
+        get; set;
+    }
+    public string PhoneNumber
+    {
+        get; set;
+    }
+    public string Description 
+    { 
+        get; set; 
+    }
 
-    public string ConditionString => ConditionStrings[Condition];
     public string GenderString => GenderStrings[Gender];
 
-    public static readonly Dictionary<int, string> ConditionStrings = new()
-    {
-       {0, "condition 1"},
-       {1, "condition 2"},
-       {2, "condition 3"},
-       {3, "condition 4"}
-    };
     public static readonly Dictionary<int, string> GenderStrings = new()
     {
        {0, "M"},
@@ -36,24 +66,27 @@ public class Patient
         get
         {
             var str = new StringBuilder();
-            str.Append(Name);
+            str.Append(FirstName);
             str.Append(' ');
-            str.Append(Surname);
+            str.Append(LastName);
             return str.ToString();
         }
     }
-    public Patient(long? id, string name,string surname, int age, int gender, string address, int weight, int height, int condition, string destription)
+    public Patient(long? id, string firstName,string lastName, string identificationNumber, int age, int gender,
+        int weight, int height, string address, string email, string phoneNumber, string destription)
     {
         PatientId = id;
-        Name = name;
-        Surname = surname;
+        FirstName = firstName;
+        LastName = lastName;
         Age = age;
         Gender = gender;
         Weight = weight;
         Height = height;
-        Condition = condition;
+        IdentificationNumber = identificationNumber;
         Description = destription;
         Address = address;
+        PhoneNumber = phoneNumber;
+        Email = email;
     }
     public static string GetStringProperty(Patient patient ,string? propertyName)
     {
@@ -65,7 +98,7 @@ public class Patient
             "Address" => patient.Address,
             "Weight" => patient.Weight.ToString(),
             "Height" => patient.Height.ToString(),
-            "Condition" => patient.ConditionString,
+            "Identification number" => patient.IdentificationNumber,
             _ => string.Empty,
         };
     }

@@ -111,7 +111,7 @@ public class DataService : IDataService
         var mData = m.MeasurementsData[measurementIndex];
         while(ObservedMeasuremntIsRunning && mData.DataIndex <= m.DataSize - m.NumberOfSamplesOnWindowShift)
         {
-            await Task.Delay(m.BufferMilliseconds);
+            await Task.Delay(m.WindowShiftMilliseconds);
             mData.DataIndex += m.NumberOfSamplesOnWindowShift;
             Debug.WriteLine(mData.DataIndex.ToString());
             ObservedMeasuremntRunEvent?.Invoke(this, new ObservedMeasuremntRunStepArgs(mData.DataIndex));

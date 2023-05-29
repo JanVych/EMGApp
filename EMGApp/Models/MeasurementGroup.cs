@@ -17,7 +17,7 @@ public class MeasurementGroup
     {
         get; set;
     }
-    public int BufferMilliseconds
+    public int WindowShiftMilliseconds
     {
         get; set;
     }
@@ -59,9 +59,11 @@ public class MeasurementGroup
     }
 
     //not in DB
-    public int FrequencyDataSize => (int)Math.Round((double)WindowLength / (double)SampleRate * 140);
+    public double SpectralResolution => (double)SampleRate / (double)WindowLength;
+    public double WindowShiftSeconds => (double)WindowShiftMilliseconds / 1000;
+    public int FrequencyDataSize => (int)Math.Round(SpectralResolution * 250);
     public int MeasuremntMaxTime => DataSize / SampleRate;
-    public int NumberOfSamplesOnWindowShift => BufferMilliseconds * SampleRate / 1000;
+    public int NumberOfSamplesOnWindowShift => WindowShiftMilliseconds * SampleRate / 1000;
     public int DominantValuesSize => DataSize / NumberOfSamplesOnWindowShift - (int)Math.Ceiling((double)WindowLength / (double)NumberOfSamplesOnWindowShift) + 1;
     public string? DateTimeString => DateTime.ToString();
     public string? MeasurementTypeString => MeasuremntTypeStrings[MeasurementType];
@@ -91,7 +93,7 @@ public class MeasurementGroup
     {
         MeasurementType = masurementType;
         SampleRate = sampleRate;
-        BufferMilliseconds = bufferMilliseconds;
+        WindowShiftMilliseconds = bufferMilliseconds;
         WindowLength = windowSize;
         DataSize = dataSize;
         MeasurementFixedTime = mTFix;
@@ -110,7 +112,7 @@ public class MeasurementGroup
         MeasurementType = masurementType;
         DateTime = dateTime;
         SampleRate = sampleRate;
-        BufferMilliseconds = bufferMilliseconds;
+        WindowShiftMilliseconds = bufferMilliseconds;
         WindowLength = windowSize;
         MeasurementFixedTime = mTFix;
         DataSize = dataSize;

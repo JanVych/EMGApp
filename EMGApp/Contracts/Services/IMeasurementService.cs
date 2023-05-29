@@ -10,6 +10,10 @@ using EMGApp.ViewModels;
 namespace EMGApp.Contracts.Services;
 public interface IMeasurementService
 {
+    public bool IsRecording
+    {
+        get; set;
+    }
     public MeasurementGroup CurrentMeasurement
     {
         get;  set;
@@ -29,7 +33,6 @@ public interface IMeasurementService
     //    get; set; 
     //}
     public string[] GetListOfDevices();
-    public void CreateConnection(int measurmentType, int sampleRate, int bufferMilliseconds, int windowSize, bool MeasurmentTimeFixed, int maxDataLenght, int deviceNumber);
     public void CreateConnection(MeasurementGroup measurement);
     public void SelectOrAddMuscle(int muscleType, int side);
     public void StartRecording();

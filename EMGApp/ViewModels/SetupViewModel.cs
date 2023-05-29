@@ -30,7 +30,7 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     private int windowSize = 1024;
 
     [ObservableProperty]
-    private double measurementTime = 120;
+    private double measurementTime = 60;
 
     [ObservableProperty]
     private int measurementTimeTypeIndex;
@@ -45,7 +45,7 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     private int notchFilter = 50;
 
     [ObservableProperty]
-    private int lowPassFilter = 130;
+    private int lowPassFilter = 250;
 
     [ObservableProperty]
     private int highPassFilter = 5;
@@ -151,12 +151,6 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
         {
             FilterComboBoxItems = Patient.GenderStrings.Select(x => x.Value).ToArray();
             SelectedFilterChangedCB();
-        }
-        else if (SelectedFilterItem == "Condition")
-        {
-            FilterComboBoxItems = Patient.ConditionStrings.Select(x => x.Value).ToArray();
-            SelectedFilterChangedCB();
-            return;
         }
         else
         {

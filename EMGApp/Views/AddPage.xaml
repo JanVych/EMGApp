@@ -7,40 +7,99 @@
     mc:Ignorable="d"
     behaviors:NavigationViewHeaderBehavior.HeaderMode="Always">
     <!--Header visibility-->
+    <Page.Resources>
+        <Style x:Name="DefaultGrid" TargetType="Grid">
+            <Setter Property="Margin" Value="45,20,45,20"/>
+            <Setter Property="Padding" Value="0,10,0,10"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}"/>
+        </Style>
+        <Style x:Name="InputTextBox" TargetType="TextBox">
+            <Setter Property="IsSpellCheckEnabled" Value="False"/>
+            <Setter Property="Margin" Value="30,0,30,0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Name="InputNumberBox" TargetType="NumberBox">
+            <Setter Property="Margin" Value="30,0,30,0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Name="InputComboBox" TargetType="ComboBox">
+            <Setter Property="Margin" Value="30,0,30,0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Page.Resources>
 
-    <Grid RowDefinitions="1*,1*,1*,1*,2*" ColumnDefinitions="1*,1*,2*">
+    <Grid RowDefinitions="*,*" ColumnDefinitions="*,*">
+        <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" 
+              RowDefinitions="*,*,*,*,*,*,*"
+              Style="{StaticResource DefaultGrid}" >
+            <TextBox Grid.Row="0" Header="First name" 
+                     Text="{x:Bind ViewModel.FirstName, Mode=TwoWay}"
+                     Style="{StaticResource InputTextBox}"/>
+            <TextBox Grid.Row="1" Header="Last name" 
+                     Text="{x:Bind ViewModel.LastName, Mode=TwoWay}"
+                     Style="{StaticResource InputTextBox}"/>
+            <TextBox Grid.Row="2" Header="Identification number" 
+                     Text="{x:Bind ViewModel.IdentificationNumber, Mode=TwoWay}"
+                     Style="{StaticResource InputTextBox}"/>
+            <ComboBox Grid.Row="3" Header="Gender" 
+                      SelectedIndex="{x:Bind ViewModel.Gender, Mode=TwoWay}" 
+                      Style="{StaticResource InputComboBox}">
+                <x:String>Male</x:String>
+                <x:String>Female</x:String>
+            </ComboBox>
+            <NumberBox Grid.Row="4" Header="Age" 
+                       Value="{x:Bind ViewModel.Age, Mode=TwoWay}"
+                       Style="{StaticResource InputNumberBox}"/>
+            <NumberBox Grid.Row="5" Header="Weight" 
+                       Value="{x:Bind ViewModel.Weight, Mode=TwoWay}"
+                       Style="{StaticResource InputNumberBox}"/>
+            <NumberBox Grid.Row="6" Header="Height" 
+                       Value="{x:Bind ViewModel.Height, Mode=TwoWay}"
+                       Style="{StaticResource InputNumberBox}"/>
+        </Grid>
 
-        <TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay}" Grid.Row="0"  Grid.Column="0" Header="Name"
-                 HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="180"/>
-        <TextBox Text="{x:Bind ViewModel.Surname, Mode=TwoWay}" Grid.Row="1"  Grid.Column="0" Header="Surname" 
-                  HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="180"/>
-        <ComboBox SelectedIndex="{x:Bind ViewModel.GenderIndex, Mode=TwoWay}" Grid.Row="2" Grid.Column="0" Header="Gender"
-                   HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="180" PlaceholderText="chose">
-            <x:String>male</x:String>
-            <x:String>female</x:String>
-        </ComboBox>
-
-        <NumberBox Value="{x:Bind ViewModel.Age, Mode=TwoWay}" Grid.Row="3" Grid.Column="0" Header="Age"
-                    HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="180"/>
-        
-        <NumberBox Value="{x:Bind ViewModel.Weight, Mode=TwoWay}" Grid.Row="0" Grid.Column="1" Header="Weight"
-                    HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="180"/>
-        <NumberBox Value="{x:Bind ViewModel.Height, Mode=TwoWay}" Grid.Row="1" Grid.Column="1" Header="Height"
-                    HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="180"/>
-
-        <ComboBox SelectedIndex="{x:Bind ViewModel.Condition, Mode=TwoWay}" Grid.Row="2"  Grid.Column="1" Header="Condition" 
-                   HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="180" PlaceholderText="chose">
-            <x:String>c1</x:String>
-            <x:String>c2</x:String>
-            <x:String>c3</x:String>
-            <x:String>c4</x:String>
-        </ComboBox>
-        <TextBox Text="{x:Bind ViewModel.Address, Mode=TwoWay}" Grid.Row="3"  Grid.Column="1" Header="Address"
-                  HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="180"/>
-        
-        <TextBox Text="{x:Bind ViewModel.Description, Mode=TwoWay}" AcceptsReturn="True" Grid.Column="2" Grid.RowSpan="4" Header="Description"
-                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-
-        <Button Grid.Row="4" Grid.ColumnSpan="3" Content="Save" HorizontalAlignment="Center" VerticalAlignment="Center" Command="{x:Bind ViewModel.NewButtonCommand}"/>
+        <Grid Grid.RowSpan="2" Grid.Column="1" RowDefinitions="1*,1*,1*,3*,1*"
+              Style="{StaticResource DefaultGrid}">
+            <TextBox Grid.Row="0" Header="Address" 
+                     Text="{x:Bind ViewModel.Address, Mode=TwoWay}"
+                     Style="{StaticResource InputTextBox}"/>
+            <TextBox Grid.Row="1" Header="Email address" 
+                     Text="{x:Bind ViewModel.Email, Mode=TwoWay}"
+                     Style="{StaticResource InputTextBox}"/>
+            <TextBox Grid.Row="2" Header="Phone number" 
+                       Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}"
+                       Style="{StaticResource InputTextBox}"/>
+            <TextBox Grid.Row="3"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         IsSpellCheckEnabled="False"
+                         Header="Description"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch"
+                         Margin="30,0,30,0"
+                         Text="{x:Bind ViewModel.Description, Mode=TwoWay}"/>
+            <Button Grid.Row="4" 
+                    Content="Confirm"
+                    Width="100" Height="60"
+                    Margin="0,0,30,0"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right"
+                    Foreground="{StaticResource TextOnAccentFillColorPrimaryBrush}"
+                    Background="{StaticResource AccentFillColorDefaultBrush}"
+                    Command="{x:Bind ViewModel.NewButtonCommand}"/>
+            <InfoBar Grid.Row="4"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Center"
+                     Margin="30,0,0,0"
+                     IsOpen="{x:Bind ViewModel.IsPatientInfoBarOpen, Mode=TwoWay}"
+                     Severity="{x:Bind ViewModel.PatientInfoBarSeverity, Mode=TwoWay}"
+                     Message="{x:Bind ViewModel.PatientInfoBarText, Mode=TwoWay}" />
+        </Grid>
     </Grid>
 </Page>

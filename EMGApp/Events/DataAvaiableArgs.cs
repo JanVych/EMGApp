@@ -3,26 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LiveChartsCore.Defaults;
 
 namespace EMGApp.Events;
 public class DataAvaiableArgs
 {
-    public double[]? Data 
+    public ObservablePoint[] Data 
     { 
         get; set; 
     }
-    public double[]? DominantValues
+    public ObservablePoint DominantValue
     {
         get; set; 
     }
-    public int Size 
-    { 
-        get; set; 
-    }
-    public DataAvaiableArgs(double[]? data, int size, double[]? dominantValues)
+    public DataAvaiableArgs(ObservablePoint[] data, ObservablePoint dominantValue)
     {
         Data = data;
-        Size = size;
-        DominantValues = dominantValues;
+        DominantValue = dominantValue;
     }
 }

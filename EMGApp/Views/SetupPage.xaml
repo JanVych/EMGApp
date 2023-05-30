@@ -334,18 +334,19 @@
                     <Grid Style="{StaticResource DataGridHeader}" Padding="11,0,3,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition MinWidth="60" Width="1*"/>
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition MinWidth="60" Width="1*"/>
                             <ColumnDefinition MinWidth="60" Width="1*"/>
-                            <ColumnDefinition MinWidth="60" Width="1*"/>
-                            <ColumnDefinition Width="2*"/>
+                           
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="Name" Style="{StaticResource DataGridHeaderCell}"/>
-                        <TextBlock Grid.Column="1" Text="Age" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Grid.Column="1" Text="Id number" Style="{StaticResource DataGridHeaderCell}"/>
                         <TextBlock Grid.Column="2" Text="Gender" Style="{StaticResource DataGridHeaderCell}"/>
-                        <TextBlock Grid.Column="3" Text="Height" Style="{StaticResource DataGridHeaderCell}"/>
-                        <TextBlock Grid.Column="4" Text="Weight" Style="{StaticResource DataGridHeaderCell}"/>
-                        <TextBlock Grid.Column="5" Text="Id number" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Grid.Column="3" Text="Age" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Grid.Column="4" Text="Height" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Grid.Column="5" Text="Weight" Style="{StaticResource DataGridHeaderCell}"/>
                     </Grid>
                 </ListView.Header>
 
@@ -354,18 +355,18 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition MinWidth="60" Width="1*"/>
                                 <ColumnDefinition Width="1*"/>
                                 <ColumnDefinition MinWidth="60" Width="1*"/>
                                 <ColumnDefinition MinWidth="60" Width="1*"/>
-                                <ColumnDefinition MinWidth="60" Width="1*"/>
-                                <ColumnDefinition Width="2*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="{x:Bind Path=FullName}" Style="{StaticResource DataGridDataCell}"/>
-                            <TextBlock Grid.Column="1" Text="{x:Bind Path=Age }" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind Path=IdentificationNumber}" Style="{StaticResource DataGridDataCell}"/>
                             <TextBlock Grid.Column="2" Text="{x:Bind Path=GenderString }" Style="{StaticResource DataGridDataCell}"/>
-                            <TextBlock Grid.Column="3" Text="{x:Bind Path=Height}" Style="{StaticResource DataGridDataCell}"/>
-                            <TextBlock Grid.Column="4" Text="{x:Bind Path=Weight}" Style="{StaticResource DataGridDataCell}"/>
-                            <TextBlock Grid.Column="5" Text="{x:Bind Path=IdentificationNumber}" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="3" Text="{x:Bind Path=Age }" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="4" Text="{x:Bind Path=Height}" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="5" Text="{x:Bind Path=Weight}" Style="{StaticResource DataGridDataCell}"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

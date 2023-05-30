@@ -6,7 +6,6 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.Services;
-using System.Diagnostics;
 using SkiaSharp;
 using EMGApp.Events;
 using EMGApp.Contracts.ViewModels;
@@ -256,8 +255,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             if (data.Slope != 0)
             {
                 var index = _dominantValuesPoints.Count - 1;
-                var startP = new ObservablePoint(0, data.StartFrequency);
-                var slopeP = new ObservablePoint(index * CurrentMeasurement.WindowShiftSeconds, data.StartFrequency + (data.Slope / 1000_000) * index);
+                var startP = new ObservablePoint(0, data.Shift);
+                var last = data.Shift + data.Slope * index * CurrentMeasurement.WindowShiftMilliseconds / 1000.0;
+                var slopeP = new ObservablePoint(index * CurrentMeasurement.WindowShiftSeconds, last);
                 _regressionLinePoints.Add(startP);
                 _regressionLinePoints.Add(slopeP);
             }
@@ -269,7 +269,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         {
             var data = CurrentMeasurementData[_measurementService.CMDataIndex];
             Slope = Math.Round(data.Slope, 4);
-            StartFrequency = Math.Round(data.StartFrequency, 4);  
+            StartFrequency = Math.Round(data.Shift, 4);  
         }
     }
     private void UpdateView()

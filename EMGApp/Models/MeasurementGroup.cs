@@ -59,6 +59,8 @@ public class MeasurementGroup
     }
 
     //not in DB
+    // Moving Avrage Window Time Seconds
+    public double MAWindowTimeSeconds = 2;
     public double SpectralResolution => (double)SampleRate / (double)WindowLength;
     public double WindowShiftSeconds => (double)WindowShiftMilliseconds / 1000;
     public int FrequencyDataSize => (int)Math.Round(SpectralResolution * 250);

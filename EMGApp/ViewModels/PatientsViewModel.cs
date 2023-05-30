@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.Services;
 using EMGApp.Models;
 using EMGApp.Services;
+using Microsoft.UI.Xaml;
 
 namespace EMGApp.ViewModels;
 
@@ -25,6 +26,22 @@ public partial class PatientsViewModel : ObservableRecipient
     [ObservableProperty]
     public List<MeasurementGroup> measurements;
 
+    //Filter Properties
+    [ObservableProperty]
+    private string selectedFilterItem = "Name";
+
+    [ObservableProperty]
+    private string[]? filterComboBoxItems;
+
+    [ObservableProperty]
+    private string? filterComboBoxItem;
+
+    [ObservableProperty]
+    private Visibility filterComboBoxVisibility = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility filterTextBoxkVisibility = Visibility.Visible;
+
 
 
     public PatientsViewModel(IDataService dataService, INavigationService navigationService)
@@ -39,7 +56,10 @@ public partial class PatientsViewModel : ObservableRecipient
     [RelayCommand]
     private void PatientSelectionChanged()
     {
-        Measurements = _dataService.Measurements.FindAll(item => item.PatientId == Patients[SelectedPatientIndex].PatientId);
+        if (SelectedPatientIndex >= 0)
+        {
+            Measurements = _dataService.Measurements.FindAll(item => item.PatientId == Patients[SelectedPatientIndex].PatientId);
+        }
     }
 
     [RelayCommand]
@@ -61,7 +81,7 @@ public partial class PatientsViewModel : ObservableRecipient
     [RelayCommand]
     private void MeasurementDetailButton()
     {
-        if ((SelectedPatientIndex >= 0 && SelectedMeasurmentIndex < Measurements.Count))
+        if ((SelectedPatientIndex >= 0 && SelectedMeasurmentIndex >= 0))
         {
             _dataService.ObservedMeasurementId = Measurements[SelectedMeasurmentIndex].MeasurementId;
             _navigationService.NavigateTo(typeof(MeasurementsViewModel).FullName!);
@@ -72,4 +92,50 @@ public partial class PatientsViewModel : ObservableRecipient
     {
     }
 
+    [RelayCommand]
+    private void SelectedFilterChanged()
+    {
+
+        if (SelectedFilterItem == "Gender")
+        {
+            FilterComboBoxItems = Patient.GenderStrings.Select(x => x.Value).ToArray();
+            SelectedFilterChangedCB();
+        }
+        else
+        {
+            FilterTextBoxkVisibility = Visibility.Visible;
+            FilterComboBoxVisibility = Visibility.Collapsed;
+            PatientsFilterChanged(string.Empty);
+        }
+    }
+    private void SelectedFilterChangedCB()
+    {
+        FilterTextBoxkVisibility = Visibility.Collapsed;
+        FilterComboBoxVisibility = Visibility.Visible;
+        FilterComboBoxItem = FilterComboBoxItems?.FirstOrDefault();
+        PatientsFilterChanged(FilterComboBoxItem ?? string.Empty);
+    }
+
+    [RelayCommand]
+    private void PatientsFilterChanged(object parameter)
+    {
+        var text = parameter as string;
+        var suitableItems = new List<Patient>();
+        var splitText = text?.ToLower().Split(" ");
+
+        foreach (var patient in _dataService.Patients)
+        {
+            var found = splitText?.All((key) =>
+            {
+                return Patient.GetStringProperty(patient, SelectedFilterItem).ToLower().Contains(key);
+            });
+            found ??= false;
+            if ((bool)found)
+            {
+                suitableItems.Add(patient);
+            }
+        }
+        Patients = suitableItems;
+        if (suitableItems.Count > 0) { SelectedPatientIndex = 0; }
+    }
 }

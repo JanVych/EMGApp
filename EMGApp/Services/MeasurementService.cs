@@ -126,30 +126,30 @@ public class MeasurementService : IMeasurementService
         }
         return new ObservablePoint((dominatValuesIndex + 1) * measurement.WindowShiftSeconds, dominantValue);
     }
-    public void CalculateSlopeAndStartFrequency(MeasurementGroup measurement, int mIndex)
+    public void CalculateSlopeAndShift(MeasurementGroup measurement, int mIndex)
     {
         var mData = measurement.MeasurementsData[mIndex];
         var dominatValuesLength = mData.DominatValuesIndex(measurement.NumberOfSamplesOnWindowShift, measurement.WindowLength);
-        var dominantValues = new double[dominatValuesLength];
-        var milsec = new double[dominatValuesLength];
+        var dominantValuesY = new double[dominatValuesLength];
+        var timeValuesX = new double[dominatValuesLength];
         for (var i = 0; i < dominatValuesLength; i++)
         {
-            dominantValues[i] = mData.DominantValues[i];
-            milsec[i] = measurement.WindowShiftMilliseconds * i;
+            dominantValuesY[i] = mData.DominantValues[i];
+            timeValuesX[i] = measurement.WindowShiftSeconds * (i + 1);
         }
-        var avrageX = milsec.Average();
-        var avrageY = dominantValues.Average();
+        var avrageX = timeValuesX.Average();
+        var avrageY = dominantValuesY.Average();
         double denominator = 0;
         double numerator = 0;
-        for (var i = 0; i < milsec.Length; i++)
+        for (var i = 0; i < timeValuesX.Length; i++)
         {
-            numerator += (milsec[i] - avrageX) * (dominantValues[i] - avrageY);
+            numerator += (timeValuesX[i] - avrageX) * (dominantValuesY[i] - avrageY);
 
-            denominator += Math.Pow((milsec[i] - avrageX), 2);
+            denominator += Math.Pow((timeValuesX[i] - avrageX), 2);
         }
         var slope = (numerator / denominator);
-        mData.StartFrequency = avrageY - slope * avrageX;
-        mData.Slope = (slope / measurement.WindowShiftMilliseconds) * 1_000_000;
+        mData.Shift = avrageY - slope * avrageX;
+        mData.Slope = slope;
     }
 
     private double CalculateMovingAvrage(double[] data)
@@ -267,7 +267,7 @@ public class MeasurementService : IMeasurementService
             Wawe.StopRecording();
             IsRecording = false;
             Debug.WriteLine("Recording stop");
-            CalculateSlopeAndStartFrequency(CurrentMeasurement, CMDataIndex);
+            CalculateSlopeAndShift(CurrentMeasurement, CMDataIndex);
         }
     }
 

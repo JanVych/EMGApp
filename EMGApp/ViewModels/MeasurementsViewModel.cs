@@ -189,7 +189,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
         {
             DominantValuesSeries[0].Values = ObservedMeasurement.MeasurementsData[MeasurementDataIndex].DominantValues;
             Slope = ObservedMeasurement.MeasurementsData[MeasurementDataIndex].Slope;
-            StartFrequency = ObservedMeasurement.MeasurementsData[MeasurementDataIndex].StartFrequency;
+            StartFrequency = ObservedMeasurement.MeasurementsData[MeasurementDataIndex].Shift;
         }
     }
     private void FrequencySpectrumChartUpdate()

@@ -233,7 +233,7 @@
                     <TextBlock Text="Hz/s" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Style="{StaticResource DefaultStackPanel}">
-                    <TextBlock Text="Start frequency:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Shift:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Text="{x:Bind ViewModel.StartFrequency, Mode=OneWay}" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Text="Hz" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </StackPanel>

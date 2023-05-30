@@ -33,7 +33,7 @@ public class MeasurementData
     {
         get; set;
     } = 0;
-    public double StartFrequency
+    public double Shift
     {
         get; set;
     } = 0;
@@ -78,6 +78,6 @@ public class MeasurementData
         Data = data;
         DominantValues = dominatValues;
         Slope = slope;
-        StartFrequency = startFrequency;
+        Shift = startFrequency;
     }
 }

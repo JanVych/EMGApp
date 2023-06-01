@@ -2,6 +2,7 @@
 using EMGApp.Contracts.Services;
 using EMGApp.Events;
 using EMGApp.Models;
+using LiveChartsCore.SkiaSharpView.Painting;
 
 namespace EMGApp.Services;
 public class DataService : IDataService
@@ -92,18 +93,29 @@ public class DataService : IDataService
 
     public void RemovePatient(Patient patient)
     {
-        if (patient.PatientId == null) { return; }
-        foreach (var m in Measurements.FindAll(p => p.PatientId == patient.PatientId))
+        if (patient.PatientId != null)
         {
-            if (m.MeasurementId != null)
+            foreach (var m in Measurements.FindAll(p => p.PatientId == patient.PatientId))
             {
-                _databaseService.Delete("measurement_data", "measurement_id", m.MeasurementId);
+                if (m.MeasurementId != null)
+                {
+                    _databaseService.Delete("measurement_data", "measurement_id", m.MeasurementId);
+                }
             }
+            _databaseService.Delete("measurement", "patient_id", patient.PatientId);
+            _databaseService.Delete("patient", "patient_id", patient.PatientId);
+            Patients = _databaseService.GetPatients();
+            Measurements = _databaseService.GetMeasurements();
         }
-        _databaseService.Delete("measurement", "patient_id", patient.PatientId);
-        _databaseService.Delete("patient", "patient_id", patient.PatientId);
-        Patients = _databaseService.GetPatients();
-        Measurements = _databaseService.GetMeasurements();
+    }
+    public void RemoveMeasurement(MeasurementGroup measurement)
+    {
+        if (measurement.MeasurementId != null) 
+        {
+            _databaseService.Delete("measurement_data", "measurement_id", measurement.MeasurementId);
+            _databaseService.Delete("measurement", "measurement_id", measurement.MeasurementId);
+            Measurements = _databaseService.GetMeasurements();
+        }
     }
     public async Task ObservedMeasuremntRunAsync(MeasurementGroup m, int measurementIndex)
     {

@@ -45,7 +45,7 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     private int notchFilter = 50;
 
     [ObservableProperty]
-    private int lowPassFilter = 250;
+    private int lowPassFilter = 200;
 
     [ObservableProperty]
     private int highPassFilter = 5;

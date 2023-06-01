@@ -38,34 +38,39 @@
         <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" 
               RowDefinitions="*,*,*,*,*,*,*"
               Style="{StaticResource DefaultGrid}" >
-            <TextBox Grid.Row="0" Header="First name" 
+            <TextBox Grid.Row="0" Header="First name *" 
                      Text="{x:Bind ViewModel.FirstName, Mode=TwoWay}"
                      Style="{StaticResource InputTextBox}"/>
-            <TextBox Grid.Row="1" Header="Last name" 
+            <TextBox Grid.Row="1" Header="Last name *" 
                      Text="{x:Bind ViewModel.LastName, Mode=TwoWay}"
                      Style="{StaticResource InputTextBox}"/>
-            <TextBox Grid.Row="2" Header="Identification number" 
+            <TextBox Grid.Row="2" Header="Identification number *" 
                      Text="{x:Bind ViewModel.IdentificationNumber, Mode=TwoWay}"
                      Style="{StaticResource InputTextBox}"/>
-            <ComboBox Grid.Row="3" Header="Gender" 
+            <ComboBox Grid.Row="3" Header="Gender *" 
                       SelectedIndex="{x:Bind ViewModel.Gender, Mode=TwoWay}" 
                       Style="{StaticResource InputComboBox}">
                 <x:String>Male</x:String>
                 <x:String>Female</x:String>
             </ComboBox>
-            <NumberBox Grid.Row="4" Header="Age" 
+            <NumberBox Grid.Row="4" Header="Age *" 
                        Value="{x:Bind ViewModel.Age, Mode=TwoWay}"
-                       Style="{StaticResource InputNumberBox}"/>
-            <NumberBox Grid.Row="5" Header="Weight" 
+                       Style="{StaticResource InputNumberBox}"
+                       NumberFormatter="{x:Bind ViewModel.NumberFormater}"/>
+            <NumberBox Grid.Row="5" Header="Weight *" 
                        Value="{x:Bind ViewModel.Weight, Mode=TwoWay}"
-                       Style="{StaticResource InputNumberBox}"/>
-            <NumberBox Grid.Row="6" Header="Height" 
+                       Style="{StaticResource InputNumberBox}"
+                       NumberFormatter="{x:Bind ViewModel.NumberFormater}"/>
+            <NumberBox Grid.Row="6" Header="Height *" 
                        Value="{x:Bind ViewModel.Height, Mode=TwoWay}"
-                       Style="{StaticResource InputNumberBox}"/>
+                       Style="{StaticResource InputNumberBox}"
+                       NumberFormatter="{x:Bind ViewModel.NumberFormater}"/>
         </Grid>
 
-        <Grid Grid.RowSpan="2" Grid.Column="1" RowDefinitions="1*,1*,1*,3*,1*"
+        <Grid Grid.RowSpan="2" Grid.Column="1" 
+              RowDefinitions="1*, 1*, 1*, 3*, auto, 1*"
               Style="{StaticResource DefaultGrid}">
+            
             <TextBox Grid.Row="0" Header="Address" 
                      Text="{x:Bind ViewModel.Address, Mode=TwoWay}"
                      Style="{StaticResource InputTextBox}"/>
@@ -73,18 +78,23 @@
                      Text="{x:Bind ViewModel.Email, Mode=TwoWay}"
                      Style="{StaticResource InputTextBox}"/>
             <TextBox Grid.Row="2" Header="Phone number" 
-                       Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}"
-                       Style="{StaticResource InputTextBox}"/>
-            <TextBox Grid.Row="3"
-                         TextWrapping="Wrap"
-                         AcceptsReturn="True"
-                         IsSpellCheckEnabled="False"
-                         Header="Description"
-                         HorizontalAlignment="Stretch"
-                         VerticalAlignment="Stretch"
-                         Margin="30,0,30,0"
-                         Text="{x:Bind ViewModel.Description, Mode=TwoWay}"/>
-            <Button Grid.Row="4" 
+                     Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}"
+                     PlaceholderText="999-999-999"
+                     Style="{StaticResource InputTextBox}"/>
+            
+            <TextBox Grid.Row="3" 
+                     TextWrapping="Wrap"
+                     AcceptsReturn="True"
+                     IsSpellCheckEnabled="False"
+                     Header="Description"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Stretch"
+                     Margin="30,0,30,0"
+                     Text="{x:Bind ViewModel.Description, Mode=TwoWay}"/>
+            <TextBlock Grid.Row="4"
+                       Margin="30,10,30,0"
+                       Text="* madatory fields"/>
+            <Button Grid.Row="5" 
                     Content="Confirm"
                     Width="100" Height="60"
                     Margin="0,0,30,0"
@@ -93,7 +103,7 @@
                     Foreground="{StaticResource TextOnAccentFillColorPrimaryBrush}"
                     Background="{StaticResource AccentFillColorDefaultBrush}"
                     Command="{x:Bind ViewModel.NewButtonCommand}"/>
-            <InfoBar Grid.Row="4"
+            <InfoBar Grid.Row="5"
                      HorizontalAlignment="Left"
                      VerticalAlignment="Center"
                      Margin="30,0,0,0"

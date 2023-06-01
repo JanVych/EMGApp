@@ -102,7 +102,7 @@
                         Orientation="Horizontal"
                         Margin="20,0,0,0"
                         Style="{StaticResource BorderStackPanel}">
-                <AppBarButton Icon="Delete" Label="Delete" Command="{x:Bind ViewModel.DeletePatientButtonCommand}"/>
+                <AppBarButton Icon="Delete" Label="Delete" Command="{x:Bind ViewModel.DeleteMeasurementButtonCommand}"/>
                 <AppBarButton Icon="Zoom" Label="Detail" Command="{x:Bind ViewModel.MeasurementDetailButtonCommand}"/>
             </StackPanel>
         </Grid>

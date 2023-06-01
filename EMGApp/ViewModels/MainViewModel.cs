@@ -172,6 +172,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void ResetButton()
     {
+        if (CurrentMeasurementData != null && _measurementService.CMDataIndex >= 0)
+        {
+            _measurementService.StopRecording();
+            var m = CurrentMeasurementData[_measurementService.CMDataIndex];
+            CurrentMeasurementData[_measurementService.CMDataIndex] = new MeasurementData(m.MuscleType, m.Side, m.Data.Length, m.DominantValues.Length);
+            UpdateView();
+        }
     }
     [RelayCommand]
     private void AddMuscleButton()

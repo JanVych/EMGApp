@@ -1,10 +1,14 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.Services;
+using EMGApp.Helpers;
 using EMGApp.Models;
 using Microsoft.UI.Xaml.Controls;
+using Windows.Globalization;
+using Windows.Globalization.NumberFormatting;
 
 namespace EMGApp.ViewModels;
 
@@ -20,13 +24,13 @@ public partial class AddViewModel : ObservableRecipient
     [ObservableProperty]
     private string identificationNumber = string.Empty;
     [ObservableProperty]
-    private int age = 0;
+    private double age = double.NaN;
     [ObservableProperty]
-    private int gender;
+    private int gender = 0;
     [ObservableProperty]
-    private int weight = 0;
+    private double weight = double.NaN;
     [ObservableProperty]
-    private int height = 0;
+    private double height = double.NaN;
     [ObservableProperty]
     private string address = string.Empty;
     [ObservableProperty]
@@ -43,10 +47,16 @@ public partial class AddViewModel : ObservableRecipient
     [ObservableProperty]
     private InfoBarSeverity patientInfoBarSeverity = InfoBarSeverity.Success;
 
+    public PatinetPropertyNumberFormater NumberFormater
+    {
+        get; 
+    }
+
     public AddViewModel(IDataService dataService, ILocalSettingsService localSettingsService)
     {
         _dataService = dataService;
         _localSettingsService = localSettingsService;
+        NumberFormater = new PatinetPropertyNumberFormater();
     }
 
     [RelayCommand]
@@ -54,10 +64,10 @@ public partial class AddViewModel : ObservableRecipient
     {
 
         if (FirstName == string.Empty || LastName == string.Empty || IdentificationNumber == string.Empty
-            || Age == 0 || Weight == 0 || Height == 0)
+            || double.IsNaN(Age) || double.IsNaN(Weight) || double.IsNaN(Height))
         {
             PatientInfoBarSeverity = InfoBarSeverity.Warning;
-            PatientInfoBarText = "Please fill required fields";
+            PatientInfoBarText = "Please fill mandatory fields";
             IsPatientInfoBarOpen = true;
             return; 
         }
@@ -74,10 +84,10 @@ public partial class AddViewModel : ObservableRecipient
         FirstName = string.Empty; 
         LastName = string.Empty;
         IdentificationNumber = string.Empty;
-        Age = 0;
+        Age = double.NaN;
         Gender = 0;
-        Weight = 0;
-        Height = 0;
+        Weight = double.NaN;
+        Height = double.NaN;
         Address = string.Empty;
         Email = string.Empty;
         PhoneNumber = string.Empty;

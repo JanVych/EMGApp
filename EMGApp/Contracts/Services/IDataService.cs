@@ -43,6 +43,7 @@ public interface IDataService
     public void AddPatient(Patient patient);
     public void AddMeasurement(MeasurementGroup measurement);
     public void RemovePatient(Patient patient);
+    public void RemoveMeasurement(MeasurementGroup measurement);
     public List<MeasurementData> GetMeasurementData(MeasurementGroup measurement);
     Task ObservedMeasuremntRunAsync(MeasurementGroup m, int measurementIndex);
 }

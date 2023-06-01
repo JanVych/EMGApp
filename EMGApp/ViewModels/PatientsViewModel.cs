@@ -74,6 +74,16 @@ public partial class PatientsViewModel : ObservableRecipient
         }
     }
     [RelayCommand]
+    private void DeleteMeasurementButton()
+    {
+        if (SelectedMeasurmentIndex >= 0)
+        {
+            _dataService.RemoveMeasurement(Measurements[SelectedMeasurmentIndex]);
+            SelectedMeasurmentIndex--;
+            Measurements = _dataService.Measurements;
+        }
+    }
+    [RelayCommand]
     private void AddPatientButton()
     {
         _navigationService.NavigateTo(typeof(AddViewModel).FullName!);

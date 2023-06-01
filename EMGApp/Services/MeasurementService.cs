@@ -191,8 +191,6 @@ public class MeasurementService : IMeasurementService
             }
         }
         var result = (lowIndex + (deltaLow / (deltaHigh + deltaLow))) * measurement.SpectralResolution;
-        if (result > 250) 
-        { var x = 0; }
         return result;
     }
     private void NotchFilter(MeasurementGroup measurement, double[] data)

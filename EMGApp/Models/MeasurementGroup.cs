@@ -63,7 +63,7 @@ public class MeasurementGroup
     public double MAWindowTimeSeconds = 2;
     public double SpectralResolution => (double)SampleRate / (double)WindowLength;
     public double WindowShiftSeconds => (double)WindowShiftMilliseconds / 1000;
-    public int FrequencyDataSize => (int)Math.Round(SpectralResolution * 250);
+    public int FrequencyDataSize => (int)Math.Round(SpectralResolution * 200);
     public int MeasuremntMaxTime => DataSize / SampleRate;
     public int NumberOfSamplesOnWindowShift => WindowShiftMilliseconds * SampleRate / 1000;
     public int DominantValuesSize => DataSize / NumberOfSamplesOnWindowShift - (int)Math.Ceiling((double)WindowLength / (double)NumberOfSamplesOnWindowShift) + 1;

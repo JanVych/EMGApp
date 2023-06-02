@@ -79,12 +79,15 @@
                         <Setter Target="dfcType.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="dfcType2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="dfcType2.(RelativePanel.Below)" Value=""/>
-                        <Setter Target="mType.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <!--<Setter Target="mType.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="mType2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="mType2.(RelativePanel.Below)" Value=""/>
                         <Setter Target="force.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="force2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
-                        <Setter Target="force2.(RelativePanel.Below)" Value=""/>
+                        <Setter Target="force2.(RelativePanel.Below)" Value=""/>-->
+                        <Setter Target="cFrequency.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
+                        <Setter Target="cFrequency2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="cFrequency2.(RelativePanel.Below)" Value=""/>
                         <Setter Target="nFilter.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="nFilter2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="nFilter2.(RelativePanel.Below)" Value=""/>
@@ -204,7 +207,7 @@
 
                 <Border Height="30"/>
                 
-                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                <!--<RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
                     <StackPanel x:Name="mType" Style="{StaticResource StackPanelSettingsCardA}">
                         <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Measurement type"/>
                         <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="dsad sdf dsfgdgdfg"/>
@@ -226,9 +229,21 @@
                         <NumberBox Value="{x:Bind ViewModel.Force, Mode=TwoWay}" MaxHeight="35" Minimum="100" Maximum="10000"/>
                         <TextBlock Text="N" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </StackPanel>
-                </RelativePanel>
+                </RelativePanel>-->
 
-                <Border Height="20"/>
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
+                    <StackPanel x:Name="cFrequency" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Corner frequency"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal 684dd"/>
+                    </StackPanel>
+                    <StackPanel x:Name="cFrequency2" Margin="10,10,10,10" Orientation="Horizontal"
+                                RelativePanel.Below="cFrequency" RelativePanel.AlignVerticalCenterWithPanel="True">
+                        <NumberBox Value="{x:Bind ViewModel.CornerFrequency, Mode=TwoWay}" MaxHeight="35" Minimum="100" Maximum="500"/>
+                        <TextBlock Text="Hz" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RelativePanel>
+                
+                <Border Height="30"/>
 
                 <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
                     <StackPanel x:Name="nFilter" Style="{StaticResource StackPanelSettingsCardA}">
@@ -237,7 +252,7 @@
                     </StackPanel>
                     <StackPanel x:Name="nFilter2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="nFilter" RelativePanel.AlignVerticalCenterWithPanel="True">
-                        <NumberBox Value="{x:Bind ViewModel.NotchFilter, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="140"/>
+                        <NumberBox Value="{x:Bind ViewModel.NotchFilter, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="500"/>
                         <TextBlock Text="Hz" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </StackPanel>
                 </RelativePanel>
@@ -249,7 +264,7 @@
                     </StackPanel>
                     <StackPanel x:Name="lpFilter2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="lpFilter" RelativePanel.AlignVerticalCenterWithPanel="True">
-                        <NumberBox Value="{x:Bind ViewModel.LowPassFilter, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="140"/>
+                        <NumberBox Value="{x:Bind ViewModel.LowPassFilter, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="500"/>
                         <TextBlock Text="Hz" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </StackPanel>
                 </RelativePanel>
@@ -261,7 +276,7 @@
                     </StackPanel>
                     <StackPanel x:Name="hpFilter2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="hpFilter" RelativePanel.AlignVerticalCenterWithPanel="True">
-                        <NumberBox Value="{x:Bind ViewModel.HighPassFilter, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="140"/>
+                        <NumberBox Value="{x:Bind ViewModel.HighPassFilter, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="500"/>
                         <TextBlock Text="Hz" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </StackPanel>
                 </RelativePanel>
@@ -295,7 +310,6 @@
                     <x:String>Gender</x:String>
                     <x:String>Height</x:String>
                     <x:String>Weight</x:String>
-                    <x:String>Address</x:String>
                 </ComboBox>
                 <TextBox Grid.Column="2" x:Name="filterTextBox" Width="130" Height="35" Margin="10,10,0,10"
                                 HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -333,7 +347,7 @@
                 <ListView.Header>
                     <Grid Style="{StaticResource DataGridHeader}" Padding="11,0,3,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="2*"/>
                             <ColumnDefinition Width="2*"/>
                             <ColumnDefinition MinWidth="60" Width="1*"/>
                             <ColumnDefinition Width="1*"/>
@@ -354,7 +368,7 @@
                     <DataTemplate x:DataType="local1:Patient">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="2*"/>
                                 <ColumnDefinition Width="2*"/>
                                 <ColumnDefinition MinWidth="60" Width="1*"/>
                                 <ColumnDefinition Width="1*"/>

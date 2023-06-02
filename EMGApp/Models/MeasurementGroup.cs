@@ -33,14 +33,6 @@ public class MeasurementGroup
     {
         get; set;
     }
-    public int MeasurementType
-    {
-        get; set;
-    }
-    public int Force
-    {
-        get; set;
-    }
     public int DominantFrequencyCalculationType
     {
         get; set;
@@ -57,18 +49,21 @@ public class MeasurementGroup
     {
         get; set;
     }
+    public int CornerFrequency
+    {
+        get; set;
+    } = 200;
 
     //not in DB
-    // Moving Avrage Window Time Seconds
+    // Moving Avrage Window Time Seconds !!
     public double MAWindowTimeSeconds = 2;
     public double SpectralResolution => (double)SampleRate / (double)WindowLength;
     public double WindowShiftSeconds => (double)WindowShiftMilliseconds / 1000;
-    public int FrequencyDataSize => (int)Math.Round(SpectralResolution * 200);
+    public int FrequencyDataSize => (int)Math.Round(SpectralResolution * CornerFrequency);
     public int MeasuremntMaxTime => DataSize / SampleRate;
     public int NumberOfSamplesOnWindowShift => WindowShiftMilliseconds * SampleRate / 1000;
     public int DominantValuesSize => DataSize / NumberOfSamplesOnWindowShift - (int)Math.Ceiling((double)WindowLength / (double)NumberOfSamplesOnWindowShift) + 1;
     public string? DateTimeString => DateTime.ToString();
-    public string? MeasurementTypeString => MeasuremntTypeStrings[MeasurementType];
     public string? DominantFrequencyCalculationTypeString => DominantFrequencyCalculationTypeStrings[DominantFrequencyCalculationType];
     public int DeviceNumber
     {
@@ -78,50 +73,42 @@ public class MeasurementGroup
     {
         get; set;
     } = new List<MeasurementData>();
-
-    public static readonly Dictionary<int, string> MeasuremntTypeStrings = new()
-    {
-       {0, "Concentric contraction"},
-       {1, "Eccentric contraction"},
-       {2, "Isometric contraction"}
-    };
+    
     public static readonly Dictionary<int, string> DominantFrequencyCalculationTypeStrings = new()
     {
        {0, "Median"},
        {1, "Mean value"}
     };
-    public MeasurementGroup(int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix , int dataSize, int masurementType,
-        int force, int dFCType, int nFilter, int lPFilter, int hPFilter, int deviceNumber)
+    public MeasurementGroup(int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix , int dataSize, int dFCType,
+        int nFilter, int lPFilter, int hPFilter, int cornerFrequency, int deviceNumber)
     {
-        MeasurementType = masurementType;
         SampleRate = sampleRate;
         WindowShiftMilliseconds = bufferMilliseconds;
         WindowLength = windowSize;
         DataSize = dataSize;
         MeasurementFixedTime = mTFix;
         DeviceNumber = deviceNumber;
-        Force = force;
         DominantFrequencyCalculationType = dFCType;
         NotchFilter = nFilter;
         LowPassFilter = lPFilter;
         HighPassFilter = hPFilter;
+        CornerFrequency = cornerFrequency;
     }
     public MeasurementGroup(long measurementId, long patientId, DateTime dateTime, int sampleRate, int bufferMilliseconds,
-        int windowSize, bool mTFix, int dataSize, int masurementType, int force, int dFCType, int nFilter, int lPFilter, int hPFilter)
+        int windowSize, bool mTFix, int dataSize,int dFCType, int nFilter, int lPFilter, int hPFilter, int cornerFrequency)
     {
         MeasurementId = measurementId;
         PatientId = patientId;
-        MeasurementType = masurementType;
         DateTime = dateTime;
         SampleRate = sampleRate;
         WindowShiftMilliseconds = bufferMilliseconds;
         WindowLength = windowSize;
         MeasurementFixedTime = mTFix;
         DataSize = dataSize;
-        Force = force;
         DominantFrequencyCalculationType = dFCType;
         NotchFilter = nFilter;
         LowPassFilter = lPFilter;
         HighPassFilter = hPFilter;
+        CornerFrequency = cornerFrequency;
     }
 }

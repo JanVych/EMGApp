@@ -34,7 +34,7 @@ public class MeasurementService : IMeasurementService
 
     public MeasurementService()
     {
-        CurrentMeasurement = new MeasurementGroup(1000, 100, 1024, true, 1_048_576, 0, 100, 0, 50, 120, 5, 0);
+        CurrentMeasurement = new MeasurementGroup(1000, 100, 1024, true, 1_048_576, 0, 50, 120, 5, 200, 0);
 
         App.MainWindow.Closed += (object sender, WindowEventArgs args) => { StopRecording(); };
     }
@@ -231,13 +231,14 @@ public class MeasurementService : IMeasurementService
         Wawe.DataAvailable += WaveIn_DataAvailable;
     }
     
-    public void SelectOrAddMuscle(int muscleType, int side)
+    public void SelectOrAddMuscle(int muscleType, int side, int measurementType, int force)
     {
         var index = CurrentMeasurement.MeasurementsData.FindIndex(m => m.MuscleType == muscleType && m.Side == side);
         if (index == -1)
         {
             index = CurrentMeasurement.MeasurementsData.Count;
-            CurrentMeasurement.MeasurementsData.Add(new MeasurementData(muscleType, side, CurrentMeasurement.DataSize, CurrentMeasurement.DominantValuesSize));
+            CurrentMeasurement.MeasurementsData.Add(new 
+                MeasurementData(muscleType, side, CurrentMeasurement.DataSize, CurrentMeasurement.DominantValuesSize, measurementType, force));
             Debug.WriteLine("new muscle on index:" + index.ToString());
         }
         if (CMDataIndex >= 0)

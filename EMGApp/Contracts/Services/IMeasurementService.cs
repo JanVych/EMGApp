@@ -34,7 +34,7 @@ public interface IMeasurementService
     //}
     public string[] GetListOfDevices();
     public void CreateConnection(MeasurementGroup measurement);
-    public void SelectOrAddMuscle(int muscleType, int side);
+    public void SelectOrAddMuscle(int muscleType, int side, int measurementType, int force);
     public void StartRecording();
     public void StopRecording();
     public double[] CalculateFrequencySpecturm(MeasurementGroup measurement, int mIndex);

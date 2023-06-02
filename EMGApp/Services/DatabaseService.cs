@@ -105,12 +105,11 @@ public class DatabaseService :IDatabaseService
                 window_size INTEGER,
                 measurement_time_fixed BOOLEAN,
                 max_data_length INTEGER,
-                measurement_type INTEGER,
-                force INTEGER,
                 dominant_frequency_calculation_type INTEGER,
                 notch_filter INTEGER,
                 low_pass_filter INTEGER,
                 high_pass_filter INTEGER,
+                corner_frequency INTEGER,
                 FOREIGN KEY (patient_id) REFERENCES patient (patient_id))";
         var measurementDataTable = @"CREATE TABLE IF NOT EXISTS measurement_data(
                 measurement_data_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -120,7 +119,9 @@ public class DatabaseService :IDatabaseService
                 data BLOB,
                 max_values BLOB,
                 slope REAL,
-                start_frequency REAL,
+                shift REAL,
+                measurement_type INTEGER,
+                force INTEGER,
                 FOREIGN KEY (measurement_id) REFERENCES measurement (measurement_id))";
         var groupTable = @"CREATE TABLE IF NOT EXISTS groups(
                 group_name TEXT,
@@ -150,15 +151,15 @@ public class DatabaseService :IDatabaseService
 
         if (m.PatientId == null || m.DateTime == null) { return; }
         var command = @"INSERT INTO measurement(patient_id, date_time, sample_rate, window_shift_milliseconds, window_size, measurement_time_fixed,
-                max_data_length, measurement_type, force, dominant_frequency_calculation_type, notch_filter, low_pass_filter, high_pass_filter)
+                max_data_length, dominant_frequency_calculation_type, notch_filter, low_pass_filter, high_pass_filter, corner_frequency)
                 VALUES (@patient_id, @date_time, @sample_rate, @window_shift_milliseconds, @window_size, @measurement_time_fixed, @max_data_length,
-                @measurement_type, @force, @dominant_frequency_calculation_type, @notch_filter, @low_pass_filter, @high_pass_filter)";
+                        @dominant_frequency_calculation_type, @notch_filter, @low_pass_filter, @high_pass_filter, @corner_frequency)";
         var parameters = new (string, object)[]
         {
             ("@patient_id", m.PatientId), ("@date_time", m.DateTime),("@sample_rate", m.SampleRate), ("@window_shift_milliseconds", m.WindowShiftMilliseconds),
             ("@window_size", m.WindowLength), ("@measurement_time_fixed",m.MeasurementFixedTime), ("@max_data_length", m.DataSize),
-            ("@measurement_type", m.MeasurementType), ("@force",m.Force), ("@dominant_frequency_calculation_type", m.DominantFrequencyCalculationType),
-            ("@notch_filter",m.NotchFilter), ("@low_pass_filter", m.LowPassFilter), ("@high_pass_filter", m.HighPassFilter)
+            ("@dominant_frequency_calculation_type", m.DominantFrequencyCalculationType), ("@notch_filter",m.NotchFilter),
+            ("@low_pass_filter", m.LowPassFilter), ("@high_pass_filter", m.HighPassFilter), ("@corner_frequency", m.CornerFrequency)
         };
         ExecuteNonQuery(command, parameters);
     }
@@ -171,13 +172,14 @@ public class DatabaseService :IDatabaseService
         var dominantValuesBytes = new byte[mData.DominantValues.Length * sizeof(double)];
         Buffer.BlockCopy(mData.DominantValues, 0, dominantValuesBytes, 0, dominantValuesBytes.Length);
 
-        var command = @"INSERT INTO measurement_data(measurement_id, musle_type, side, data, max_values, slope, start_frequency)
-                VALUES (@measurement_id, @musle_type, @side, @data, @max_values, @slope, @start_frequency)";
+        var command = @"INSERT INTO measurement_data(measurement_id, musle_type, side, data, max_values, slope, shift, measurement_type, force)
+                VALUES (@measurement_id, @musle_type, @side, @data, @max_values, @slope, @shift, @measurement_type, @force)";
         var parameters = new (string, object)[]
         {
                 ("@measurement_id", mData.MeasurementId), ("@musle_type", mData.MuscleType), ("@side", mData.Side),
                 ("@data", dataBytes), ("@max_values", dominantValuesBytes),
-                ("@slope", mData.Slope), ("@start_frequency", mData.Shift)
+                ("@slope", mData.Slope), ("@shift", mData.Shift),
+                ("@measurement_type", mData.MeasurementType), ("@force",mData.Force)
         };
         ExecuteNonQuery(command, parameters);
     }
@@ -218,8 +220,8 @@ public class DatabaseService :IDatabaseService
             _database.Open();
             var cmd = new SQLiteCommand(_database);
             cmd.CommandText = @"SELECT measurement_id, patient_id, date_time, sample_rate, window_shift_milliseconds,
-                            window_size, measurement_time_fixed, max_data_length, measurement_type, force,
-                            dominant_frequency_calculation_type, notch_filter, low_pass_filter, high_pass_filter 
+                            window_size, measurement_time_fixed, max_data_length, dominant_frequency_calculation_type,
+                            notch_filter, low_pass_filter, high_pass_filter, corner_frequency
                             FROM measurement";
             var r = cmd.ExecuteReader();
             while (r.Read())
@@ -227,7 +229,7 @@ public class DatabaseService :IDatabaseService
                 m.Add(new MeasurementGroup
                 (r.GetInt64(0), r.GetInt64(1), r.GetDateTime(2), r.GetInt32(3), r.GetInt32(4),
                 r.GetInt32(5), r.GetBoolean(6), r.GetInt32(7), r.GetInt32(8), r.GetInt32(9),
-                r.GetInt32(10), r.GetInt32(11), r.GetInt32(12), r.GetInt32(13)));
+                r.GetInt32(10), r.GetInt32(11), r.GetInt32(12)));
             }
         }
         catch (SQLiteException ex)
@@ -253,7 +255,8 @@ public class DatabaseService :IDatabaseService
         {
             _database.Open();
             using var cmd = new SQLiteCommand(_database);
-            cmd.CommandText = @"SELECT measurement_id, measurement_data_id, musle_type, side, data, max_values, slope, start_frequency
+            cmd.CommandText = @"SELECT measurement_id, measurement_data_id, musle_type, side, data, max_values, slope,
+                            shift, measurement_type, force
                             FROM measurement_data WHERE measurement_id = @measurement_id";
             cmd.Parameters.AddWithValue("@measurement_id", measurmentId);
             var r = cmd.ExecuteReader(CommandBehavior.KeyInfo);
@@ -277,7 +280,7 @@ public class DatabaseService :IDatabaseService
 
                 mdata.Add(new MeasurementData(
                     r.GetInt64(0), r.GetInt64(1), r.GetInt32(2), r.GetInt32(3), data, dominatValues,
-                    r.GetDouble(6), r.GetDouble(7)));
+                    r.GetDouble(6), r.GetDouble(7), r.GetInt32(8), r.GetInt32(9)));
             }
         }
         catch (SQLiteException ex)

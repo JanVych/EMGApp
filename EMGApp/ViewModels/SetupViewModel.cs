@@ -36,25 +36,22 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     private int measurementTimeTypeIndex;
 
     [ObservableProperty]
-    private int force;
-
-    [ObservableProperty]
     private int dominantFrequencyClaculationTypeIndex = 0;
 
     [ObservableProperty]
     private int notchFilter = 50;
 
     [ObservableProperty]
-    private int lowPassFilter = 200;
+    private int lowPassFilter = 180;
 
     [ObservableProperty]
     private int highPassFilter = 5;
 
     [ObservableProperty]
-    private bool measurementFixedTime = true;
+    private int cornerFrequency = 200;
 
     [ObservableProperty]
-    private int measurementTypeIndex = 0;
+    private bool measurementFixedTime = true;
 
     [ObservableProperty]
     private int selectedDeviceIndex = 0;
@@ -85,11 +82,6 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     private Visibility filterTextBoxkVisibility = Visibility.Visible;
 
     //
-    public Dictionary<int, string> MeasurementTypeStrings
-    {
-        get; set;
-    } = MeasurementGroup.MeasuremntTypeStrings;
-
     public Dictionary<int, string> DominantFrequencyCalculationTypeStrings
     {
         get; set;
@@ -119,8 +111,8 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
             MeasurementTimeTypeIndex = 0;
         }
         var measurementDataSize = (int)(SampleRate * MeasurementTime);
-        var measurement = new MeasurementGroup(SampleRate, BufferInMilliseconds,WindowSize , MeasurementFixedTime, measurementDataSize,
-            MeasurementTypeIndex, Force, DominantFrequencyClaculationTypeIndex, NotchFilter, LowPassFilter, HighPassFilter, SelectedDeviceIndex);
+        var measurement = new MeasurementGroup(SampleRate, BufferInMilliseconds, WindowSize , MeasurementFixedTime, measurementDataSize,
+            DominantFrequencyClaculationTypeIndex, NotchFilter, LowPassFilter, HighPassFilter,CornerFrequency, SelectedDeviceIndex);
 
         _dataService.CurrentPatientId = Patients[SelectedPatientIndex].PatientId;
         _measurementService.StopRecording();

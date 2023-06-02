@@ -37,6 +37,14 @@ public class MeasurementData
     {
         get; set;
     } = 0;
+    public int MeasurementType
+    {
+        get; set;
+    }
+    public int Force
+    {
+        get; set;
+    }
     //
     public int DataIndex
     {
@@ -46,6 +54,7 @@ public class MeasurementData
 
     public string? MuscleTypeString => MuscleTypeStrings[MuscleType];
     public string? SideString => SideStrings[Side];
+    public string? MeasurementTypeString => MeasuremntTypeStrings[MeasurementType];
     public string? SlopeString => Slope.ToString() + " Hz/s";
 
     public static readonly Dictionary<int, string> MuscleTypeStrings = new()
@@ -60,16 +69,25 @@ public class MeasurementData
         {0, "right" },
         {1, "left" }
     };
+    public static readonly Dictionary<int, string> MeasuremntTypeStrings = new()
+    {
+       {0, "Concentric contraction"},
+       {1, "Eccentric contraction"},
+       {2, "Isometric contraction"}
+    };
     //
     public bool IsActive = false;
-    public MeasurementData(int musleType, int side, int dataSize, int dominatValuesSize)
+    public MeasurementData(int musleType, int side, int dataSize, int dominatValuesSize, int measurementType, int force)
     {
         MuscleType = musleType;
         Side = side; 
         Data = new short[dataSize];
         DominantValues = new double[dominatValuesSize];
+        MeasurementType = measurementType;
+        Force = force;
     }
-    public MeasurementData(long measurementDataId, long measurementId, int musleType, int side, short[] data, double[] dominatValues, double slope, double startFrequency)
+    public MeasurementData(long measurementDataId, long measurementId, int musleType, int side, short[] data, double[] dominatValues,
+        double slope, double startFrequency, int measurementType, int force)
     {
         MeasurementDataId = measurementDataId;
         MeasurementId = measurementId;
@@ -79,5 +97,7 @@ public class MeasurementData
         DominantValues = dominatValues;
         Slope = slope;
         Shift = startFrequency;
+        MeasurementType = measurementType;
+        Force = force;
     }
 }

@@ -70,7 +70,6 @@
                     <x:String>Gender</x:String>
                     <x:String>Height</x:String>
                     <x:String>Weight</x:String>
-                    <x:String>Address</x:String>
                 </ComboBox>
                 <TextBox Width="120" Height="35" x:Name="filterTextBox"
                          Visibility="{x:Bind ViewModel.FilterTextBoxkVisibility, Mode=OneWay}"

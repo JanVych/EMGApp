@@ -85,14 +85,24 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     // new muscle select
     [ObservableProperty]
-    private int selectedMuscleIndex = 0;
+    private int selectedMuscleType = 0;
 
     [ObservableProperty]
-    private bool side = false;
+    private int side = 0;
+
+    [ObservableProperty]
+    private int selectedMeasurementType = 0;
+
+    [ObservableProperty]
+    private int force = 100;
     public Dictionary<int, string> MuscleTypeStrings
     {
         get; set;
     } = MeasurementData.MuscleTypeStrings;
+    public Dictionary<int, string> MeasurementTypeStrings
+    {
+        get; set;
+    } = MeasurementData.MeasuremntTypeStrings;
 
     // progress bar
     [ObservableProperty]
@@ -176,7 +186,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         {
             _measurementService.StopRecording();
             var m = CurrentMeasurementData[_measurementService.CMDataIndex];
-            CurrentMeasurementData[_measurementService.CMDataIndex] = new MeasurementData(m.MuscleType, m.Side, m.Data.Length, m.DominantValues.Length);
+            CurrentMeasurementData[_measurementService.CMDataIndex] = new 
+                MeasurementData(m.MuscleType, m.Side, m.Data.Length, m.DominantValues.Length, m.MeasurementType, m.Force);
             UpdateView();
         }
     }
@@ -184,7 +195,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private void AddMuscleButton()
     {
         _measurementService.StopRecording();
-        _measurementService.SelectOrAddMuscle(SelectedMuscleIndex, Side ? 0 : 1);
+        _measurementService.SelectOrAddMuscle(SelectedMuscleType, Side, SelectedMeasurementType, Force);
         CurrentMeasurementData = null;
         CurrentMeasurementData = CurrentMeasurement?.MeasurementsData;
         UpdateView();
@@ -194,7 +205,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (CurrentMeasurementData != null)
         {
             _measurementService.StopRecording();
-            _measurementService.SelectOrAddMuscle(muscletype, side);
+            _measurementService.SelectOrAddMuscle(muscletype, side, SelectedMeasurementType, Force);
             for (var i = 0; i < CurrentMeasurementData.Count; i++)
             {
                 if (CurrentMeasurementData[i].MuscleType != muscletype || CurrentMeasurementData[i].Side != side)

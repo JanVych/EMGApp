@@ -9,7 +9,6 @@
     <!--Header visibility-->
     <Page.Resources>
         <Style x:Name="DefaultGrid" TargetType="Grid">
-            <Setter Property="Margin" Value="45,20,45,20"/>
             <Setter Property="Padding" Value="0,10,0,10"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="6"/>
@@ -34,9 +33,11 @@
         </Style>
     </Page.Resources>
 
-    <Grid RowDefinitions="*,*" ColumnDefinitions="*,*">
+    <Grid RowDefinitions="*,*" ColumnDefinitions="*,*"
+          Margin="50,20,50,20">
         <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" 
               RowDefinitions="*,*,*,*,*,*,*"
+              Margin="0,0,60,0"
               Style="{StaticResource DefaultGrid}" >
             <TextBox Grid.Row="0" Header="First name *" 
                      Text="{x:Bind ViewModel.FirstName, Mode=TwoWay}"

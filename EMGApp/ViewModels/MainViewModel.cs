@@ -12,6 +12,7 @@ using EMGApp.Contracts.ViewModels;
 using EMGApp.Models;
 using Windows.System;
 using System.Collections.ObjectModel;
+using Microsoft.UI.Xaml.Data;
 
 namespace EMGApp.ViewModels;
 
@@ -147,13 +148,17 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private void DataAvailable(object? sender, DataAvaiableArgs args)
     {
-        FrequencySpectrumSeries[0].Values = args.Data;
-        _dominantValuesPoints.Add(args.DominantValue);
-
-        _dispatcherQueue.TryEnqueue(() =>
+        if (_measurementService.IsRecording)
         {
-            UpdateProgressBar();
-        });
+            FrequencySpectrumSeries[0].Values = args.Data;
+            //!! "thread save"
+            _dominantValuesPoints.Add(args.DominantValue);
+
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                UpdateProgressBar();
+            });
+        }
     }
 
     [RelayCommand]
@@ -169,7 +174,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         _measurementService.StartRecording();
     }
     [RelayCommand]
-    private void SaveButton() => _dataService.AddMeasurement(_measurementService.CurrentMeasurement);
+    private void SaveButton() 
+    {;
+        _measurementService.StopRecording();
+        UpdateView();
+        _dataService.AddMeasurement(_measurementService.CurrentMeasurement);
+    }
     [RelayCommand]
     private void StopButton()
     {

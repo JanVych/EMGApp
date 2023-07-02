@@ -163,6 +163,8 @@
                 </Button.Content>
                 <Button.Flyout>
                     <Flyout x:Name="mFlyout" Placement="Bottom">
+                        
+
                         <StackPanel Spacing="10">
                             <ComboBox Height="60" Header="Muscle type"
                                       SelectedIndex="{x:Bind ViewModel.SelectedMuscleType, Mode=TwoWay}"
@@ -180,9 +182,9 @@
                                       HorizontalAlignment="Stretch" VerticalAlignment="Center"
                                       ItemsSource="{x:Bind ViewModel.MeasurementTypeStrings}"
                                       DisplayMemberPath="Value"  SelectedValuePath="Key"/>
-                            <NumberBox Height="60" Header="Force"
-                                       HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                       Value="{x:Bind ViewModel.Force}"/>
+                            <NumberBox Height="60" Header="Force [N]" 
+                                           HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                                           Value="{x:Bind ViewModel.Force}"/>
                             <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     Height="40"
                                     Command="{x:Bind ViewModel.AddMuscleButtonCommand}"

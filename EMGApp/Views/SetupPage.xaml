@@ -298,18 +298,15 @@
                          Style="{StaticResource BodyStrongTextBlockStyle}"/>
 
                 <ComboBox Grid.Column="1" Width="120" Height="35" Margin="10,10,0,10"
-                          HorizontalAlignment="Center" VerticalAlignment="Center" 
+                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                          ItemsSource="{x:Bind ViewModel.FilterItems, Mode=OneTime}"
                           SelectedItem="{x:Bind ViewModel.SelectedFilterItem, Mode=TwoWay }">
                     <Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="SelectionChanged">
                             <Core:InvokeCommandAction Command="{x:Bind ViewModel.SelectedFilterChangedCommand}"/>
                         </Core:EventTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
-                    <x:String>Name</x:String>
-                    <x:String>Age</x:String>
-                    <x:String>Gender</x:String>
-                    <x:String>Height</x:String>
-                    <x:String>Weight</x:String>
+                    
                 </ComboBox>
                 <TextBox Grid.Column="2" x:Name="filterTextBox" Width="130" Height="35" Margin="10,10,0,10"
                                 HorizontalAlignment="Center" VerticalAlignment="Center"

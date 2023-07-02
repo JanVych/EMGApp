@@ -81,6 +81,11 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private Visibility filterTextBoxkVisibility = Visibility.Visible;
 
+    public string[] FilterItems
+    {
+        get; set; 
+    } = new string[] {"name","age","gender","weight","height" };
+
     //
     public Dictionary<int, string> DominantFrequencyCalculationTypeStrings
     {

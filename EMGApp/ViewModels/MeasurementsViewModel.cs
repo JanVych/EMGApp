@@ -10,9 +10,7 @@ using EMGApp.Models;
 using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.ViewModels;
 using EMGApp.Events;
-using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
-using EMGApp.Services;
 
 namespace EMGApp.ViewModels;
 
@@ -20,6 +18,11 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
 {
     private readonly IMeasurementService _measurementService;
     private readonly IDataService _dataService;
+
+    public Patient? ObservedPatient
+    {
+        get; set; 
+    }
     public MeasurementGroup? ObservedMeasurement
     {
         get; set;  
@@ -127,7 +130,8 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     {
         _measurementService = measurementService;
         _dataService = dataService;
-        ObservedMeasurement = _dataService.Measurements.Find(m => m.MeasurementId == _dataService.ObservedMeasurementId);
+        ObservedMeasurement = _dataService.ObservedMeasurement;
+        ObservedPatient = _dataService.ObservedPatient;
         if (ObservedMeasurement != null) 
         {
             if (ObservedMeasurement.MeasurementsData.Count == 0) 

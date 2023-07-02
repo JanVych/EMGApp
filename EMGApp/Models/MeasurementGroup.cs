@@ -9,7 +9,7 @@ public class MeasurementGroup
     {
         get; set;
     }
-    public DateTime? DateTime
+    public DateTime? MeasurementDateTime
     {
         get; set;
     }
@@ -63,7 +63,9 @@ public class MeasurementGroup
     public int MeasuremntMaxTime => DataSize / SampleRate;
     public int NumberOfSamplesOnWindowShift => WindowShiftMilliseconds * SampleRate / 1000;
     public int DominantValuesSize => DataSize / NumberOfSamplesOnWindowShift - (int)Math.Ceiling((double)WindowLength / (double)NumberOfSamplesOnWindowShift) + 1;
-    public string? DateTimeString => DateTime.ToString();
+    public string? MeasurementDateTimeString => MeasurementDateTime.ToString();
+    public string? MeasurementDateString => MeasurementDateTime?.ToString("dddd MM/dd/yyyy");
+    public string? MeasurementDayTimeString => MeasurementDateTime?.ToString("h:mm tt");
     public string? DominantFrequencyCalculationTypeString => DominantFrequencyCalculationTypeStrings[DominantFrequencyCalculationType];
     public int DeviceNumber
     {
@@ -99,7 +101,7 @@ public class MeasurementGroup
     {
         MeasurementId = measurementId;
         PatientId = patientId;
-        DateTime = dateTime;
+        MeasurementDateTime = dateTime;
         SampleRate = sampleRate;
         WindowShiftMilliseconds = bufferMilliseconds;
         WindowLength = windowSize;

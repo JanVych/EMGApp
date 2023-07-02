@@ -149,14 +149,14 @@ public class DatabaseService :IDatabaseService
     public void InsertMeasurement(MeasurementGroup m)
     {
 
-        if (m.PatientId == null || m.DateTime == null) { return; }
+        if (m.PatientId == null || m.MeasurementDateTime == null) { return; }
         var command = @"INSERT INTO measurement(patient_id, date_time, sample_rate, window_shift_milliseconds, window_size, measurement_time_fixed,
                 max_data_length, dominant_frequency_calculation_type, notch_filter, low_pass_filter, high_pass_filter, corner_frequency)
                 VALUES (@patient_id, @date_time, @sample_rate, @window_shift_milliseconds, @window_size, @measurement_time_fixed, @max_data_length,
                         @dominant_frequency_calculation_type, @notch_filter, @low_pass_filter, @high_pass_filter, @corner_frequency)";
         var parameters = new (string, object)[]
         {
-            ("@patient_id", m.PatientId), ("@date_time", m.DateTime),("@sample_rate", m.SampleRate), ("@window_shift_milliseconds", m.WindowShiftMilliseconds),
+            ("@patient_id", m.PatientId), ("@date_time", m.MeasurementDateTime),("@sample_rate", m.SampleRate), ("@window_shift_milliseconds", m.WindowShiftMilliseconds),
             ("@window_size", m.WindowLength), ("@measurement_time_fixed",m.MeasurementFixedTime), ("@max_data_length", m.DataSize),
             ("@dominant_frequency_calculation_type", m.DominantFrequencyCalculationType), ("@notch_filter",m.NotchFilter),
             ("@low_pass_filter", m.LowPassFilter), ("@high_pass_filter", m.HighPassFilter), ("@corner_frequency", m.CornerFrequency)

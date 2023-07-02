@@ -10,11 +10,124 @@
     xmlns:local1="using:EMGApp.Models"
     mc:Ignorable="d">
 
-    <Grid RowDefinitions="*, *, auto, auto" ColumnDefinitions="*, *">
-        <Grid Grid.Row="0" Grid.ColumnSpan="2" RowDefinitions="*" ColumnDefinitions="auto, *">
-            <ListView ItemsSource="{x:Bind ViewModel.ObservedMeasurement.MeasurementsData}" SelectedIndex="{x:Bind ViewModel.MeasurementDataIndex, Mode=TwoWay}"
-                  BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" MinWidth="300"
-                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0" BorderThickness="0">
+    <Page.Resources>
+        <Style x:Key="DataGridHeader" TargetType="Grid">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Margin" Value="5,5,10,5"/>
+            <Setter Property="Background" Value="{ThemeResource ControlAltFillColorSecondaryBrush}"/>
+        </Style>
+        <Style x:Key="DataGridHeaderCell" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5,0,5,0"/>
+        </Style>
+        <Style x:Key="DataGridDataCell" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5,0,5,0"/>
+        </Style>
+
+        <Style x:Key="InfoGrid" TargetType="Grid">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="BorderBrush" Value="{StaticResource CardStrokeColorDefaultBrush}"/>
+            <Setter Property="Background" Value="{StaticResource ControlFillColorDefaultBrush}"/>
+            <Setter Property="Height" Value="60"/>
+        </Style>
+        <Style x:Key="InfoStackPanel" TargetType="StackPanel">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="3,0,3,0"/>
+        </Style>
+        <Style x:Key="InfoTitleTextBlock" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+        <Style x:Key="InfoContentTextBlock" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+
+    </Page.Resources>
+
+    <Grid RowDefinitions="auto, *, *, auto, auto" ColumnDefinitions="*, *">
+
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" ColumnDefinitions="auto, auto, *">
+            <Grid Grid.Column="0" Padding="10,0,10,0"
+                  Style="{StaticResource InfoGrid}">
+                <StackPanel Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="{x:Bind ViewModel.ObservedPatient.FullName}"
+                           Style="{StaticResource InfoTitleTextBlock}"/>
+                    <TextBlock Text="{x:Bind ViewModel.ObservedPatient.IdentificationNumber}"
+                           Style="{StaticResource InfoTitleTextBlock}"/>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Column="1" 
+                  Padding="10,0,10,0" Margin="10,0,0,0"
+                  Style="{StaticResource InfoGrid}">
+                <StackPanel Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="{x:Bind ViewModel.ObservedMeasurement.MeasurementDateString}"
+                           Style="{StaticResource InfoTitleTextBlock}"/>
+                    <TextBlock Text="{x:Bind ViewModel.ObservedMeasurement.MeasurementDayTimeString}"
+                           Style="{StaticResource InfoTitleTextBlock}"/>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Column="2" ColumnDefinitions="*,*,*,*,*"
+                  Margin="10,0,0,0"
+                  Style="{StaticResource InfoGrid}">
+                <StackPanel Grid.Column="0" Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="Sample rate" 
+                               Style="{StaticResource InfoTitleTextBlock}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind ViewModel.ObservedMeasurement.SampleRate}"
+                               Style="{StaticResource InfoContentTextBlock}"/>
+                        <TextBlock Text=" Hz" Style="{StaticResource InfoContentTextBlock}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="Window shift time" 
+                               Style="{StaticResource InfoTitleTextBlock}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind ViewModel.ObservedMeasurement.WindowShiftMilliseconds}"
+                               Style="{StaticResource InfoContentTextBlock}"/>
+                        <TextBlock Text=" ms" Style="{StaticResource InfoContentTextBlock}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="Measurement time" 
+                               Style="{StaticResource InfoTitleTextBlock}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind ViewModel.ObservedMeasurement.MeasuremntMaxTime}"
+                               Style="{StaticResource InfoContentTextBlock}"/>
+                        <TextBlock Text=" s" Style="{StaticResource InfoContentTextBlock}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="Window lenghth" 
+                               Style="{StaticResource InfoTitleTextBlock}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind ViewModel.ObservedMeasurement.WindowLength}"
+                               Style="{StaticResource InfoContentTextBlock}"/>
+                        <TextBlock Text=" samples" Style="{StaticResource InfoContentTextBlock}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Style="{StaticResource InfoStackPanel}">
+                    <TextBlock Text="Calculation"
+                               Style="{StaticResource InfoTitleTextBlock}"/>
+                    <TextBlock Text="{x:Bind ViewModel.ObservedMeasurement.DominantFrequencyCalculationTypeString}"
+                               Style="{StaticResource InfoContentTextBlock}"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" RowDefinitions="*" ColumnDefinitions="auto, *">
+            <ListView Grid.Row="0" Grid.Column="0"
+                      ItemsSource="{x:Bind ViewModel.ObservedMeasurement.MeasurementsData}" 
+                      SelectedIndex="{x:Bind ViewModel.MeasurementDataIndex, Mode=TwoWay}"
+                      BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" MinWidth="450 "
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0">
 
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="SelectionChanged">
@@ -23,19 +136,37 @@
                 </Interactivity:Interaction.Behaviors>
 
                 <ListView.Header>
-                    <Grid ColumnDefinitions="*,*,*" Margin="5,5,5,5">
-                        <TextBlock Text="Muscle" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                        <TextBlock Text="Side" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                        <TextBlock Text="Slope" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    <Grid Style="{StaticResource DataGridHeader}" Padding="11,0,3,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Muscle" Grid.Column="0" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Text="Side" Grid.Column="1" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Text="Measurement" Grid.Column="2" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Text="Force" Grid.Column="3" Style="{StaticResource DataGridHeaderCell}"/>
+                        <TextBlock Text="Slope" Grid.Column="4" Style="{StaticResource DataGridHeaderCell}"/>
                     </Grid>
                 </ListView.Header>
 
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local1:MeasurementData">
-                        <Grid ColumnDefinitions="*,*,*">
-                            <TextBlock Grid.Column="0" Text="{x:Bind Path=MuscleTypeString}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="1" Text="{x:Bind Path=SideString}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="2" Text="{x:Bind Path=SlopeString}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind Path=MuscleTypeString}" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind Path=SideString}" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="2" Text="{x:Bind Path=MeasurementTypeStringShort}" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="3" Text="{x:Bind Path=Force}" Style="{StaticResource DataGridDataCell}"/>
+                            <TextBlock Grid.Column="4" Text="{x:Bind Path=SlopeString}" Style="{StaticResource DataGridDataCell}"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -46,14 +177,14 @@
                             Series="{x:Bind ViewModel.DominantValuesSeries}" />
         </Grid>
         
-        <lvc:CartesianChart Grid.Row="1" Grid.Column="1"
+        <lvc:CartesianChart Grid.Row="2" Grid.Column="1"
                             XAxes="{x:Bind ViewModel.FrequencySpectrumXAxes}" YAxes="{x:Bind ViewModel.FrequencySpectrumYAxes}"
                             Series="{x:Bind ViewModel.FrequencySpectrumSeries}" Margin="0,0,0,0"/>
-        <lvc:CartesianChart Grid.Row="1" Grid.Column="0"
+        <lvc:CartesianChart Grid.Row="2" Grid.Column="0"
                             XAxes="{x:Bind ViewModel.InputSignalXAxes}" YAxes="{x:Bind ViewModel.InputSignalYAxes}"
                             Series="{x:Bind ViewModel.InputSignalSeries}" Margin="0,0,0,0"/>
 
-        <Slider Grid.Row="2" Grid.ColumnSpan="2" 
+        <Slider Grid.Row="3" Grid.ColumnSpan="2" 
                 Value="{x:Bind ViewModel.SliderValue, Mode=TwoWay}" Maximum="{x:Bind ViewModel.SliderMaximum, Mode=TwoWay}">
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="ValueChanged">
@@ -62,7 +193,7 @@
             </Interactivity:Interaction.Behaviors>
         </Slider>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
             <AppBarButton Icon="Play" Label="Start" Grid.Column="1" HorizontalAlignment="Center" 
                 Command="{x:Bind ViewModel.StartButtonCommand}" VerticalAlignment="Center" Margin="0,0,0,0"/>
             <AppBarButton Icon="Stop" Label="Stop"  Grid.Column="1" HorizontalAlignment="Center" 

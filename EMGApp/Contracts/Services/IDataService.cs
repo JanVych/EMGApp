@@ -20,6 +20,10 @@ public interface IDataService
     {
         get; set;
     }
+    public long? ObservedPatientId
+    {
+        get; set;
+    }
     public EventHandler<ObservedMeasuremntRunStepArgs>? ObservedMeasuremntRunEvent
     {
         get; set;
@@ -37,6 +41,10 @@ public interface IDataService
         get;
     }
     public MeasurementGroup? ObservedMeasurement
+    {
+        get;
+    }
+    public Patient? ObservedPatient
     {
         get;
     }

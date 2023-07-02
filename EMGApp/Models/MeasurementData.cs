@@ -55,7 +55,8 @@ public class MeasurementData
     public string? MuscleTypeString => MuscleTypeStrings[MuscleType];
     public string? SideString => SideStrings[Side];
     public string? MeasurementTypeString => MeasuremntTypeStrings[MeasurementType];
-    public string? SlopeString => Slope.ToString() + " Hz/s";
+    public string? MeasurementTypeStringShort => MeasuremntTypeStrings[MeasurementType].Substring(0, MeasuremntTypeStrings[MeasurementType].IndexOf(' '));
+    public string? SlopeString => Math.Round(Slope, 4).ToString() + " Hz/s";
 
     public static readonly Dictionary<int, string> MuscleTypeStrings = new()
     {
@@ -71,10 +72,11 @@ public class MeasurementData
     };
     public static readonly Dictionary<int, string> MeasuremntTypeStrings = new()
     {
-       {0, "Concentric contraction"},
-       {1, "Eccentric contraction"},
-       {2, "Isometric contraction"}
+       {0, "concentric contraction"},
+       {1, "eccentric contraction"},
+       {2, "isometric contraction"}
     };
+
     //
     public bool IsActive = false;
     public MeasurementData(int musleType, int side, int dataSize, int dominatValuesSize, int measurementType, int force)

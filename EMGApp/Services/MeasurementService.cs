@@ -5,6 +5,7 @@ using System.Diagnostics;
 using EMGApp.Events;
 using LiveChartsCore.Defaults;
 using Microsoft.UI.Xaml;
+using System.Collections.ObjectModel;
 
 namespace EMGApp.Services;
 public class MeasurementService : IMeasurementService
@@ -57,6 +58,7 @@ public class MeasurementService : IMeasurementService
         {
             Debug.WriteLine($"waveIn index:{rawData.DataIndex}");
             Debug.WriteLine("Not enough data for window");
+            DataAvailable?.Invoke(this, new DataAvaiableArgs(rawData.DataIndex, null, null));
             return;
         }
         Debug.WriteLine($"waveIn index:{rawData.DataIndex}");
@@ -71,7 +73,7 @@ public class MeasurementService : IMeasurementService
             pData[i] = new ObservablePoint(i * fconst, data[i]);
         }
         
-        DataAvailable?.Invoke(this, new DataAvaiableArgs(pData, dominantValue));
+        DataAvailable?.Invoke(this, new DataAvaiableArgs(rawData.DataIndex, pData, dominantValue));
     }
 
     public double[] CalculateFrequencySpecturm(MeasurementGroup measurement, int mIndex)
@@ -105,11 +107,15 @@ public class MeasurementService : IMeasurementService
 
         return data;
     }
-    public ObservablePoint CalculateDominantValue(MeasurementGroup measurement, int mIndex, double[] data)
+    public ObservablePoint? CalculateDominantValue(MeasurementGroup measurement, int mIndex, double[] data)
     {
         var mData = measurement.MeasurementsData[mIndex];
         var dominatValuesIndex = mData.DominatValuesIndex(measurement.NumberOfSamplesOnWindowShift, measurement.WindowLength);
         double dominantValue;
+        if (dominatValuesIndex < 0)
+        {
+            return null;
+        }
         if (measurement.DominantFrequencyCalculationType == 0)
         {
             dominantValue = CalculateMedianValue(measurement, data);
@@ -118,13 +124,26 @@ public class MeasurementService : IMeasurementService
         {
             dominantValue = CalculateMeanValue(measurement, data);
         }
-       
-        if (dominatValuesIndex >= 0)
+
+        mData.DominantValues[dominatValuesIndex] = dominantValue;
+        Debug.WriteLine("Dominat value added on index:" + dominatValuesIndex.ToString());
+        Debug.WriteLine("Dominat value added value:" + dominantValue.ToString());
+
+        //moving avrage
+        var numberOfAvragedSamples = (int)(measurement.MovingAvrageWindowTimeSeconds / measurement.WindowShiftSeconds);
+        double sum = 0;
+        if (dominatValuesIndex >= numberOfAvragedSamples - 1)
         {
-            mData.DominantValues[dominatValuesIndex] = dominantValue;
-            Debug.WriteLine("Dominat value added on index:" + dominatValuesIndex.ToString());
+            for (var i = dominatValuesIndex - numberOfAvragedSamples + 1; i <= dominatValuesIndex; i++)
+            {
+                sum += mData.DominantValues[i];
+            }
+            Debug.WriteLine("Avraged dominat value added on index:" + dominatValuesIndex.ToString());
+            Debug.WriteLine("Avraged dominat value added value:" + (sum / numberOfAvragedSamples).ToString());
+            return new ObservablePoint((dominatValuesIndex + 1) * measurement.WindowShiftSeconds, sum / numberOfAvragedSamples);
         }
-        return new ObservablePoint((dominatValuesIndex + 1) * measurement.WindowShiftSeconds, dominantValue);
+        return null;
+    //return new ObservablePoint((dominatValuesIndex + 1) * measurement.WindowShiftSeconds, dominantValue);
     }
     public void CalculateSlopeAndShift(MeasurementGroup measurement, int mIndex)
     {
@@ -152,10 +171,6 @@ public class MeasurementService : IMeasurementService
         mData.Slope = slope;
     }
 
-    private double CalculateMovingAvrage(double[] data)
-    {
-        return data.Average();
-    }
     private double CalculateMeanValue(MeasurementGroup measurement, double[] data)
     {
         double sum = 0;
@@ -269,8 +284,12 @@ public class MeasurementService : IMeasurementService
             CalculateSlopeAndShift(CurrentMeasurement, CMDataIndex);
         }
     }
+    //public ObservableCollection<ObservablePoint> GetAvragedDominantValues(MeasurementGroup measurement)
+    //{
+    //    ObservableCollection<ObservablePoint> dominantValues = new();
 
-    
+    //}
+
     public string[] GetListOfDevices()
     {
         var waveInDevices = WaveIn.DeviceCount;

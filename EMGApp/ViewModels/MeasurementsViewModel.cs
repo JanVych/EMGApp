@@ -221,7 +221,6 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     }
     private void InputSignalChartUpdate()
     {
-        Debug.WriteLine("InputSig");
         if (ObservedMeasurement != null && MeasurementDataIndex >= 0)
         {
             var size = ObservedMeasurement.NumberOfSamplesOnWindowShift;

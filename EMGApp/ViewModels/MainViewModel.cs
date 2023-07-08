@@ -12,7 +12,6 @@ using EMGApp.Contracts.ViewModels;
 using EMGApp.Models;
 using Windows.System;
 using System.Collections.ObjectModel;
-using Microsoft.UI.Xaml.Data;
 
 namespace EMGApp.ViewModels;
 
@@ -24,7 +23,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private readonly INavigationService _navigationService;
 
     private ObservableCollection<ObservablePoint> _dominantValuesPoints = new();
-    private ObservableCollection<ObservablePoint> _regressionLinePoints = new();
+    private readonly ObservableCollection<ObservablePoint> _regressionLinePoints = new();
 
     public ISeries[] FrequencySpectrumSeries
     {
@@ -96,6 +95,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private int force = 100;
+
     public Dictionary<int, string> MuscleTypeStrings
     {
         get; set;
@@ -150,13 +150,18 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         if (_measurementService.IsRecording)
         {
-            FrequencySpectrumSeries[0].Values = args.Data;
-            //!! "thread save"
-            _dominantValuesPoints.Add(args.DominantValue);
-
+            if (args.Data != null)
+            {
+                FrequencySpectrumSeries[0].Values = args.Data;
+                if (args.DominantValue != null)
+                {
+                    //!! "thread save"
+                    _dominantValuesPoints.Add(args.DominantValue);
+                }
+            }
             _dispatcherQueue.TryEnqueue(() =>
             {
-                UpdateProgressBar();
+                UpdateProgressBar(args.DataIndex);
             });
         }
     }
@@ -232,14 +237,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             UpdateView();
         }
     }
-    private void UpdateProgressBar()
+    private void UpdateProgressBar(int dataIndex)
     {
         if (CurrentMeasurementData != null && CurrentMeasurementData.Count > 0) 
         {
-            ProgressBarValue = CurrentMeasurementData[_measurementService.CMDataIndex].DataIndex;
+            ProgressBarValue = dataIndex;
             ProgressTimeValue = Math.Round((double)ProgressBarValue / CurrentMeasurement.SampleRate, 2);
             if (ProgressBarValue >= CurrentMeasurement.DataSize)
             {
+                _measurementService.StopRecording();
                 UpdateSlopeAndStartFrequency();
                 UpdateCharts();
             }
@@ -302,8 +308,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
     private void UpdateView()
     {
-        UpdateProgressBar();
-        UpdateSlopeAndStartFrequency();
-        UpdateCharts();
+        if (CurrentMeasurementData != null)
+        {
+            UpdateProgressBar(CurrentMeasurementData[_measurementService.CMDataIndex].DataIndex);
+            UpdateSlopeAndStartFrequency();
+            UpdateCharts();
+        }   
     }
 }

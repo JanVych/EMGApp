@@ -155,7 +155,7 @@
                     </StackPanel>
                     <StackPanel x:Name="wsTime2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="wsTime" RelativePanel.AlignVerticalCenterWithPanel="True">
-                        <NumberBox Value="{x:Bind ViewModel.BufferInMilliseconds, Mode=TwoWay}" MaxHeight="35" Minimum="100" Maximum="10000"/>
+                        <NumberBox Value="{x:Bind ViewModel.WindowShiftMilliseconds, Mode=TwoWay}" MaxHeight="35" Minimum="100" Maximum="10000"/>
                         <TextBlock Text="ms" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </StackPanel>
                 </RelativePanel>
@@ -191,7 +191,10 @@
                     </StackPanel>
                     <StackPanel x:Name="mTime2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="mTime" RelativePanel.AlignVerticalCenterWithPanel="True">
-                        <NumberBox Value="{x:Bind ViewModel.MeasurementTime, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="300"/>
+                        <NumberBox MaxHeight="35"
+                                   Value="{x:Bind ViewModel.MeasurementTime, Mode=TwoWay}"  
+                                   Minimum="{x:Bind ViewModel.MinimumMeasurementTime, Mode=TwoWay}" 
+                                   Maximum="{x:Bind ViewModel.MaximumMeasurementTime, Mode=TwoWay}"/>
                         <ComboBox MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"
                                   SelectedIndex="{x:Bind ViewModel.MeasurementTimeTypeIndex, Mode=TwoWay}">
                             <x:String>sec</x:String>

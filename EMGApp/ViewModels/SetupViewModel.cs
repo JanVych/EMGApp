@@ -1,7 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Reflection.Metadata;
-using System.Xml;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.Services;
@@ -18,7 +15,7 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     private readonly INavigationService _navigationService;
 
     [ObservableProperty]
-    private int bufferInMilliseconds = 100;
+    private int windowShiftMilliseconds = 100;
 
     [ObservableProperty]
     private int sampleRate = 1000;
@@ -31,6 +28,12 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private double measurementTime = 60;
+
+    [ObservableProperty]
+    private double minimumMeasurementTime = 10;
+
+    [ObservableProperty]
+    private double maximumMeasurementTime = 300;
 
     [ObservableProperty]
     private int measurementTimeTypeIndex;
@@ -116,7 +119,7 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
             MeasurementTimeTypeIndex = 0;
         }
         var measurementDataSize = (int)(SampleRate * MeasurementTime);
-        var measurement = new MeasurementGroup(SampleRate, BufferInMilliseconds, WindowSize , MeasurementFixedTime, measurementDataSize,
+        var measurement = new MeasurementGroup(SampleRate, WindowShiftMilliseconds, WindowSize , MeasurementFixedTime, measurementDataSize,
             DominantFrequencyClaculationTypeIndex, NotchFilter, LowPassFilter, HighPassFilter,CornerFrequency, SelectedDeviceIndex);
 
         _dataService.CurrentPatientId = Patients[SelectedPatientIndex].PatientId;
@@ -132,11 +135,17 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
         Debug.WriteLine(MeasurementTimeTypeIndex);
         if (MeasurementTimeTypeIndex == 0)
         {
-            MeasurementTime *= 60;
+            var time = MeasurementTime;
+            MinimumMeasurementTime = 10;
+            MaximumMeasurementTime = 300;
+            MeasurementTime = time * 60;
         }
         else 
         {
-            MeasurementTime /= 60;
+            var time = MeasurementTime;
+            MinimumMeasurementTime = 0.16;
+            MaximumMeasurementTime = 5;
+            MeasurementTime = time / 60;
         }
         return;
     }

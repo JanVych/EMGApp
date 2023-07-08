@@ -209,7 +209,7 @@
 
         <Grid Grid.Row="3" ColumnDefinitions="auto,*,auto"
               HorizontalAlignment="Stretch" Margin="40,15,40,15">
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Width="30">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Width="40">
                 <TextBlock Text="{x:Bind ViewModel.ProgressTimeValue, Mode=OneWay}"/>
                 <TextBlock Text=" s"/>
             </StackPanel>
@@ -217,7 +217,7 @@
                          Margin="15,0,15,0"
                          Maximum="{x:Bind ViewModel.CurrentMeasurement.DataSize}" 
                          Value="{x:Bind ViewModel.ProgressBarValue, Mode=OneWay}"/>
-            <StackPanel Grid.Column="2" Orientation="Horizontal" Width="30">
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Width="40">
                 <TextBlock Text="{x:Bind ViewModel.CurrentMeasurement.MeasuremntMaxTime}"/>
                 <TextBlock Text=" s"/>
             </StackPanel>

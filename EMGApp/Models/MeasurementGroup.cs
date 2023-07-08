@@ -55,8 +55,12 @@ public class MeasurementGroup
     } = 200;
 
     //not in DB
-    // Moving Avrage Window Time Seconds !!
-    public double MAWindowTimeSeconds = 2;
+    //
+    public double MovingAvrageWindowTimeSeconds
+    {
+        get;
+    } = 2;
+    //
     public double SpectralResolution => (double)SampleRate / (double)WindowLength;
     public double WindowShiftSeconds => (double)WindowShiftMilliseconds / 1000;
     public int FrequencyDataSize => (int)Math.Round(SpectralResolution * CornerFrequency);
@@ -81,11 +85,11 @@ public class MeasurementGroup
        {0, "Median"},
        {1, "Mean value"}
     };
-    public MeasurementGroup(int sampleRate, int bufferMilliseconds, int windowSize, bool mTFix , int dataSize, int dFCType,
+    public MeasurementGroup(int sampleRate, int windowShiftMilliseconds, int windowSize, bool mTFix , int dataSize, int dFCType,
         int nFilter, int lPFilter, int hPFilter, int cornerFrequency, int deviceNumber)
     {
         SampleRate = sampleRate;
-        WindowShiftMilliseconds = bufferMilliseconds;
+        WindowShiftMilliseconds = windowShiftMilliseconds;
         WindowLength = windowSize;
         DataSize = dataSize;
         MeasurementFixedTime = mTFix;

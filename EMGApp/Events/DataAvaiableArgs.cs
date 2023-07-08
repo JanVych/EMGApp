@@ -8,16 +8,21 @@ using LiveChartsCore.Defaults;
 namespace EMGApp.Events;
 public class DataAvaiableArgs
 {
-    public ObservablePoint[] Data 
+    public ObservablePoint[]? Data 
     { 
-        get; set; 
+        get;
     }
-    public ObservablePoint DominantValue
+    public ObservablePoint? DominantValue
     {
-        get; set; 
+        get;
     }
-    public DataAvaiableArgs(ObservablePoint[] data, ObservablePoint dominantValue)
+    public int DataIndex
     {
+    get;
+    }
+    public DataAvaiableArgs(int dataIndex, ObservablePoint[]? data, ObservablePoint? dominantValue)
+    {
+        DataIndex = dataIndex;
         Data = data;
         DominantValue = dominantValue;
     }

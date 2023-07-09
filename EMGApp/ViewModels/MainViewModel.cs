@@ -12,13 +12,14 @@ using EMGApp.Contracts.ViewModels;
 using EMGApp.Models;
 using Windows.System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Metrics;
 
 namespace EMGApp.ViewModels;
 
 public partial class MainViewModel : ObservableRecipient, INavigationAware
 {
     private readonly DispatcherQueue _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-    private readonly IMeasurementService _measurementService;
+    internal readonly IMeasurementService _measurementService;
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
 
@@ -119,6 +120,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         get; set;
     }
+    public int CMDataIndex
+    {
+        get; set;
+    }
     public Patient? CurrentPatient
     {
         get; set;
@@ -133,12 +138,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         CurrentPatient = _dataService.CurrentPatient;
         CurrentMeasurement = _measurementService.CurrentMeasurement;
         CurrentMeasurementData = CurrentMeasurement.MeasurementsData;
+        CMDataIndex = _measurementService.CMDataIndex;
+
         DeviceName = _measurementService.GetListOfDevices()[CurrentMeasurement.DeviceNumber];
 
         DominantValuesSeries[0].Values = _dominantValuesPoints;
         DominantValuesSeries[1].Values = _regressionLinePoints;
 
-        if (CurrentMeasurementData.Count != 0)
+        if (CMDataIndex >= 0)
         {
            UpdateView();
         }
@@ -197,11 +204,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void ResetButton()
     {
-        if (CurrentMeasurementData != null && _measurementService.CMDataIndex >= 0)
+        if (CurrentMeasurementData != null && CMDataIndex >= 0)
         {
             _measurementService.StopRecording();
-            var m = CurrentMeasurementData[_measurementService.CMDataIndex];
-            CurrentMeasurementData[_measurementService.CMDataIndex] = new 
+            var m = CurrentMeasurementData[CMDataIndex];
+            CurrentMeasurementData[CMDataIndex] = new 
                 MeasurementData(m.MuscleType, m.Side, m.Data.Length, m.DominantValues.Length, m.MeasurementType, m.Force);
             UpdateView();
         }
@@ -213,13 +220,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         _measurementService.SelectOrAddMuscle(SelectedMuscleType, Side, SelectedMeasurementType, Force);
         CurrentMeasurementData = null;
         CurrentMeasurementData = CurrentMeasurement?.MeasurementsData;
+        CMDataIndex = _measurementService.CMDataIndex;
         UpdateView();
     }
+
     internal void MuscleButton(int muscletype, int side)
     {
         if (CurrentMeasurementData != null)
         {
-            _measurementService.StopRecording();
             _measurementService.SelectOrAddMuscle(muscletype, side, SelectedMeasurementType, Force);
             for (var i = 0; i < CurrentMeasurementData.Count; i++)
             {
@@ -234,6 +242,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             }
             CurrentMeasurementData = null;
             CurrentMeasurementData = CurrentMeasurement?.MeasurementsData;
+            CMDataIndex = _measurementService.CMDataIndex;
             UpdateView();
         }
     }
@@ -254,8 +263,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private void UpdateCharts()
     {
         //bad
-        FrequencySpectrumSeries[0].Values = new ObservablePoint[]{new ObservablePoint(0,0)};  
-        _dominantValuesPoints.Clear();
+        FrequencySpectrumSeries[0].Values = new ObservablePoint[]{new ObservablePoint(0,0)};
+
+        var size = 0;
+        if (CurrentMeasurementData != null && CurrentMeasurementData.Count > 0)
+        {
+            var data = CurrentMeasurementData[CMDataIndex];
+            size = data.DominatValuesIndex(CurrentMeasurement.NumberOfSamplesOnWindowShift, CurrentMeasurement.WindowLength) + 1;
+        }
+        _dominantValuesPoints = _measurementService.GetAvragedDominantValues(CurrentMeasurement, CMDataIndex, size);
         _regressionLinePoints.Clear();
         DominantValuesSeries[0] = new LineSeries<ObservablePoint>
         {
@@ -279,16 +295,16 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         if (CurrentMeasurementData != null && CurrentMeasurementData.Count > 0) 
         {
-            var data = CurrentMeasurementData[_measurementService.CMDataIndex];
-            var dominantValuesIndex = data.DominatValuesIndex(CurrentMeasurement.NumberOfSamplesOnWindowShift, CurrentMeasurement.WindowLength);
-            var windowShiftSeconds = CurrentMeasurement.WindowShiftSeconds;
-            for (var i = 0; i <= dominantValuesIndex - 1; i++)
-            {
-                _dominantValuesPoints.Add(new ObservablePoint((i + 1) * windowShiftSeconds, data.DominantValues[i]));
-            }
+            var data = CurrentMeasurementData[CMDataIndex];
+            //var dominantValuesIndex = data.DominatValuesIndex(CurrentMeasurement.NumberOfSamplesOnWindowShift, CurrentMeasurement.WindowLength);
+            //var windowShiftSeconds = CurrentMeasurement.WindowShiftSeconds;
+            //for (var i = 0; i <= dominantValuesIndex - 1; i++)
+            //{
+            //    _dominantValuesPoints.Add(new ObservablePoint((i + 1) * windowShiftSeconds, data.DominantValues[i]));
+            //}
             if (data.Slope != 0)
             {
-                var index = _dominantValuesPoints.Count - 1;
+                var index = _dominantValuesPoints.Count + (int)(CurrentMeasurement.MovingAvrageWindowTimeSeconds / CurrentMeasurement.WindowShiftSeconds) - 1;
                 var startP = new ObservablePoint(0, data.Shift);
                 var last = data.Shift + data.Slope * index * CurrentMeasurement.WindowShiftMilliseconds / 1000.0;
                 var slopeP = new ObservablePoint(index * CurrentMeasurement.WindowShiftSeconds, last);
@@ -301,7 +317,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         if (CurrentMeasurementData != null)
         {
-            var data = CurrentMeasurementData[_measurementService.CMDataIndex];
+            var data = CurrentMeasurementData[CMDataIndex];
             Slope = Math.Round(data.Slope, 4);
             StartFrequency = Math.Round(data.Shift, 4);  
         }
@@ -310,7 +326,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         if (CurrentMeasurementData != null)
         {
-            UpdateProgressBar(CurrentMeasurementData[_measurementService.CMDataIndex].DataIndex);
+            UpdateProgressBar(CurrentMeasurementData[CMDataIndex].DataIndex);
             UpdateSlopeAndStartFrequency();
             UpdateCharts();
         }   

@@ -24,12 +24,19 @@ public sealed partial class MainPage : Page
     // :(
     private void ToggleButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        var t1 = ((TextBlock)((Grid)((ToggleButton)sender).Parent).FindName("muscleTypeString")).Text;
-        var t2 = ((TextBlock)((Grid)((ToggleButton)sender).Parent).FindName("sideString")).Text;
-        var n1 = MeasurementData.MuscleTypeStrings.FirstOrDefault(x => x.Value == t1).Key;
-        var n2 = MeasurementData.SideStrings.FirstOrDefault(x => x.Value == t2).Key;
-        ViewModel.MuscleButton(n1, n2);
-        itemsRepeater.UpdateLayout();
+        if (ViewModel._measurementService.IsRecording == false)
+        {
+            var t1 = ((TextBlock)((Grid)((ToggleButton)sender).Parent).FindName("muscleTypeString")).Text;
+            var t2 = ((TextBlock)((Grid)((ToggleButton)sender).Parent).FindName("sideString")).Text;
+            var n1 = MeasurementData.MuscleTypeStrings.FirstOrDefault(x => x.Value == t1).Key;
+            var n2 = MeasurementData.SideStrings.FirstOrDefault(x => x.Value == t2).Key;
+            ViewModel.MuscleButton(n1, n2);
+            itemsRepeater.UpdateLayout();
+        }
+        else
+        {
+            ((ToggleButton)sender).IsChecked = false;
+        }
     }
     // :{
     private void Button_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

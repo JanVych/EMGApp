@@ -10,7 +10,6 @@ using EMGApp.Models;
 using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.ViewModels;
 using EMGApp.Events;
-using System.Diagnostics;
 
 namespace EMGApp.ViewModels;
 
@@ -27,8 +26,9 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     {
         get; set;  
     }
+    // Observed measurement data index
     [ObservableProperty]
-    public int measurementDataIndex;
+    public int oMDataIndex;
 
     [ObservableProperty]
     private double slope;
@@ -77,7 +77,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
         get; set;
     } =
     {
-         new LineSeries<double>
+         new LineSeries<ObservablePoint>
         {
             Values = null,
             Stroke = new SolidColorPaint(SKColors.DeepSkyBlue) { StrokeThickness = 2 },
@@ -140,7 +140,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
             }
             if (ObservedMeasurement.MeasurementsData.Count > _dataService.ObservedMeasurementDataIndex)
             {
-                MeasurementDataIndex = _dataService.ObservedMeasurementDataIndex;
+                OMDataIndex = _dataService.ObservedMeasurementDataIndex;
             }
             SliderReset();
             DominantValuesChartUpdate();
@@ -166,7 +166,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     {
         if (ObservedMeasurement != null)
         {
-            ObservedMeasurement.MeasurementsData[MeasurementDataIndex].DataIndex = SliderValue;
+            ObservedMeasurement.MeasurementsData[OMDataIndex].DataIndex = SliderValue;
             InputSignalChartUpdate();
             FrequencySpectrumChartUpdate();
         }
@@ -174,7 +174,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     [RelayCommand]
     private void MeasuremntDataSelectionChanged()
     {
-        _dataService.ObservedMeasurementDataIndex = MeasurementDataIndex;
+        _dataService.ObservedMeasurementDataIndex = OMDataIndex;
         PauseButton();
         SliderReset();
         DominantValuesChartUpdate();
@@ -183,26 +183,27 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     {
         if (ObservedMeasurement != null)
         {
-            SliderValue = ObservedMeasurement.MeasurementsData[MeasurementDataIndex].DataIndex;
+            SliderValue = ObservedMeasurement.MeasurementsData[OMDataIndex].DataIndex;
             SliderMaximum = ObservedMeasurement.DataSize;
         }
     }
     private void DominantValuesChartUpdate()
     {
-        if (ObservedMeasurement != null && MeasurementDataIndex >= 0) 
+        if (ObservedMeasurement != null && OMDataIndex >= 0) 
         {
-            DominantValuesSeries[0].Values = ObservedMeasurement.MeasurementsData[MeasurementDataIndex].DominantValues;
-            Slope = ObservedMeasurement.MeasurementsData[MeasurementDataIndex].Slope;
-            StartFrequency = ObservedMeasurement.MeasurementsData[MeasurementDataIndex].Shift;
+            DominantValuesSeries[0].Values = _measurementService.GetAvragedDominantValues(ObservedMeasurement, OMDataIndex, ObservedMeasurement.DominantValuesSize); 
+            /*ObservedMeasurement.MeasurementsData[MeasurementDataIndex].DominantValues;*/
+            Slope = ObservedMeasurement.MeasurementsData[OMDataIndex].Slope;
+            StartFrequency = ObservedMeasurement.MeasurementsData[OMDataIndex].Shift;
         }
     }
     private void FrequencySpectrumChartUpdate()
     {
-        if (ObservedMeasurement != null && MeasurementDataIndex >= 0)
+        if (ObservedMeasurement != null && OMDataIndex >= 0)
         {
             if (SliderValue >= ObservedMeasurement.WindowLength)
             {
-                var frequencySpectrumData = _measurementService.CalculateFrequencySpecturm(ObservedMeasurement, MeasurementDataIndex);
+                var frequencySpectrumData = _measurementService.CalculateFrequencySpecturm(ObservedMeasurement, OMDataIndex);
 
                 var frequencySpectrumPoints = new ObservablePoint[ObservedMeasurement.FrequencyDataSize];
                 var fconst = (double)ObservedMeasurement.SampleRate / (double)ObservedMeasurement.WindowLength;
@@ -221,13 +222,13 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     }
     private void InputSignalChartUpdate()
     {
-        if (ObservedMeasurement != null && MeasurementDataIndex >= 0)
+        if (ObservedMeasurement != null && OMDataIndex >= 0)
         {
             var size = ObservedMeasurement.NumberOfSamplesOnWindowShift;
             if (SliderValue >= size)
             {
                 var inputSignalData = new short[size];
-                Buffer.BlockCopy(ObservedMeasurement.MeasurementsData[MeasurementDataIndex].Data, SliderValue - size, inputSignalData, 0, size * sizeof(short));
+                Buffer.BlockCopy(ObservedMeasurement.MeasurementsData[OMDataIndex].Data, SliderValue - size, inputSignalData, 0, size * sizeof(short));
                 InputSignalSeries[0].Values = inputSignalData;
             }
             else
@@ -242,7 +243,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
         if (ObservedMeasurement != null && !_dataService.ObservedMeasuremntIsRunning)
         {
             _dataService.ObservedMeasuremntRunEvent += RunEventRecived;
-            await _dataService.ObservedMeasuremntRunAsync(ObservedMeasurement, MeasurementDataIndex);
+            await _dataService.ObservedMeasuremntRunAsync(ObservedMeasurement, OMDataIndex);
         }
     }
     [RelayCommand]

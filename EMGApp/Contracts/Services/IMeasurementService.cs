@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EMGApp.Events;
 using EMGApp.Models;
 using EMGApp.ViewModels;
+using LiveChartsCore.Defaults;
 
 namespace EMGApp.Contracts.Services;
 public interface IMeasurementService
@@ -38,4 +40,6 @@ public interface IMeasurementService
     public void StartRecording();
     public void StopRecording();
     public double[] CalculateFrequencySpecturm(MeasurementGroup measurement, int mIndex);
+
+    public ObservableCollection<ObservablePoint> GetAvragedDominantValues(MeasurementGroup measurement, int mDataIndex, int size);
 }

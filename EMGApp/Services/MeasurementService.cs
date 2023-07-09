@@ -110,9 +110,9 @@ public class MeasurementService : IMeasurementService
     public ObservablePoint? CalculateDominantValue(MeasurementGroup measurement, int mIndex, double[] data)
     {
         var mData = measurement.MeasurementsData[mIndex];
-        var dominatValuesIndex = mData.DominatValuesIndex(measurement.NumberOfSamplesOnWindowShift, measurement.WindowLength);
+        var dominantValuesIndex = mData.DominatValuesIndex(measurement.NumberOfSamplesOnWindowShift, measurement.WindowLength);
         double dominantValue;
-        if (dominatValuesIndex < 0)
+        if (dominantValuesIndex < 0)
         {
             return null;
         }
@@ -125,22 +125,22 @@ public class MeasurementService : IMeasurementService
             dominantValue = CalculateMeanValue(measurement, data);
         }
 
-        mData.DominantValues[dominatValuesIndex] = dominantValue;
-        Debug.WriteLine("Dominat value added on index:" + dominatValuesIndex.ToString());
+        mData.DominantValues[dominantValuesIndex] = dominantValue;
+        Debug.WriteLine("Dominat value added on index:" + dominantValuesIndex.ToString());
         Debug.WriteLine("Dominat value added value:" + dominantValue.ToString());
 
         //moving avrage
         var numberOfAvragedSamples = (int)(measurement.MovingAvrageWindowTimeSeconds / measurement.WindowShiftSeconds);
         double sum = 0;
-        if (dominatValuesIndex >= numberOfAvragedSamples - 1)
+        if (dominantValuesIndex >= numberOfAvragedSamples - 1)
         {
-            for (var i = dominatValuesIndex - numberOfAvragedSamples + 1; i <= dominatValuesIndex; i++)
+            for (var i = dominantValuesIndex - numberOfAvragedSamples + 1; i <= dominantValuesIndex; i++)
             {
                 sum += mData.DominantValues[i];
             }
-            Debug.WriteLine("Avraged dominat value added on index:" + dominatValuesIndex.ToString());
+            Debug.WriteLine("Avraged dominat value added on index:" + dominantValuesIndex.ToString());
             Debug.WriteLine("Avraged dominat value added value:" + (sum / numberOfAvragedSamples).ToString());
-            return new ObservablePoint((dominatValuesIndex + 1) * measurement.WindowShiftSeconds, sum / numberOfAvragedSamples);
+            return new ObservablePoint((dominantValuesIndex + 1) * measurement.WindowShiftSeconds, sum / numberOfAvragedSamples);
         }
         return null;
     //return new ObservablePoint((dominatValuesIndex + 1) * measurement.WindowShiftSeconds, dominantValue);
@@ -284,11 +284,29 @@ public class MeasurementService : IMeasurementService
             CalculateSlopeAndShift(CurrentMeasurement, CMDataIndex);
         }
     }
-    //public ObservableCollection<ObservablePoint> GetAvragedDominantValues(MeasurementGroup measurement)
-    //{
-    //    ObservableCollection<ObservablePoint> dominantValues = new();
+    public ObservableCollection<ObservablePoint> GetAvragedDominantValues(MeasurementGroup measurement, int mDataIndex, int size)
+    {
+        ObservableCollection<ObservablePoint> dominantValues = new();
+        var mData = measurement.MeasurementsData[mDataIndex];
+        if (size > measurement.DominantValuesSize) 
+        { 
+            size = measurement.DominantValuesSize; 
+        }
 
-    //}
+        var numberOfAvragedSamples = (int)(measurement.MovingAvrageWindowTimeSeconds / measurement.WindowShiftSeconds);
+        double sum = 0;
+
+        for (var i = numberOfAvragedSamples - 1; i < size; i++)
+        {
+            for (var j = i - numberOfAvragedSamples + 1; j <= i; j++)
+            {
+                sum += mData.DominantValues[i];
+            }
+            dominantValues.Add(new ObservablePoint((i + 1) * measurement.WindowShiftSeconds, sum / numberOfAvragedSamples));
+            sum = 0;
+        }
+        return dominantValues;
+    }
 
     public string[] GetListOfDevices()
     {

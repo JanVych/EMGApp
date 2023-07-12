@@ -10,6 +10,7 @@ using EMGApp.Models;
 using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.ViewModels;
 using EMGApp.Events;
+using System.Collections.ObjectModel;
 
 namespace EMGApp.ViewModels;
 
@@ -17,6 +18,9 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
 {
     private readonly IMeasurementService _measurementService;
     private readonly IDataService _dataService;
+
+    private ObservableCollection<ObservablePoint> _dominantValuesPoints = new();
+    private ObservableCollection<ObservablePoint> _regressionLinePoints = new();
 
     public Patient? ObservedPatient
     {
@@ -120,7 +124,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     public IEnumerable<ICartesianAxis> DominatValuesXAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "measurements", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    } = new Axis[] { new Axis { Name = "s", NamePaint = new SolidColorPaint(SKColors.Gray) } };
     public IEnumerable<ICartesianAxis> DominantValuesYAxes
     {
         get; set;
@@ -191,10 +195,24 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     {
         if (ObservedMeasurement != null && OMDataIndex >= 0) 
         {
-            DominantValuesSeries[0].Values = _measurementService.GetAvragedDominantValues(ObservedMeasurement, OMDataIndex, ObservedMeasurement.DominantValuesSize); 
-            /*ObservedMeasurement.MeasurementsData[MeasurementDataIndex].DominantValues;*/
-            Slope = ObservedMeasurement.MeasurementsData[OMDataIndex].Slope;
-            StartFrequency = ObservedMeasurement.MeasurementsData[OMDataIndex].Shift;
+            var m = ObservedMeasurement;
+            var data = m.MeasurementsData[OMDataIndex];
+
+            _dominantValuesPoints = _measurementService.GetAvragedDominantValues(m, OMDataIndex, m.DominantValuesSize);
+            DominantValuesSeries[0].Values = _dominantValuesPoints;
+            DominantValuesSeries[1].Values = _regressionLinePoints;
+            Slope = data.Slope;
+            StartFrequency = data.StartFrequency;
+            if (Slope != 0)
+            {
+                var startPoint = new ObservablePoint(m.WindowLength / m.SampleRate, data.StartFrequency);
+                var lastPointIndex = _dominantValuesPoints.Count * m.WindowShiftSeconds + m.WindowLength / m.SampleRate + m.MovingAvrageWindowTimeSeconds;
+                var lastPointValue = data.StartFrequency + data.Slope * lastPointIndex;
+                var lastPoint = new ObservablePoint(lastPointIndex, lastPointValue);
+                _regressionLinePoints.Clear();
+                _regressionLinePoints.Add(startPoint);
+                _regressionLinePoints.Add(lastPoint);
+            }
         }
     }
     private void FrequencySpectrumChartUpdate()
@@ -206,11 +224,10 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
                 var frequencySpectrumData = _measurementService.CalculateFrequencySpecturm(ObservedMeasurement, OMDataIndex);
 
                 var frequencySpectrumPoints = new ObservablePoint[ObservedMeasurement.FrequencyDataSize];
-                var fconst = (double)ObservedMeasurement.SampleRate / (double)ObservedMeasurement.WindowLength;
 
                 for (var i = 0; i < ObservedMeasurement.FrequencyDataSize; i++)
                 {
-                    frequencySpectrumPoints[i] = (new ObservablePoint(i * fconst, frequencySpectrumData[i]));
+                    frequencySpectrumPoints[i] = (new ObservablePoint(i * ObservedMeasurement.SpectralResolution, frequencySpectrumData[i]));
                 }
                 FrequencySpectrumSeries[0].Values = frequencySpectrumPoints;
             }

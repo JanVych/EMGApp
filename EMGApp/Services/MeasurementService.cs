@@ -46,7 +46,7 @@ public class MeasurementService : IMeasurementService
         {
             if (rawData.DataIndex >= CurrentMeasurement.DataSize)
             {
-                Debug.WriteLine("Buffer is full");
+                //Buffer is full
                 StopRecording();
                 return;
             }
@@ -56,21 +56,18 @@ public class MeasurementService : IMeasurementService
 
         if (rawData.DataIndex - CurrentMeasurement.WindowLength < 0)
         {
-            Debug.WriteLine($"waveIn index:{rawData.DataIndex}");
-            Debug.WriteLine("Not enough data for window");
+            //Not enough data for window
             DataAvailable?.Invoke(this, new DataAvaiableArgs(rawData.DataIndex, null, null));
             return;
         }
-        Debug.WriteLine($"waveIn index:{rawData.DataIndex}");
 
         var data = CalculateFrequencySpecturm(CurrentMeasurement, CMDataIndex);
         var dominantValue = CalculateDominantValue(CurrentMeasurement, CMDataIndex, data);
 
-        var fconst = (double)CurrentMeasurement.SampleRate / (double)CurrentMeasurement.WindowLength;
         var pData = new ObservablePoint[CurrentMeasurement.FrequencyDataSize];
         for (var i = 0; i < CurrentMeasurement.FrequencyDataSize; i++)
         {
-            pData[i] = new ObservablePoint(i * fconst, data[i]);
+            pData[i] = new ObservablePoint(i * CurrentMeasurement.SpectralResolution, data[i]);
         }
         
         DataAvailable?.Invoke(this, new DataAvaiableArgs(rawData.DataIndex, pData, dominantValue));
@@ -103,7 +100,6 @@ public class MeasurementService : IMeasurementService
         HighPassFilter(measurement, data);
         LowPassFilter(measurement, data);
         NotchFilter(measurement, data);
-        Debug.WriteLine("Data Calculated");
 
         return data;
     }
@@ -126,21 +122,19 @@ public class MeasurementService : IMeasurementService
         }
 
         mData.DominantValues[dominantValuesIndex] = dominantValue;
-        Debug.WriteLine("Dominat value added on index:" + dominantValuesIndex.ToString());
-        Debug.WriteLine("Dominat value added value:" + dominantValue.ToString());
 
         //moving avrage
         var numberOfAvragedSamples = (int)(measurement.MovingAvrageWindowTimeSeconds / measurement.WindowShiftSeconds);
         double sum = 0;
+        double positionX;
         if (dominantValuesIndex >= numberOfAvragedSamples - 1)
         {
             for (var i = dominantValuesIndex - numberOfAvragedSamples + 1; i <= dominantValuesIndex; i++)
             {
                 sum += mData.DominantValues[i];
             }
-            Debug.WriteLine("Avraged dominat value added on index:" + dominantValuesIndex.ToString());
-            Debug.WriteLine("Avraged dominat value added value:" + (sum / numberOfAvragedSamples).ToString());
-            return new ObservablePoint((dominantValuesIndex + 1) * measurement.WindowShiftSeconds, sum / numberOfAvragedSamples);
+            positionX = (dominantValuesIndex + 1) * measurement.WindowShiftSeconds + measurement.WindowLength / (double)measurement.SampleRate;
+            return new ObservablePoint(positionX, sum / numberOfAvragedSamples);
         }
         return null;
     //return new ObservablePoint((dominatValuesIndex + 1) * measurement.WindowShiftSeconds, dominantValue);
@@ -167,7 +161,7 @@ public class MeasurementService : IMeasurementService
             denominator += Math.Pow((timeValuesX[i] - avrageX), 2);
         }
         var slope = (numerator / denominator);
-        mData.Shift = avrageY - slope * avrageX;
+        mData.StartFrequency = avrageY - slope * avrageX;
         mData.Slope = slope;
     }
 
@@ -210,23 +204,23 @@ public class MeasurementService : IMeasurementService
     }
     private void NotchFilter(MeasurementGroup measurement, double[] data)
     {
-        var i = (int)Math.Round((double)measurement.WindowLength / (double)measurement.SampleRate * measurement.NotchFilter);
-        data[i] = 0;
-        data[i + 1] = 0;
-        data[i - 1] = 0;
+        var index = (int)Math.Round(measurement.NotchFilter / (double)measurement.SpectralResolution);
+        data[index] = 0;
+        data[index + 1] = 0;
+        data[index - 1] = 0;
     }
     private void LowPassFilter(MeasurementGroup measurement, double[] data)
     {
-        var f = measurement.LowPassFilter * measurement.WindowLength / measurement.SampleRate;
-        for (var i = measurement.FrequencyDataSize - 1; i > f; i--)
+        var index = Math.Round(measurement.LowPassFilter / (double)measurement.SpectralResolution);
+        for (var i = measurement.FrequencyDataSize - 1; i > index; i--)
         {
             data[i] = 0;
         }
     }
     private void HighPassFilter(MeasurementGroup measurement, double[] data)
     {
-        var f = measurement.HighPassFilter * measurement.WindowLength / measurement.SampleRate;
-        for (var i = 0; i < f; i++)
+        var index = Math.Round(measurement.HighPassFilter / (double)measurement.SpectralResolution);
+        for (var i = 0; i < index; i++)
         {
             data[i] = 0;
         }
@@ -236,7 +230,6 @@ public class MeasurementService : IMeasurementService
     {
         CMDataIndex = -1;
         CurrentMeasurement = measurement;
-        Debug.WriteLine($"New wawe, device number: {measurement.DeviceNumber}, sample rate: {measurement.SampleRate}, buffer size: {measurement.WindowShiftMilliseconds} ms, window size: {measurement.WindowLength}");
         Wawe = new()
         {
             DeviceNumber = measurement.DeviceNumber,
@@ -252,9 +245,8 @@ public class MeasurementService : IMeasurementService
         if (index == -1)
         {
             index = CurrentMeasurement.MeasurementsData.Count;
-            CurrentMeasurement.MeasurementsData.Add(new 
-                MeasurementData(muscleType, side, CurrentMeasurement.DataSize, CurrentMeasurement.DominantValuesSize, measurementType, force));
-            Debug.WriteLine("new muscle on index:" + index.ToString());
+            CurrentMeasurement.MeasurementsData.Add
+                (new MeasurementData(muscleType, side, CurrentMeasurement.DataSize, CurrentMeasurement.DominantValuesSize, measurementType, force));
         }
         if (CMDataIndex >= 0)
         {
@@ -270,7 +262,6 @@ public class MeasurementService : IMeasurementService
         {
             Wawe.StartRecording();
             IsRecording = true;
-            Debug.WriteLine("Recording start");
         }
     }
 
@@ -280,7 +271,6 @@ public class MeasurementService : IMeasurementService
         {
             Wawe.StopRecording();
             IsRecording = false;
-            Debug.WriteLine("Recording stop");
             CalculateSlopeAndShift(CurrentMeasurement, CMDataIndex);
         }
     }
@@ -295,14 +285,15 @@ public class MeasurementService : IMeasurementService
 
         var numberOfAvragedSamples = (int)(measurement.MovingAvrageWindowTimeSeconds / measurement.WindowShiftSeconds);
         double sum = 0;
-
+        double positionX;
         for (var i = numberOfAvragedSamples - 1; i < size; i++)
         {
             for (var j = i - numberOfAvragedSamples + 1; j <= i; j++)
             {
-                sum += mData.DominantValues[i];
+                sum += mData.DominantValues[j];
             }
-            dominantValues.Add(new ObservablePoint((i + 1) * measurement.WindowShiftSeconds, sum / numberOfAvragedSamples));
+            positionX = (i + 1) * measurement.WindowShiftSeconds + measurement.WindowLength / (double)measurement.SampleRate;
+            dominantValues.Add(new ObservablePoint(positionX, sum / numberOfAvragedSamples));
             sum = 0;
         }
         return dominantValues;

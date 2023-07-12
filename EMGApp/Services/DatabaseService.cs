@@ -178,7 +178,7 @@ public class DatabaseService :IDatabaseService
         {
                 ("@measurement_id", mData.MeasurementId), ("@musle_type", mData.MuscleType), ("@side", mData.Side),
                 ("@data", dataBytes), ("@max_values", dominantValuesBytes),
-                ("@slope", mData.Slope), ("@shift", mData.Shift),
+                ("@slope", mData.Slope), ("@shift", mData.StartFrequency),
                 ("@measurement_type", mData.MeasurementType), ("@force",mData.Force)
         };
         ExecuteNonQuery(command, parameters);

@@ -61,12 +61,12 @@ public class MeasurementGroup
         get;
     } = 2;
     //
-    public double SpectralResolution => (double)SampleRate / (double)WindowLength;
+    public double SpectralResolution => SampleRate / (double)WindowLength;
     public double WindowShiftSeconds => (double)WindowShiftMilliseconds / 1000;
-    public int FrequencyDataSize => (int)Math.Round(SpectralResolution * CornerFrequency);
+    public int FrequencyDataSize => (int)Math.Round(CornerFrequency / SpectralResolution);
     public int MeasuremntMaxTime => DataSize / SampleRate;
     public int NumberOfSamplesOnWindowShift => WindowShiftMilliseconds * SampleRate / 1000;
-    public int DominantValuesSize => DataSize / NumberOfSamplesOnWindowShift - (int)Math.Ceiling((double)WindowLength / (double)NumberOfSamplesOnWindowShift) + 1;
+    public int DominantValuesSize => DataSize / NumberOfSamplesOnWindowShift - (int)Math.Ceiling(WindowLength / (double)NumberOfSamplesOnWindowShift) + 1;
     public string? MeasurementDateTimeString => MeasurementDateTime.ToString();
     public string? MeasurementDateString => MeasurementDateTime?.ToString("dddd MM/dd/yyyy");
     public string? MeasurementDayTimeString => MeasurementDateTime?.ToString("h:mm tt");

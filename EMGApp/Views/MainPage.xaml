@@ -181,8 +181,8 @@
                                       ItemsSource="{x:Bind ViewModel.MeasurementTypeStrings}"
                                       DisplayMemberPath="Value"  SelectedValuePath="Key"/>
                             <NumberBox Height="60" Header="Force [N]" 
-                                           HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                           Value="{x:Bind ViewModel.Force}"/>
+                                       HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                                       Value="{x:Bind ViewModel.Force}"/>
                             <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     Height="40"
                                     Command="{x:Bind ViewModel.AddMuscleButtonCommand}"
@@ -200,11 +200,11 @@
 
         <Grid Grid.Row="2" ColumnDefinitions="2*,3*">
             <lvc:CartesianChart Grid.Column="0"
-                            XAxes="{x:Bind ViewModel.FrequencySpectrumXAxes}" YAxes="{x:Bind ViewModel.FrequencySpectrumYAxes}"
-                            Series="{x:Bind ViewModel.FrequencySpectrumSeries}"/>
+                                XAxes="{x:Bind ViewModel.FrequencySpectrumXAxes}" YAxes="{x:Bind ViewModel.FrequencySpectrumYAxes}"
+                                Series="{x:Bind ViewModel.FrequencySpectrumSeries}"/>
             <lvc:CartesianChart Grid.Column="1"
-                            XAxes="{x:Bind ViewModel.DominantValuesXAxes}" YAxes="{x:Bind ViewModel.DominantValuesYAxes}"
-                            Series="{x:Bind ViewModel.DominantValuesSeries}"/>
+                                XAxes="{x:Bind ViewModel.DominantValuesXAxes}" YAxes="{x:Bind ViewModel.DominantValuesYAxes}"
+                                Series="{x:Bind ViewModel.DominantValuesSeries}"/>
         </Grid>
 
         <Grid Grid.Row="3" ColumnDefinitions="auto,*,auto"
@@ -227,29 +227,39 @@
         <Grid Grid.Row="4" ColumnDefinitions="*,auto">
             <StackPanel Grid.Column="0" Height="60" HorizontalAlignment="Center"
                         Style="{StaticResource DefaultStackPanel}">
-                <AppBarButton Icon="Play" Label="Start" Grid.Column="1" HorizontalAlignment="Center" 
-                Command="{x:Bind ViewModel.StartButtonCommand}" VerticalAlignment="Center" Margin="0,0,0,0"/>
-                <AppBarButton Icon="Stop" Label="Stop"  Grid.Column="1" HorizontalAlignment="Center" 
-                Command="{x:Bind ViewModel.StopButtonCommand}" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                <AppBarButton Icon="Refresh" Label="Reset"  Grid.Column="1" HorizontalAlignment="Center" 
-                Command="{x:Bind ViewModel.ResetButtonCommand}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                <AppBarButton Icon="Play" Label="Start" 
+                              HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0"
+                              Command="{x:Bind ViewModel.StartButtonCommand}"/>
+                <AppBarButton Icon="Stop" Label="Stop" 
+                              HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0"
+                              Command="{x:Bind ViewModel.StopButtonCommand}" />
+                <AppBarButton Icon="Refresh" Label="Reset" 
+                              HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0"
+                              Command="{x:Bind ViewModel.ResetButtonCommand}" />
 
-                <AppBarButton Icon="Save" Label="Save" Grid.Column="2" HorizontalAlignment="Center" 
-                Command="{x:Bind ViewModel.SaveButtonCommand}" VerticalAlignment="Center" Margin="30,0,0,0"/>
-                <AppBarButton Icon="Setting" Label="Change" Command="{x:Bind ViewModel.ChangeSettingsCommand}"
-                      HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,0,0,0"/>
+                <AppBarButton Icon="Save" Label="Save" 
+                              HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,0,0,0"
+                              Command="{x:Bind ViewModel.SaveButtonCommand}" />
+                <AppBarButton Icon="Setting" Label="Change" 
+                              HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,0,0,0"
+                              Command="{x:Bind ViewModel.ChangeSettingsCommand}"/>
             </StackPanel>
 
             <StackPanel Grid.Column="1" Spacing="10" Orientation="Horizontal" HorizontalAlignment="Right">
                 <StackPanel Style="{StaticResource DefaultStackPanel}">
                     <TextBlock Text="Slope:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="{x:Bind ViewModel.Slope, Mode=OneWay}"  Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Hz/s" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind ViewModel.Slope, Mode=OneWay}" 
+                               Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Hz/s"
+                               Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Style="{StaticResource DefaultStackPanel}">
-                    <TextBlock Text="Shift:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="{x:Bind ViewModel.StartFrequency, Mode=OneWay}" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Hz" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Shift:" 
+                               VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind ViewModel.StartFrequency, Mode=OneWay}" 
+                               Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Hz" 
+                               Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </StackPanel>
             </StackPanel>
            

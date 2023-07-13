@@ -39,9 +39,9 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     [ObservableProperty]
     private double startFrequency;
     [ObservableProperty]
-    private int sliderValue;
+    private int sliderIndexValue;
     [ObservableProperty]
-    private int sliderMaximum;
+    private double sliderTimeValue;
     public ISeries[] FrequencySpectrumSeries
     {
         get; set;
@@ -148,7 +148,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
             }
             SliderReset();
             DominantValuesChartUpdate();
-            SliderValueChanged();
+            SliderIndexValueChanged();
         }
     }
     public void OnNavigatedTo(object parameter)
@@ -164,13 +164,20 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
         PauseButton();
     }
 
-    private void RunEventRecived(object? sender, ObservedMeasuremntRunStepArgs args) => SliderValue = args.Value;
-    [RelayCommand]
-    private void SliderValueChanged()
+    private void RunEventRecived(object? sender, ObservedMeasuremntRunStepArgs args)
     {
         if (ObservedMeasurement != null)
         {
-            ObservedMeasurement.MeasurementsData[OMDataIndex].DataIndex = SliderValue;
+            SliderIndexValue = args.Value;
+        }
+    }
+    [RelayCommand]
+    private void SliderIndexValueChanged()
+    {
+        if (ObservedMeasurement != null)
+        {
+            ObservedMeasurement.MeasurementsData[OMDataIndex].DataIndex = SliderIndexValue;
+            SliderTimeValue = Math.Round((double)SliderIndexValue / ObservedMeasurement.SampleRate, 2);
             InputSignalChartUpdate();
             FrequencySpectrumChartUpdate();
         }
@@ -187,8 +194,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     {
         if (ObservedMeasurement != null)
         {
-            SliderValue = ObservedMeasurement.MeasurementsData[OMDataIndex].DataIndex;
-            SliderMaximum = ObservedMeasurement.DataSize;
+            SliderIndexValue = ObservedMeasurement.MeasurementsData[OMDataIndex].DataIndex;
         }
     }
     private void DominantValuesChartUpdate()
@@ -219,7 +225,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     {
         if (ObservedMeasurement != null && OMDataIndex >= 0)
         {
-            if (SliderValue >= ObservedMeasurement.WindowLength)
+            if (SliderIndexValue >= ObservedMeasurement.WindowLength)
             {
                 var frequencySpectrumData = _measurementService.CalculateFrequencySpecturm(ObservedMeasurement, OMDataIndex);
 
@@ -242,10 +248,10 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
         if (ObservedMeasurement != null && OMDataIndex >= 0)
         {
             var size = ObservedMeasurement.NumberOfSamplesOnWindowShift;
-            if (SliderValue >= size)
+            if (SliderIndexValue >= size)
             {
                 var inputSignalData = new short[size];
-                Buffer.BlockCopy(ObservedMeasurement.MeasurementsData[OMDataIndex].Data, SliderValue - size, inputSignalData, 0, size * sizeof(short));
+                Buffer.BlockCopy(ObservedMeasurement.MeasurementsData[OMDataIndex].Data, SliderIndexValue - size, inputSignalData, 0, size * sizeof(short));
                 InputSignalSeries[0].Values = inputSignalData;
             }
             else
@@ -276,7 +282,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     private void ResetButton()
     {
         _dataService.ObservedMeasuremntIsRunning = false;
-        SliderValue = 0;
+        SliderIndexValue = 0;
     }
 
 }

@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.Services;
 using EMGApp.Models;
 using EMGApp.Services;
+using FftSharp;
 using Microsoft.UI.Xaml;
 
 namespace EMGApp.ViewModels;
@@ -12,6 +13,7 @@ namespace EMGApp.ViewModels;
 public partial class PatientsViewModel : ObservableRecipient
 {
     private readonly IDataService _dataService;
+    private readonly IMeasurementService _measurementService;
     private readonly INavigationService _navigationService;
 
     [ObservableProperty]
@@ -44,10 +46,11 @@ public partial class PatientsViewModel : ObservableRecipient
 
 
 
-    public PatientsViewModel(IDataService dataService, INavigationService navigationService)
+    public PatientsViewModel(IDataService dataService, INavigationService navigationService, IMeasurementService measurementService)
     {
         _dataService = dataService;
         _navigationService = navigationService;
+        _measurementService = measurementService;
         Patients = _dataService.Patients;
         Measurements = new List<MeasurementGroup>();
         PatientSelectionChanged();
@@ -101,6 +104,18 @@ public partial class PatientsViewModel : ObservableRecipient
     [RelayCommand]
     private void EditPatientButton()
     {
+    }
+
+    [RelayCommand]
+    private void MeasurementPatientButton()
+    {
+        if (Patients.Count <= SelectedPatientIndex || SelectedPatientIndex < 0) { return; }
+        _measurementService.StopRecording();
+        // ?? Devuice number
+        _measurementService.CreateConnection(_measurementService.CreateDefaultMeasurement());
+        _dataService.CurrentPatientId = Patients[SelectedPatientIndex].PatientId;
+
+        _navigationService.NavigateTo(typeof(MainViewModel).FullName!);
     }
 
     [RelayCommand]

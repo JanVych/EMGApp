@@ -30,10 +30,7 @@ public interface IMeasurementService
         get; set;
     }
 
-    //public Action? DevicesPropertyChanged
-    //{
-    //    get; set; 
-    //}
+    public MeasurementGroup CreateDefaultMeasurement();
     public string[] GetListOfDevices();
     public void CreateConnection(MeasurementGroup measurement);
     public void SelectOrAddMuscle(int muscleType, int side, int measurementType, int force);

@@ -49,6 +49,11 @@
                 <AppBarButton Icon="Edit" Label="Edit" Command="{x:Bind ViewModel.EditPatientButtonCommand}"/>
                 <AppBarButton Icon="Delete" Label="Delete" Command="{x:Bind ViewModel.DeletePatientButtonCommand}"/>
                 <AppBarButton Icon="Zoom" Label="Detail" Command="{x:Bind ViewModel.MeasurementDetailButtonCommand}"/>
+                <AppBarButton Label="Measure" Command="{x:Bind ViewModel.MeasurementPatientButtonCommand}">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE9D2;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
             </StackPanel>
             <StackPanel Grid.Column="1" 
                         Orientation="Horizontal"

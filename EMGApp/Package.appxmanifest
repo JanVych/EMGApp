@@ -12,7 +12,7 @@
   <Identity
     Name="24CBE06F-D5EF-4A24-B6E6-DC96F74C68E4"
     Publisher="CN=janvy"
-    Version="1.0.0.0" />
+    Version="0.1.1.0" />
 
   <Properties>
     <DisplayName>EMGApp</DisplayName>

@@ -59,14 +59,14 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
             IsHoverable = false
         }
     };
-    public ISeries[] InputSignalSeries
+    public ISeries[] EMGSignalSeries
     {
         get; set;
     } =
     {
-        new LineSeries<short>
+        new LineSeries<ObservablePoint>
         {
-            Values = new short[]{1 },
+            Values = null,
             Stroke = new SolidColorPaint(SKColors.DeepSkyBlue) { StrokeThickness = 2 },
             Fill = null,
             LineSmoothness = 1,
@@ -108,27 +108,27 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     public IEnumerable<ICartesianAxis> FrequencySpectrumXAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "Hz", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    } = new Axis[] { new Axis { Name = "Frequency [Hz]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
     public IEnumerable<ICartesianAxis> FrequencySpectrumYAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "µV", NamePaint = new SolidColorPaint(SKColors.Gray) } };
-    public IEnumerable<ICartesianAxis> InputSignalXAxes
+    } = new Axis[] { new Axis { Name = "Spectral density [µV]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    public IEnumerable<ICartesianAxis> EMGSignalXAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "samples", NamePaint = new SolidColorPaint(SKColors.Gray) } };
-    public IEnumerable<ICartesianAxis> InputSignalYAxes
+    } = new Axis[] { new Axis { Name = "Window time [ms]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    public IEnumerable<ICartesianAxis> EMGSignalYAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "µV", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    } = new Axis[] { new Axis { Name = "EMG [µV]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
     public IEnumerable<ICartesianAxis> DominatValuesXAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "s", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    } = new Axis[] { new Axis { Name = "Time [s]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
     public IEnumerable<ICartesianAxis> DominantValuesYAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "Hz", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    } = new Axis[] { new Axis { Name = "Dominant frequency [Hz]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
 
     public MeasurementsViewModel(IMeasurementService measurementService, IDataService dataService)
     {
@@ -178,8 +178,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
         {
             ObservedMeasurement.MeasurementsData[OMDataIndex].DataIndex = SliderIndexValue;
             SliderTimeValue = Math.Round((double)SliderIndexValue / ObservedMeasurement.SampleRate, 2);
-            InputSignalChartUpdate();
-            FrequencySpectrumChartUpdate();
+            ChartsUpdate();
         }
     }
     [RelayCommand]
@@ -221,14 +220,20 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
             }
         }
     }
-    private void FrequencySpectrumChartUpdate()
+    private void ChartsUpdate()
     {
         if (ObservedMeasurement != null && OMDataIndex >= 0)
         {
             if (SliderIndexValue >= ObservedMeasurement.WindowLength)
             {
-                var frequencySpectrumData = _measurementService.CalculateFrequencySpecturm(ObservedMeasurement, OMDataIndex);
+                var EMGSignalData = new ObservablePoint[ObservedMeasurement.WindowLength];
+                var dataIndex = SliderIndexValue - ObservedMeasurement.WindowLength;
+                for (var i = 0; i < ObservedMeasurement.WindowLength; i++)
+                {
+                    EMGSignalData[i] = new ObservablePoint(i, ObservedMeasurement.MeasurementsData[OMDataIndex].Data[dataIndex + i]);
+                }
 
+                var frequencySpectrumData = _measurementService.CalculateFrequencySpecturm(ObservedMeasurement, OMDataIndex);
                 var frequencySpectrumPoints = new ObservablePoint[ObservedMeasurement.FrequencyDataSize];
 
                 for (var i = 0; i < ObservedMeasurement.FrequencyDataSize; i++)
@@ -236,27 +241,12 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
                     frequencySpectrumPoints[i] = (new ObservablePoint(i * ObservedMeasurement.SpectralResolution, frequencySpectrumData[i]));
                 }
                 FrequencySpectrumSeries[0].Values = frequencySpectrumPoints;
+                EMGSignalSeries[0].Values = EMGSignalData;
             }
             else
             {
                 FrequencySpectrumSeries[0].Values = new ObservablePoint[] {new ObservablePoint(1,1) };
-            }
-        }
-    }
-    private void InputSignalChartUpdate()
-    {
-        if (ObservedMeasurement != null && OMDataIndex >= 0)
-        {
-            var size = ObservedMeasurement.NumberOfSamplesOnWindowShift;
-            if (SliderIndexValue >= size)
-            {
-                var inputSignalData = new short[size];
-                Buffer.BlockCopy(ObservedMeasurement.MeasurementsData[OMDataIndex].Data, SliderIndexValue - size, inputSignalData, 0, size * sizeof(short));
-                InputSignalSeries[0].Values = inputSignalData;
-            }
-            else
-            {
-                InputSignalSeries[0].Values = new short[] {1 };
+                EMGSignalSeries[0].Values = new ObservablePoint[] { new ObservablePoint(1, 1) };
             }
         }
     }

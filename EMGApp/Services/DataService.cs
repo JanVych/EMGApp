@@ -58,12 +58,19 @@ public class DataService : IDataService
         _databaseService = databaseService;
         Patients = _databaseService.GetPatients();
         Measurements = _databaseService.GetMeasurements();
+        LoadFirstPatient();
+    }
+
+    public void LoadFirstPatient()
+    {
+        CurrentPatientId ??= Patients.FirstOrDefault()?.PatientId;
     }
 
     public void AddPatient(Patient patient)
     {
         _databaseService.InsertPatient(patient);
         Patients = _databaseService.GetPatients();
+        LoadFirstPatient();
     }
 
     public void AddMeasurement(MeasurementGroup measurement)
@@ -113,6 +120,12 @@ public class DataService : IDataService
             _databaseService.Delete("patient", "patient_id", patient.PatientId);
             Patients = _databaseService.GetPatients();
             Measurements = _databaseService.GetMeasurements();
+            if (CurrentPatientId == patient.PatientId)
+            {
+                CurrentPatientId = null;
+                LoadFirstPatient();
+            }
+            
         }
     }
     public void RemoveMeasurement(MeasurementGroup measurement)
@@ -132,7 +145,6 @@ public class DataService : IDataService
         {
             await Task.Delay(m.WindowShiftMilliseconds);
             mData.DataIndex += m.NumberOfSamplesOnWindowShift;
-            Debug.WriteLine(mData.DataIndex.ToString());
             ObservedMeasuremntRunEvent?.Invoke(this, new ObservedMeasuremntRunStepArgs(mData.DataIndex));
         }
         ObservedMeasuremntIsRunning = false;

@@ -25,7 +25,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private ObservableCollection<ObservablePoint> _dominantValuesPoints = new();
     private ObservableCollection<ObservablePoint> _regressionLinePoints = new();
-
+    
     public ISeries[] FrequencySpectrumSeries
     {
         get; set;
@@ -67,13 +67,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     };
     public IEnumerable<ICartesianAxis> FrequencySpectrumXAxes { get; set; } = new Axis[] 
-    { new Axis { Name = "Hz", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    { new Axis { Name = "Frequency [Hz]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
     public IEnumerable<ICartesianAxis> DominantValuesXAxes { get; set; } = new Axis[] 
-    { new Axis { Name = "s", NamePaint = new SolidColorPaint(SKColors.Gray)} };
+    { new Axis { Name = "Time [s]", NamePaint = new SolidColorPaint(SKColors.Gray)} };
     public IEnumerable<ICartesianAxis> FrequencySpectrumYAxes { get; set; } = new Axis[] 
-    { new Axis { Name = "µV", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    { new Axis { Name = "Spectral density [µV]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
     public IEnumerable<ICartesianAxis> DominantValuesYAxes { get; set; } = new Axis[] 
-    { new Axis { Name = "Hz", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    { new Axis { Name = "Dominant frequency [Hz]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
 
     [ObservableProperty]
     private string? deviceName;
@@ -129,6 +129,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         get; set;
     }
 
+
     public MainViewModel(IMeasurementService connectionService, IDataService dataService, INavigationService navigationService)
     {
         _measurementService = connectionService;
@@ -182,14 +183,17 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void StartButton()
     {
-        _regressionLinePoints.Clear();
-        _measurementService.StartRecording();
+        if (CurrentPatient != null && CMDataIndex >= 0)
+        {
+            _regressionLinePoints.Clear();
+            _measurementService.StartRecording();
+        }
     }
     [RelayCommand]
     private void SaveButton() 
-    {;
+    {
         _measurementService.StopRecording();
-        UpdateView();
+        //UpdateView();
         _dataService.AddMeasurement(_measurementService.CurrentMeasurement);
     }
     [RelayCommand]
@@ -264,10 +268,18 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         var m = CurrentMeasurement;
         MeasurementData data;
+        var fData = _measurementService.CalculateFrequencySpecturm(m, CMDataIndex);
+        var pData = new ObservablePoint[CurrentMeasurement.FrequencyDataSize];
+        if (fData != Array.Empty<double>()) 
+        {
+            for (var i = 0; i < CurrentMeasurement.FrequencyDataSize; i++)
+            {
+                pData[i] = new ObservablePoint(i * CurrentMeasurement.SpectralResolution, fData[i]);
+            }
+        }
+        FrequencySpectrumSeries[0].Values = pData;
 
         //bad
-        FrequencySpectrumSeries[0].Values = new ObservablePoint[]{new ObservablePoint(0,0)};
-
         var size = 0;
         if (CurrentMeasurementData != null && CurrentMeasurementData.Count > 0)
         {

@@ -110,7 +110,7 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     private void DevicesSelectionChanged() => Devices = _measurementService.GetListOfDevices();
 
     [RelayCommand]
-    private void ConnectButton()
+    private void ConfirmButton()
     {
         if (Patients.Count <= SelectedPatientIndex || SelectedPatientIndex < 0) { return; }
         if (MeasurementTimeTypeIndex == 1)
@@ -122,10 +122,10 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
         var measurement = new MeasurementGroup(SampleRate, WindowShiftMilliseconds, WindowSize , MeasurementFixedTime, measurementDataSize,
             DominantFrequencyClaculationTypeIndex, NotchFilter, LowPassFilter, HighPassFilter,CornerFrequency, SelectedDeviceIndex);
 
-        _dataService.CurrentPatientId = Patients[SelectedPatientIndex].PatientId;
         _measurementService.StopRecording();
         _measurementService.CreateConnection(measurement);
-       
+        _dataService.CurrentPatientId = Patients[SelectedPatientIndex].PatientId;
+
         _navigationService.NavigateTo(typeof(MainViewModel).FullName!);
     }
 

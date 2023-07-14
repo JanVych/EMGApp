@@ -1,5 +1,4 @@
 ﻿using EMGApp.ViewModels;
-
 using Microsoft.UI.Xaml.Controls;
 
 namespace EMGApp.Views;

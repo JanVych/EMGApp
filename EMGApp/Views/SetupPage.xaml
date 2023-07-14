@@ -61,39 +61,43 @@
                         <Setter Target="device.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="device2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="device2.(RelativePanel.Below)" Value=""/>
+                        
                         <Setter Target="wSize.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="wSize2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="wSize2.(RelativePanel.Below)" Value=""/>
+                        
                         <Setter Target="sRate.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="sRate2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="sRate2.(RelativePanel.Below)" Value=""/>
+                        
                         <Setter Target="wsTime.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="wsTime2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="wsTime2.(RelativePanel.Below)" Value=""/>
+                        
                         <Setter Target="mtFixed.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="mtFixed2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="mtFixed2.(RelativePanel.Below)" Value=""/>
+                        
                         <Setter Target="mTime.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="mTime2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="mTime2.(RelativePanel.Below)" Value=""/>
+                        
                         <Setter Target="dfcType.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="dfcType2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="dfcType2.(RelativePanel.Below)" Value=""/>
-                        <!--<Setter Target="mType.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
-                        <Setter Target="mType2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
-                        <Setter Target="mType2.(RelativePanel.Below)" Value=""/>
-                        <Setter Target="force.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
-                        <Setter Target="force2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
-                        <Setter Target="force2.(RelativePanel.Below)" Value=""/>-->
+                        
                         <Setter Target="cFrequency.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="cFrequency2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="cFrequency2.(RelativePanel.Below)" Value=""/>
+                        
                         <Setter Target="nFilter.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="nFilter2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="nFilter2.(RelativePanel.Below)" Value=""/>
+                        
                         <Setter Target="lpFilter.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="lpFilter2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="lpFilter2.(RelativePanel.Below)" Value=""/>
+                        
                         <Setter Target="hpFilter.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="hpFilter2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="hpFilter2.(RelativePanel.Below)" Value=""/>
@@ -209,44 +213,6 @@
                 </RelativePanel>
 
                 <Border Height="30"/>
-                
-                <!--<RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
-                    <StackPanel x:Name="mType" Style="{StaticResource StackPanelSettingsCardA}">
-                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Measurement type"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="dsad sdf dsfgdgdfg"/>
-                    </StackPanel>
-                    <ComboBox x:Name="mType2" RelativePanel.Below="mType" RelativePanel.AlignVerticalCenterWithPanel="True"
-                              Margin="10,10,10,10" PlaceholderText="select" Width="200"
-                              SelectedValuePath="Key" DisplayMemberPath="Value"
-                              SelectedIndex="{x:Bind ViewModel.MeasurementTypeIndex, Mode=TwoWay}" 
-                              ItemsSource="{x:Bind ViewModel.MeasurementTypeStrings, Mode=OneTime}"/>
-                </RelativePanel>
-
-                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
-                    <StackPanel x:Name="force" Style="{StaticResource StackPanelSettingsCardA}">
-                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Force"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal"/>
-                    </StackPanel>
-                    <StackPanel x:Name="force2" Margin="10,10,10,10" Orientation="Horizontal"
-                                RelativePanel.Below="force" RelativePanel.AlignVerticalCenterWithPanel="True">
-                        <NumberBox Value="{x:Bind ViewModel.Force, Mode=TwoWay}" MaxHeight="35" Minimum="100" Maximum="10000"/>
-                        <TextBlock Text="N" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </RelativePanel>-->
-
-                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
-                    <StackPanel x:Name="cFrequency" Style="{StaticResource StackPanelSettingsCardA}">
-                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Corner frequency"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal 684dd"/>
-                    </StackPanel>
-                    <StackPanel x:Name="cFrequency2" Margin="10,10,10,10" Orientation="Horizontal"
-                                RelativePanel.Below="cFrequency" RelativePanel.AlignVerticalCenterWithPanel="True">
-                        <NumberBox Value="{x:Bind ViewModel.CornerFrequency, Mode=TwoWay}" MaxHeight="35" Minimum="100" Maximum="500"/>
-                        <TextBlock Text="Hz" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </RelativePanel>
-                
-                <Border Height="30"/>
 
                 <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
                     <StackPanel x:Name="nFilter" Style="{StaticResource StackPanelSettingsCardA}">
@@ -272,7 +238,7 @@
                     </StackPanel>
                 </RelativePanel>
 
-                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}" Margin="0,0,0,30">
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
                     <StackPanel x:Name="hpFilter" Style="{StaticResource StackPanelSettingsCardA}">
                         <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="High pass filter"/>
                         <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal wedwed"/>
@@ -280,6 +246,20 @@
                     <StackPanel x:Name="hpFilter2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="hpFilter" RelativePanel.AlignVerticalCenterWithPanel="True">
                         <NumberBox Value="{x:Bind ViewModel.HighPassFilter, Mode=TwoWay}" MaxHeight="35" Minimum="1" Maximum="500"/>
+                        <TextBlock Text="Hz" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RelativePanel>
+
+                <Border Height="30"/>
+
+                <RelativePanel Style="{StaticResource RelativePanelSettingsCard}" Margin="0,0,0,30">
+                    <StackPanel x:Name="cFrequency" Style="{StaticResource StackPanelSettingsCardA}">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Corner frequency"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal 684dd"/>
+                    </StackPanel>
+                    <StackPanel x:Name="cFrequency2" Margin="10,10,10,10" Orientation="Horizontal"
+                                RelativePanel.Below="cFrequency" RelativePanel.AlignVerticalCenterWithPanel="True">
+                        <NumberBox Value="{x:Bind ViewModel.CornerFrequency, Mode=TwoWay}" MaxHeight="35" Minimum="100" Maximum="500"/>
                         <TextBlock Text="Hz" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </StackPanel>
                 </RelativePanel>
@@ -333,12 +313,12 @@
                         </Core:EventTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </ComboBox>
-                <Button Grid.Column="3" Content="Connect" Margin="10,10,20,10" 
+                <Button Grid.Column="3" Content="Confirm" Margin="10,10,20,10" 
                         Height="50" Width="100"
                         HorizontalAlignment="Right" VerticalAlignment="Center"
                         Foreground="{StaticResource TextOnAccentFillColorPrimaryBrush}"
                         Background="{StaticResource AccentFillColorDefaultBrush}"
-                        Command="{x:Bind ViewModel.ConnectButtonCommand}"/>
+                        Command="{x:Bind ViewModel.ConfirmButtonCommand}"/>
 
             </Grid>
             <ListView Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 

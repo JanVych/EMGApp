@@ -35,9 +35,16 @@ public class MeasurementService : IMeasurementService
 
     public MeasurementService()
     {
-        CurrentMeasurement = new MeasurementGroup(1000, 100, 1024, true, 1_048_576, 0, 50, 120, 5, 200, 0);
-
         App.MainWindow.Closed += (object sender, WindowEventArgs args) => { StopRecording(); };
+        CurrentMeasurement = CreateDefaultMeasurement();
+    }
+
+    public MeasurementGroup CreateDefaultMeasurement()
+    {
+        // TO DO - handle device number
+        var m = new MeasurementGroup(1000, 100, 1024, true, 1_048_576, 0, 50, 180, 5, 200, 0);
+        CreateConnection(m);
+        return m;
     }
     private void WaveIn_DataAvailable(object? sender, WaveInEventArgs e)
     {
@@ -76,6 +83,10 @@ public class MeasurementService : IMeasurementService
     public double[] CalculateFrequencySpecturm(MeasurementGroup measurement, int mIndex)
     {
         var mData = measurement.MeasurementsData[mIndex];
+        if (mData.DataIndex - measurement.WindowLength < 0)
+        {
+            return Array.Empty<double>();   
+        }
         var startIndex = mData.DataIndex - measurement.WindowLength;
         var rawDataIndex = 0;
         var rawData = new double[measurement.WindowLength];

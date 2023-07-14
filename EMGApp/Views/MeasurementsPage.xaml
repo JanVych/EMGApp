@@ -189,8 +189,8 @@
                             XAxes="{x:Bind ViewModel.FrequencySpectrumXAxes}" YAxes="{x:Bind ViewModel.FrequencySpectrumYAxes}"
                             Series="{x:Bind ViewModel.FrequencySpectrumSeries}" Margin="0,0,0,0"/>
         <lvc:CartesianChart Grid.Row="2" Grid.Column="0"
-                            XAxes="{x:Bind ViewModel.InputSignalXAxes}" YAxes="{x:Bind ViewModel.InputSignalYAxes}"
-                            Series="{x:Bind ViewModel.InputSignalSeries}" Margin="0,0,0,0"/>
+                            XAxes="{x:Bind ViewModel.EMGSignalXAxes}" YAxes="{x:Bind ViewModel.EMGSignalYAxes}"
+                            Series="{x:Bind ViewModel.EMGSignalSeries}" Margin="0,0,0,0"/>
 
         <Grid Grid.Row="3" Grid.ColumnSpan="2"
               ColumnDefinitions="auto, *, auto"

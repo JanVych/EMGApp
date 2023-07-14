@@ -47,6 +47,7 @@
         </Style>
     </Page.Resources>
 
+
     <Grid RowDefinitions="Auto,Auto,*,Auto, Auto" Margin="0,0,0,10">
         <Grid Grid.Row="0" ColumnDefinitions="auto,*">
             <Grid Grid.Column="0" Padding="10,0,10,0"
@@ -198,7 +199,7 @@
             </Button>
         </Grid>
 
-        <Grid Grid.Row="2" ColumnDefinitions="2*,3*">
+        <Grid Grid.Row="2" ColumnDefinitions="2*,3*" x:Name="chartsGrid">
             <lvc:CartesianChart Grid.Column="0"
                                 XAxes="{x:Bind ViewModel.FrequencySpectrumXAxes}" YAxes="{x:Bind ViewModel.FrequencySpectrumYAxes}"
                                 Series="{x:Bind ViewModel.FrequencySpectrumSeries}"/>
@@ -240,7 +241,8 @@
                 <AppBarButton Icon="Save" Label="Save" 
                               HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,0,0,0"
                               Command="{x:Bind ViewModel.SaveButtonCommand}" />
-                <AppBarButton Icon="Setting" Label="Change" 
+
+                <AppBarButton Icon="Setting" Label="Setup" 
                               HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,0,0,0"
                               Command="{x:Bind ViewModel.ChangeSettingsCommand}"/>
             </StackPanel>

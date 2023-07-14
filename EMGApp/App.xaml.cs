@@ -110,6 +110,8 @@ public partial class App : Application
 
         await App.GetService<IActivationService>().ActivateAsync(args);
         App.GetService<IDatabaseService>();
+        App.GetService<IDataService>();
+        App.GetService<IMeasurementService>();
     }
 
     private void WindowClosed(object sender, WindowEventArgs args)

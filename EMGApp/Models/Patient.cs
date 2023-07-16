@@ -1,9 +1,12 @@
 ﻿using System.Text;
+using CommunityToolkit.Mvvm.ComponentModel;
 using EMGApp.Views;
+using Microsoft.UI.Xaml;
 using Windows.ApplicationModel.Payments;
 
 namespace EMGApp.Models;
-public class Patient
+
+public partial class Patient : ObservableObject
 {
     public long? PatientId 
     { 
@@ -54,13 +57,6 @@ public class Patient
         get; set; 
     }
 
-    public string GenderString => GenderStrings[Gender];
-
-    public static readonly Dictionary<int, string> GenderStrings = new()
-    {
-       {0, "M"},
-       {1, "F"},
-    };
     public string FullName
     {
         get
@@ -72,6 +68,32 @@ public class Patient
             return str.ToString();
         }
     }
+    public string GenderString => GenderStrings[Gender];
+
+    //
+    [ObservableProperty]
+    public Visibility isExpanded = Visibility.Collapsed;
+
+    public static readonly Dictionary<int, string> GenderStrings = new()
+    {
+       {0, "M"},
+       {1, "F"},
+    };
+    public static string GetStringProperty(Patient patient, string? propertyName)
+    {
+        return propertyName switch
+        {
+            "Name" => patient.FullName,
+            "Age" => patient.Age.ToString(),
+            "Gender" => patient.GenderString,
+            "Address" => patient.Address,
+            "Weight" => patient.Weight.ToString(),
+            "Height" => patient.Height.ToString(),
+            "Identification number" => patient.IdentificationNumber,
+            _ => string.Empty,
+        };
+    }
+
     public Patient(long? id, string firstName,string lastName, string identificationNumber, int age, int gender,
         int weight, int height, string address, string email, string phoneNumber, string destription)
     {
@@ -87,19 +109,5 @@ public class Patient
         Address = address;
         PhoneNumber = phoneNumber;
         Email = email;
-    }
-    public static string GetStringProperty(Patient patient ,string? propertyName)
-    {
-        return propertyName switch
-        {
-            "Name" => patient.FullName,
-            "Age" => patient.Age.ToString(),
-            "Gender" => patient.GenderString,
-            "Address" => patient.Address,
-            "Weight" => patient.Weight.ToString(),
-            "Height" => patient.Height.ToString(),
-            "Identification number" => patient.IdentificationNumber,
-            _ => string.Empty,
-        };
     }
 }

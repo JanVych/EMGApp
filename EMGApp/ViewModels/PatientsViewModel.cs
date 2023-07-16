@@ -54,7 +54,7 @@ public partial class PatientsViewModel : ObservableRecipient
         Patients = _dataService.Patients;
         Measurements = new List<MeasurementGroup>();
         PatientSelectionChanged();
-        
+
     }
     [RelayCommand]
     private void PatientSelectionChanged()
@@ -62,6 +62,28 @@ public partial class PatientsViewModel : ObservableRecipient
         if (SelectedPatientIndex >= 0)
         {
             Measurements = _dataService.Measurements.FindAll(item => item.PatientId == Patients[SelectedPatientIndex].PatientId);
+        }
+        else
+        {
+            Measurements.Clear();
+        }
+    }
+
+    [RelayCommand]
+    private void PatientClick(Patient clickedPatient)
+    {
+        if (SelectedPatientIndex >= 0 && Patients[SelectedPatientIndex].PatientId == clickedPatient.PatientId)
+        {
+            if (clickedPatient.IsExpanded == Visibility.Visible)
+            {
+                Patients.ForEach(p => p.IsExpanded = Visibility.Collapsed);
+            }
+            else
+            {
+                PatientSelectionChanged();
+                Patients.ForEach(p => p.IsExpanded = Visibility.Collapsed);
+                clickedPatient.IsExpanded = Visibility.Visible;
+            }
         }
     }
 
@@ -71,11 +93,13 @@ public partial class PatientsViewModel : ObservableRecipient
         if (SelectedPatientIndex >= 0)
         {
             _dataService.RemovePatient(Patients[SelectedPatientIndex]);
-            SelectedPatientIndex--;
+            var index = SelectedPatientIndex - 1;
             Patients = _dataService.Patients;
+            SelectedPatientIndex = index;
             PatientSelectionChanged();
         }
     }
+
     [RelayCommand]
     private void DeleteMeasurementButton()
     {
@@ -101,6 +125,17 @@ public partial class PatientsViewModel : ObservableRecipient
             _navigationService.NavigateTo(typeof(MeasurementsViewModel).FullName!);
         }
     }
+
+    [RelayCommand]
+    private void PatientDeatailButton()
+    {
+        if (SelectedPatientIndex >= 0)
+        {
+            Patients.ForEach(p => p.IsExpanded = Visibility.Collapsed);
+            Patients[SelectedPatientIndex].IsExpanded = Visibility.Visible;
+        }
+    }
+
     [RelayCommand]
     private void EditPatientButton()
     {

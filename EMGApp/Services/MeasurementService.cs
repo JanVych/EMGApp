@@ -42,7 +42,7 @@ public class MeasurementService : IMeasurementService
     public MeasurementGroup CreateDefaultMeasurement()
     {
         // TO DO - handle device number
-        var m = new MeasurementGroup(1000, 100, 1024, true, 1_048_576, 0, 50, 180, 5, 200, 0);
+        var m = new MeasurementGroup(1000, 100, 1024, true, 60_000, 0, 50, 180, 5, 200, 0);
         CreateConnection(m);
         return m;
     }

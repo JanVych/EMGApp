@@ -16,4 +16,9 @@ public sealed partial class PatientsPage : Page
         ViewModel = App.GetService<PatientsViewModel>();
         InitializeComponent();
     }
+
+    private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        ViewModel.PatientClickCommand.Execute(e.ClickedItem);
+    }
 }

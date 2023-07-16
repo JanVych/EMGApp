@@ -78,7 +78,10 @@ public class MeasurementData
     };
 
     //
-    public bool IsActive = false;
+    public bool IsActive
+    {
+        get; set;
+    } = false;
     public MeasurementData(int musleType, int side, int dataSize, int dominatValuesSize, int measurementType, int force)
     {
         MuscleType = musleType;

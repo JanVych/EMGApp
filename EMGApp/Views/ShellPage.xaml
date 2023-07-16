@@ -55,12 +55,12 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE779;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Uid="Shell_Add" helpers:NavigationHelper.NavigateTo="EMGApp.ViewModels.AddViewModel">
+                <!--<NavigationViewItem x:Uid="Shell_Add" helpers:NavigationHelper.NavigateTo="EMGApp.ViewModels.AddViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE710;"/>
                     </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem x:Uid="Shell_Measurements" helpers:NavigationHelper.NavigateTo="EMGApp.ViewModels.MeasurementsViewModel">
+                </NavigationViewItem>-->
+                <NavigationViewItem x:Uid="Shell_Measurements" helpers:NavigationHelper.NavigateTo="EMGApp.ViewModels.MeasurementsViewModel" >
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEA37;"/>
                     </NavigationViewItem.Icon>

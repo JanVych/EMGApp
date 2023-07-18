@@ -8,6 +8,7 @@ public interface IDatabaseService
     public T? ExecuteScalar<T>(string commandText, (string, object)[]? parameters);
     public T? ExecuteScalar<T>(string commandText);
     public void InsertPatient(Patient p);
+    public void UpdatePatient(Patient p);
     public void InsertMeasurement(MeasurementGroup m);
     public void InsertMeasurementData(MeasurementData m);
     public long GetLastInsertedRowId(string tableName);

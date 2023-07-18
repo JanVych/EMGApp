@@ -1,14 +1,10 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using System.Windows.Input;
+﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.Services;
 using EMGApp.Helpers;
 using EMGApp.Models;
 using Microsoft.UI.Xaml.Controls;
-using Windows.Globalization;
-using Windows.Globalization.NumberFormatting;
 
 namespace EMGApp.ViewModels;
 

@@ -20,6 +20,7 @@ public class PageService : IPageService
         Configure<AddViewModel, AddPage>();
         Configure<SetupViewModel, SetupPage>();
         Configure<MeasurementsViewModel, MeasurementsPage>();
+        Configure<EditViewModel, EditPage>();
     }
 
     public Type GetPageType(string key)

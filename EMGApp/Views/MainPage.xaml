@@ -7,7 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
     xmlns:local1="using:EMGApp.Models" 
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    xmlns:behaviors="using:EMGApp.Behaviors"
+    behaviors:NavigationViewHeaderBehavior.HeaderContext="Measurement">
     
     <Page.Resources>
         <StackLayout x:Name="HorizontalStackLayout" Orientation="Horizontal"/>

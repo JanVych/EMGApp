@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using EMGApp.Contracts.Services;
 using EMGApp.Events;
 using EMGApp.Models;
@@ -25,11 +26,19 @@ public class DataService : IDataService
     }
     public Patient? CurrentPatient => Patients.FirstOrDefault(p => p.PatientId == CurrentPatientId);
 
+    // Patient selected for editing
+    public long? EditedPatientId
+    {
+        get; set;
+    }
+    public Patient? EditedPatient => Patients.FirstOrDefault(p => p.PatientId ==  EditedPatientId);
     // Patient selected for observimg
+
     public long? ObservedPatientId
     {
         get; set; 
     }
+
     public Patient? ObservedPatient => Patients.FirstOrDefault(p => p.PatientId == ObservedPatientId);
 
     // Measurement selected for observimg
@@ -96,6 +105,13 @@ public class DataService : IDataService
         Measurements = _databaseService.GetMeasurements();
     }
 
+    public void EditPatient(Patient patient)
+    {
+        _databaseService.UpdatePatient(patient);
+        Patients = _databaseService.GetPatients();
+        LoadFirstPatient();
+    }
+
     public List<MeasurementData> GetMeasurementData(MeasurementGroup measurement)
     {
         if (measurement.MeasurementId != null)
@@ -125,9 +141,9 @@ public class DataService : IDataService
                 CurrentPatientId = null;
                 LoadFirstPatient();
             }
-            
         }
     }
+   
     public void RemoveMeasurement(MeasurementGroup measurement)
     {
         if (measurement.MeasurementId != null) 

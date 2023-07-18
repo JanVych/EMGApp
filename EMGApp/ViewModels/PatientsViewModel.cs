@@ -139,6 +139,11 @@ public partial class PatientsViewModel : ObservableRecipient
     [RelayCommand]
     private void EditPatientButton()
     {
+        if (SelectedPatientIndex >= 0)
+        {
+            _dataService.EditedPatientId = Patients[SelectedPatientIndex].PatientId;
+            _navigationService.NavigateTo(typeof(EditViewModel).FullName!);
+        }
     }
 
     [RelayCommand]

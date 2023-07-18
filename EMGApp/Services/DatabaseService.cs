@@ -248,6 +248,22 @@ public class DatabaseService :IDatabaseService
         ExecuteNonQuery(command, parameters);
     }
 
+    public void UpdatePatient(Patient p)
+    {
+        var command = @$"UPDATE patient SET first_name = @first_name, last_name = @last_name, 
+                        identification_number = @identification_number, age = @age, gender = @gender, 
+                        weight = @weight, height = @height, address = @address, email = @email, 
+                        phone_number = @phone_number, description = @description
+                        WHERE patient_id = {p.PatientId}";
+        var parameters = new (string, object)[]
+        {
+            ("@first_name", p.FirstName), ("@last_name", p.LastName), ("@identification_number", p.IdentificationNumber),
+            ("@age", p.Age), ("@gender", p.Gender), ("@weight", p.Weight), ("@height", p.Height), ("@address",p.Address),
+            ("@email",p.Email), ("@phone_number", p.PhoneNumber), ("@description", p.Description)
+        };
+        ExecuteNonQuery(command, parameters);
+    }
+
     public List<MeasurementData> GetMeasurementData(long? measurmentId)
     {
         var mdata = new List<MeasurementData>();

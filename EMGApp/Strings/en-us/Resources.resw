@@ -150,19 +150,4 @@
   <data name="SettingsPage_PrivacyTermsLink.NavigateUri" xml:space="preserve">
     <value>https://YourPrivacyUrlGoesHere/</value>
   </data>
-  <data name="Shell_Main.Content" xml:space="preserve">
-    <value>Measurement</value>
-  </data>
-  <data name="Shell_Patients.Content" xml:space="preserve">
-    <value>Patients</value>
-  </data>
-  <data name="Shell_Add.Content" xml:space="preserve">
-    <value>New patient</value>
-  </data>
-  <data name="Shell_Setup.Content" xml:space="preserve">
-    <value>Setup</value>
-  </data>
-  <data name="Shell_Measurements.Content" xml:space="preserve">
-    <value>Measurement record</value>
-  </data>
 </root>

@@ -2,8 +2,6 @@
     x:Class="EMGApp.Views.ShellPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:helpers="using:EMGApp.Helpers"
     xmlns:behaviors="using:EMGApp.Behaviors"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -38,7 +36,6 @@
             CompactModeThresholdWidth="{StaticResource AppCompactWidth}"
             OpenPaneLength="250"
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged">
-            <!--Header="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}"-->
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Uid="Shell_Setup" helpers:NavigationHelper.NavigateTo="EMGApp.ViewModels.SetupViewModel">
                     <NavigationViewItem.Icon>
@@ -55,27 +52,31 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE779;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--<NavigationViewItem x:Uid="Shell_Add" helpers:NavigationHelper.NavigateTo="EMGApp.ViewModels.AddViewModel">
-                    <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE710;"/>
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>-->
                 <NavigationViewItem x:Uid="Shell_Measurements" helpers:NavigationHelper.NavigateTo="EMGApp.ViewModels.MeasurementsViewModel" >
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEA37;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <!--<NavigationViewItem x:Uid="Shell_Add" helpers:NavigationHelper.NavigateTo="EMGApp.ViewModels.AddViewModel">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE710;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>-->
+                <!--<NavigationViewItem x:Uid="Shell_Edit" helpers:NavigationHelper.NavigateTo="EMGApp.ViewModels.EditViewModel">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>-->
             </NavigationView.MenuItems>
             
             <i:Interaction.Behaviors>
-                <behaviors:NavigationViewHeaderBehavior
-                    DefaultHeader="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}">
+                <behaviors:NavigationViewHeaderBehavior>
                     <behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
                         <DataTemplate>
                             <Grid>
                                 <TextBlock
-                                    Text="{Binding }"
-                                    Style="{ThemeResource TitleTextBlockStyle}" /> 
+                                    Text="{Binding}"
+                                    Style="{ThemeResource TitleTextBlockStyle}"/> 
                             </Grid>
                         </DataTemplate>
                     </behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>

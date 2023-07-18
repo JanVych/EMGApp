@@ -73,6 +73,8 @@ public partial class App : Application
             services.AddSingleton<IDataService, DataService>();
 
             // Views and ViewModels
+            services.AddTransient<EditViewModel>();
+            services.AddTransient<EditPage>();
             services.AddTransient<MeasurementsViewModel>();
             services.AddTransient<MeasurementsPage>();
             services.AddTransient<SetupViewModel>();

@@ -1,13 +1,13 @@
 ﻿<Page
-    x:Class="EMGApp.Views.AddPage"
+    x:Class="EMGApp.Views.EditPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:behaviors="using:EMGApp.Behaviors"
-    mc:Ignorable="d"
-    behaviors:NavigationViewHeaderBehavior.HeaderContext="Add new Patient">
-    
+    behaviors:NavigationViewHeaderBehavior.HeaderContext="Edit patient"
+     mc:Ignorable="d">
+
     <Page.Resources>
         <Style x:Name="DefaultGrid" TargetType="Grid">
             <Setter Property="Padding" Value="0,10,0,10"/>
@@ -72,7 +72,7 @@
         <Grid Grid.RowSpan="2" Grid.Column="1" 
               RowDefinitions="1*, 1*, 1*, 3*, auto, 1*"
               Style="{StaticResource DefaultGrid}">
-            
+
             <TextBox Grid.Row="0" Header="Address" 
                      Text="{x:Bind ViewModel.Address, Mode=TwoWay}"
                      Style="{StaticResource InputTextBox}"/>
@@ -83,7 +83,7 @@
                      Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}"
                      PlaceholderText="999-999-999"
                      Style="{StaticResource InputTextBox}"/>
-            
+
             <TextBox Grid.Row="3" 
                      TextWrapping="Wrap"
                      AcceptsReturn="True"
@@ -104,7 +104,7 @@
                     HorizontalAlignment="Right"
                     Foreground="{StaticResource TextOnAccentFillColorPrimaryBrush}"
                     Background="{StaticResource AccentFillColorDefaultBrush}"
-                    Command="{x:Bind ViewModel.NewButtonCommand}"/>
+                    Command="{x:Bind ViewModel.ConfirmButtonCommand}"/>
             <InfoBar Grid.Row="5"
                      HorizontalAlignment="Left"
                      VerticalAlignment="Center"

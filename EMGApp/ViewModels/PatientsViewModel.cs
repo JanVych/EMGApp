@@ -131,8 +131,15 @@ public partial class PatientsViewModel : ObservableRecipient
     {
         if (SelectedPatientIndex >= 0)
         {
-            Patients.ForEach(p => p.IsExpanded = Visibility.Collapsed);
-            Patients[SelectedPatientIndex].IsExpanded = Visibility.Visible;
+            if (Patients[SelectedPatientIndex].IsExpanded == Visibility.Collapsed)
+            {
+                Patients.ForEach(p => p.IsExpanded = Visibility.Collapsed);
+                Patients[SelectedPatientIndex].IsExpanded = Visibility.Visible;
+            }
+            else
+            {
+                Patients[SelectedPatientIndex].IsExpanded = Visibility.Collapsed;
+            }
         }
     }
 

@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using EMGApp.Models;
+﻿using EMGApp.Models;
 using EMGApp.ViewModels;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 

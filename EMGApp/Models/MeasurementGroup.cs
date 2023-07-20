@@ -67,9 +67,9 @@ public class MeasurementGroup
     public int MeasuremntMaxTime => DataSize / SampleRate;
     public int NumberOfSamplesOnWindowShift => WindowShiftMilliseconds * SampleRate / 1000;
     public int DominantValuesSize => DataSize / NumberOfSamplesOnWindowShift - (int)Math.Ceiling(WindowLength / (double)NumberOfSamplesOnWindowShift) + 1;
-    public string? MeasurementDateTimeString => MeasurementDateTime.ToString();
+    public string? MeasurementDateTimeString => MeasurementDateTime?.ToString("MM/dd/yyyy HH:mm");
     public string? MeasurementDateString => MeasurementDateTime?.ToString("dddd MM/dd/yyyy");
-    public string? MeasurementDayTimeString => MeasurementDateTime?.ToString("h:mm tt");
+    public string? MeasurementDayTimeString => MeasurementDateTime?.ToString("HH:mm");
     public string? DominantFrequencyCalculationTypeString => DominantFrequencyCalculationTypeStrings[DominantFrequencyCalculationType];
     public int DeviceNumber
     {

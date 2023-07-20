@@ -41,10 +41,12 @@
 
     <Grid RowDefinitions="auto,auto,*" ColumnDefinitions="6*,2*"
           Margin="0,0,0,20">
-        <Grid  Grid.ColumnSpan="2"  Grid.Row="0" ColumnDefinitions="3*,3*,2*"
+        <Grid  Grid.ColumnSpan="2" Grid.Row="0" 
+               ColumnDefinitions="3*,3*,2*"
                Margin="0,0,0,10">
             <StackPanel Grid.Column="0"
-                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Center"
                         Orientation="Horizontal"
                         Style="{StaticResource BorderStackPanel}">
                 <AppBarButton Icon="Add" Label="Add" Command="{x:Bind ViewModel.AddPatientButtonCommand}"/>
@@ -59,12 +61,17 @@
             </StackPanel>
             <StackPanel Grid.Column="1" 
                         Orientation="Horizontal"
-                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Center"
                         Style="{StaticResource BorderStackPanel}">
-                <TextBlock Text="Filter" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                <TextBlock Text="Filter" 
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center" 
                            Margin="10,10,0,10"/>
-                <ComboBox Width="100" Height="35" SelectedIndex="0" 
-                          HorizontalAlignment="Center" VerticalAlignment="Center" 
+                <ComboBox Width="100" Height="35" 
+                          SelectedIndex="0" 
+                          HorizontalAlignment="Center" 
+                          VerticalAlignment="Center" 
                           SelectedItem="{x:Bind ViewModel.SelectedFilterItem, Mode=TwoWay}"
                           Margin="10,10,0,10">
                     <Interactivity:Interaction.Behaviors>
@@ -78,9 +85,11 @@
                     <x:String>Height</x:String>
                     <x:String>Weight</x:String>
                 </ComboBox>
-                <TextBox Width="120" Height="35" x:Name="filterTextBox"
+                <TextBox Width="120" Height="35" 
+                         x:Name="filterTextBox"
                          Visibility="{x:Bind ViewModel.FilterTextBoxkVisibility, Mode=OneWay}"
-                         HorizontalAlignment="Center" VerticalAlignment="Center" 
+                         HorizontalAlignment="Center" 
+                         VerticalAlignment="Center" 
                          Margin="10,10,0,10">
                     <Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="TextChanged">
@@ -104,7 +113,8 @@
                 </ComboBox>
             </StackPanel>
             <StackPanel Grid.Column="2"
-                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Center"
                         Orientation="Horizontal"
                         Margin="20,0,0,0"
                         Style="{StaticResource BorderStackPanel}">
@@ -117,7 +127,8 @@
         <ListView Grid.Row="2" Grid.Column="0" 
                   ItemsSource="{x:Bind ViewModel.Patients, Mode=TwoWay}" 
                   SelectedIndex="{x:Bind ViewModel.SelectedPatientIndex, Mode=TwoWay}"
-                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                  HorizontalAlignment="Stretch" 
+                  VerticalAlignment="Stretch"
                   IsItemClickEnabled="True"
                   ItemClick="ListView_ItemClick">
             
@@ -165,20 +176,20 @@
                             <TextBlock Grid.Column="4" Text="{x:Bind Path=Height}" Style="{StaticResource DataGridDataCell}"/>
                             <TextBlock Grid.Column="5" Text="{x:Bind Path=Weight}" Style="{StaticResource DataGridDataCell}"/>
                         </Grid>
-                        <Grid Grid.Row="1" Visibility="{Binding Path=IsExpanded, Mode=OneWay}" Margin="20,20,0,0">
+                        <Grid Grid.Row="1" Visibility="{Binding Path=IsExpanded, Mode=OneWay}" Padding="10,20,10,20">
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Grid.Row="0" Text="{x:Bind Address}" Style="{StaticResource BodyTextBlockStyle}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="0" Text="{x:Bind Email}" Style="{StaticResource BodyTextBlockStyle}"/>
-                            <TextBlock Grid.Column="2" Grid.Row="0" Text="{x:Bind PhoneNumber}" Style="{StaticResource BodyTextBlockStyle}"/>
-                            <TextBlock Grid.ColumnSpan="3" Grid.Row="1" Text="{x:Bind Description}" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="1" Text="{x:Bind Email}" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="2" Text="{x:Bind PhoneNumber}" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="3" Text="{x:Bind Description}" Style="{StaticResource BodyTextBlockStyle}"/>
                         </Grid>
                     </Grid>
                 </DataTemplate>

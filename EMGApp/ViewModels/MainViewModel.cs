@@ -173,7 +173,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             });
         }
     }
-
+    [RelayCommand]
+    private void ChangePatient()
+    {
+        _measurementService.StopRecording();
+        _navigationService.NavigateTo(typeof(PatientsViewModel).FullName!);
+    }
     [RelayCommand]
     private void ChangeSettings()
     {

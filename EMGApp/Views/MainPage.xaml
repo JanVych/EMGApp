@@ -132,16 +132,54 @@
                                           BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
                                           Background="{ThemeResource ControlFillColorDefaultBrush}"
                                           IsChecked="{x:Bind IsActive}"
-                                          Height="60"
+                                          Height="70"
                                           Click="ToggleButton_Click">
                                 <StackPanel>
-                                    <TextBlock x:Name="muscleTypeString" 
-                                               Grid.Column="0" Text="{x:Bind MuscleTypeString}"
-                                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                                    <TextBlock x:Name="sideString" 
-                                               Grid.Column="1" Text="{x:Bind SideString}"
+                                    
+                                    <Grid ColumnDefinitions ="*,*">
+                                        <TextBlock x:Name="muscleTypeString" 
+                                                   HorizontalAlignment="Left"
+                                                   Grid.Column="0"
+                                                   Text="{x:Bind MuscleTypeString}"
+                                                   Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                                        <TextBlock Grid.Column="1"
+                                                   HorizontalAlignment="Left"
+                                                   Margin="5,0,0,0"
+                                                   x:Name="sideString" 
+                                                   Text="{x:Bind SideString}"
+                                                   Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                                    </Grid>
+                                    <StackPanel Grid.Column="1"
+                                                    HorizontalAlignment="Left"
+                                                    Orientation="Horizontal"
+                                                    Spacing="5">
+                                        <TextBlock Text="{x:Bind Force}"/>
+                                        <TextBlock Text="N"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{x:Bind MeasurementTypeString}"
                                                Style="{StaticResource BodyTextBlockStyle}"/>
                                 </StackPanel>
+                                <!--<StackPanel>
+                                    <TextBlock x:Name="muscleTypeString" 
+                                               Text="{x:Bind MuscleTypeString}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                                    <Grid ColumnDefinitions ="*,*">
+                                        <TextBlock Grid.Column="0"
+                                                   HorizontalAlignment="Left"
+                                                   x:Name="sideString" 
+                                                   Text="{x:Bind SideString}"
+                                                   Style="{StaticResource BodyTextBlockStyle}"/>
+                                        <StackPanel Grid.Column="1"
+                                                    HorizontalAlignment="Left"
+                                                    Orientation="Horizontal"
+                                                    Spacing="5">
+                                            <TextBlock Text="{x:Bind Force}"/>
+                                            <TextBlock Text="N"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <TextBlock Text="{x:Bind MeasurementTypeStringShort}"
+                                               Style="{StaticResource BodyTextBlockStyle}"/>
+                                </StackPanel>-->
                             </ToggleButton>
                         </Grid>
                         
@@ -149,7 +187,7 @@
                 </ItemsRepeater>
             </ScrollViewer>
             
-            <Button Grid.Column="1" Height="60"
+            <Button Grid.Column="1" Height="70"
                     BorderThickness="1"
                     BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
                     Background="{ThemeResource ControlFillColorDefaultBrush}">
@@ -165,7 +203,6 @@
                 <Button.Flyout>
                     <Flyout x:Name="mFlyout" Placement="Bottom">
                         
-
                         <StackPanel Spacing="10">
                             <ComboBox Height="60" Header="Muscle type"
                                       SelectedIndex="{x:Bind ViewModel.SelectedMuscleType, Mode=TwoWay}"
@@ -244,14 +281,18 @@
                               HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,0,0,0"
                               Command="{x:Bind ViewModel.SaveButtonCommand}" />
 
-                <AppBarButton Icon="Setting" Label="Setup" 
+                <AppBarButton Icon="People" Label="Patients" 
                               HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,0,0,0"
+                              Command="{x:Bind ViewModel.ChangePatientCommand}"/>
+                
+                <AppBarButton Icon="Setting" Label="Setup" 
+                              HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0"
                               Command="{x:Bind ViewModel.ChangeSettingsCommand}"/>
             </StackPanel>
 
             <StackPanel Grid.Column="1" Spacing="10" Orientation="Horizontal" HorizontalAlignment="Right">
                 <StackPanel Style="{StaticResource DefaultStackPanel}">
-                    <TextBlock Text="Start frequency:" 
+                    <TextBlock Text="Start:" 
                                VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Text="{x:Bind ViewModel.StartFrequency, Mode=OneWay}" 
                                Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>

@@ -123,16 +123,22 @@ public class DatabaseService :IDatabaseService
                 measurement_type INTEGER,
                 force INTEGER,
                 FOREIGN KEY (measurement_id) REFERENCES measurement (measurement_id))";
-        var groupTable = @"CREATE TABLE IF NOT EXISTS groups(
-                group_name TEXT,
+        var groupTable = @"CREATE TABLE IF NOT EXISTS patient_group(
+                patient_group_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                patient_group_name TEXT,
+                patient_id INTEGER)";
+        var groupRealationTable = @"CREATE TABLE IF NOT EXISTS patient_group_relation(
+                patient_group_id INTEGER,
                 patient_id INTEGER,
+                FOREIGN KEY (patient_group_id) REFERENCES patient_group (patient_group_id),
                 FOREIGN KEY (patient_id) REFERENCES patient (patient_id),
-                PRIMARY KEY (group_name, patient_id))";
+                PRIMARY KEY (patient_group_id, patient_id))";
 
         ExecuteNonQuery(patienTable);
         ExecuteNonQuery(measurementTable);
         ExecuteNonQuery(measurementDataTable);
         ExecuteNonQuery(groupTable);
+        ExecuteNonQuery(groupRealationTable);
     }
     public void InsertPatient(Patient p)
     {

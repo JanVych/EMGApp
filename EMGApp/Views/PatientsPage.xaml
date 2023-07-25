@@ -17,7 +17,7 @@
             <Setter Property="CornerRadius" Value="4"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="Margin" Value="5,5,10,5"/>
-            <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorBaseBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}"/>
         </Style>
         <Style x:Key="DataGridHeaderCell" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}">
             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -35,7 +35,7 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="6"/>
             <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
-            <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorBaseBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}"/>
         </Style>
     </Page.Resources>
 
@@ -122,7 +122,7 @@
                 <AppBarButton Icon="Zoom" Label="Detail" Command="{x:Bind ViewModel.MeasurementDetailButtonCommand}"/>
             </StackPanel>
         </Grid>
-        
+
 
         <ListView Grid.Row="2" Grid.Column="0" 
                   ItemsSource="{x:Bind ViewModel.Patients, Mode=TwoWay}" 
@@ -131,7 +131,7 @@
                   VerticalAlignment="Stretch"
                   IsItemClickEnabled="True"
                   ItemClick="ListView_ItemClick">
-            
+
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="SelectionChanged">
                     <Core:InvokeCommandAction Command="{x:Bind ViewModel.PatientSelectionChangedCommand}"/>
@@ -201,7 +201,7 @@
                   SelectedIndex="{x:Bind ViewModel.SelectedMeasurmentIndex, Mode=TwoWay}"
                   Margin="20,0,0,0"
                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            
+
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local1:MeasurementGroup">
                     <Grid>

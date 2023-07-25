@@ -17,7 +17,7 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="6"/>
             <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
-            <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorBaseBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}"/>
         </Style>
 
         <Style x:Key="StackPanelSettingsCardA" TargetType="StackPanel">
@@ -31,7 +31,7 @@
             <Setter Property="CornerRadius" Value="4"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="Margin" Value="5,5,10,5"/>
-            <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorBaseBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}"/>
         </Style>
         <Style x:Key="DataGridHeaderCell" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}">
             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -63,43 +63,43 @@
                         <Setter Target="device.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="device2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="device2.(RelativePanel.Below)" Value=""/>
-                        
+
                         <Setter Target="wSize.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="wSize2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="wSize2.(RelativePanel.Below)" Value=""/>
-                        
+
                         <Setter Target="sRate.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="sRate2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="sRate2.(RelativePanel.Below)" Value=""/>
-                        
+
                         <Setter Target="wsTime.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="wsTime2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="wsTime2.(RelativePanel.Below)" Value=""/>
-                        
+
                         <Setter Target="mtFixed.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="mtFixed2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="mtFixed2.(RelativePanel.Below)" Value=""/>
-                        
+
                         <Setter Target="mTime.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="mTime2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="mTime2.(RelativePanel.Below)" Value=""/>
-                        
+
                         <Setter Target="dfcType.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="dfcType2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="dfcType2.(RelativePanel.Below)" Value=""/>
-                        
+
                         <Setter Target="cFrequency.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="cFrequency2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="cFrequency2.(RelativePanel.Below)" Value=""/>
-                        
+
                         <Setter Target="nFilter.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="nFilter2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="nFilter2.(RelativePanel.Below)" Value=""/>
-                        
+
                         <Setter Target="lpFilter.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="lpFilter2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="lpFilter2.(RelativePanel.Below)" Value=""/>
-                        
+
                         <Setter Target="hpFilter.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="hpFilter2.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="hpFilter2.(RelativePanel.Below)" Value=""/>
@@ -276,7 +276,7 @@
                   BorderThickness="1"
                   CornerRadius="6"
                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                  Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
+                  Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
 
                 <TextBlock Grid.Column="0" Text="Filter by" Margin="10,10,0,10"
                          HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -291,7 +291,7 @@
                             <Core:InvokeCommandAction Command="{x:Bind ViewModel.SelectedFilterChangedCommand}"/>
                         </Core:EventTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
-                    
+
                 </ComboBox>
                 <TextBox Grid.Column="2" x:Name="filterTextBox" Width="130" Height="35" Margin="10,10,0,10"
                                 HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -335,7 +335,7 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition MinWidth="60" Width="1*"/>
                             <ColumnDefinition MinWidth="60" Width="1*"/>
-                           
+
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="Name" Style="{StaticResource DataGridHeaderCell}"/>
                         <TextBlock Grid.Column="1" Text="Id number" Style="{StaticResource DataGridHeaderCell}"/>

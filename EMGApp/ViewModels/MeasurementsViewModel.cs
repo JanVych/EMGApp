@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.Input;
 using EMGApp.Contracts.ViewModels;
 using EMGApp.Events;
 using System.Collections.ObjectModel;
+using EMGApp.Services;
 
 namespace EMGApp.ViewModels;
 
@@ -18,17 +19,18 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
 {
     private readonly IMeasurementService _measurementService;
     private readonly IDataService _dataService;
+    private readonly INavigationService _navigationService;
 
     private ObservableCollection<ObservablePoint> _dominantValuesPoints = new();
     private ObservableCollection<ObservablePoint> _regressionLinePoints = new();
 
     public Patient? ObservedPatient
     {
-        get; set; 
+        get; set;
     }
     public MeasurementGroup? ObservedMeasurement
     {
-        get; set;  
+        get; set;
     }
     // Observed measurement data index
     [ObservableProperty]
@@ -130,15 +132,16 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
         get; set;
     } = new Axis[] { new Axis { Name = "Dominant frequency [Hz]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
 
-    public MeasurementsViewModel(IMeasurementService measurementService, IDataService dataService)
+    public MeasurementsViewModel(IMeasurementService measurementService, IDataService dataService, INavigationService navigationService)
     {
         _measurementService = measurementService;
         _dataService = dataService;
+        _navigationService = navigationService;
         ObservedMeasurement = _dataService.ObservedMeasurement;
         ObservedPatient = _dataService.ObservedPatient;
-        if (ObservedMeasurement != null) 
+        if (ObservedMeasurement != null)
         {
-            if (ObservedMeasurement.MeasurementsData.Count == 0) 
+            if (ObservedMeasurement.MeasurementsData.Count == 0)
             {
                 ObservedMeasurement.MeasurementsData = _dataService.GetMeasurementData(ObservedMeasurement);
             }
@@ -171,6 +174,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
             SliderIndexValue = args.Value;
         }
     }
+
     [RelayCommand]
     private void SliderIndexValueChanged()
     {
@@ -181,6 +185,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
             ChartsUpdate();
         }
     }
+
     [RelayCommand]
     private void MeasuremntDataSelectionChanged()
     {
@@ -198,7 +203,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     }
     private void DominantValuesChartUpdate()
     {
-        if (ObservedMeasurement != null && OMDataIndex >= 0) 
+        if (ObservedMeasurement != null && OMDataIndex >= 0)
         {
             var m = ObservedMeasurement;
             var data = m.MeasurementsData[OMDataIndex];
@@ -245,11 +250,12 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
             }
             else
             {
-                FrequencySpectrumSeries[0].Values = new ObservablePoint[] {new ObservablePoint(1,1) };
+                FrequencySpectrumSeries[0].Values = new ObservablePoint[] { new ObservablePoint(1, 1) };
                 EMGSignalSeries[0].Values = new ObservablePoint[] { new ObservablePoint(1, 1) };
             }
         }
     }
+
     [RelayCommand]
     private async void StartButton()
     {
@@ -259,6 +265,7 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
             await _dataService.ObservedMeasuremntRunAsync(ObservedMeasurement, OMDataIndex);
         }
     }
+
     [RelayCommand]
     private void PauseButton()
     {
@@ -273,6 +280,13 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     {
         _dataService.ObservedMeasuremntIsRunning = false;
         SliderIndexValue = 0;
+    }
+
+    [RelayCommand]
+    private void ChangePatient()
+    {
+        _dataService.ObservedMeasuremntIsRunning = false;
+        _navigationService.NavigateTo(typeof(PatientsViewModel).FullName!);
     }
 
 }

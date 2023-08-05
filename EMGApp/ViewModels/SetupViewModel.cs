@@ -84,10 +84,6 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private Visibility filterTextBoxkVisibility = Visibility.Visible;
 
-    public string[] FilterItems
-    {
-        get; set; 
-    } = new string[] {"name","age","gender","weight","height" };
 
     //
     public Dictionary<int, string> DominantFrequencyCalculationTypeStrings
@@ -135,17 +131,17 @@ public partial class SetupViewModel : ObservableRecipient, INavigationAware
         Debug.WriteLine(MeasurementTimeTypeIndex);
         if (MeasurementTimeTypeIndex == 0)
         {
-            var time = MeasurementTime;
+            var time = MeasurementTime * 60;
             MinimumMeasurementTime = 10;
             MaximumMeasurementTime = 300;
-            MeasurementTime = time * 60;
+            MeasurementTime = Math.Round(time);
         }
         else 
         {
-            var time = MeasurementTime;
+            var time = MeasurementTime / 60;
             MinimumMeasurementTime = 0.16;
             MaximumMeasurementTime = 5;
-            MeasurementTime = time / 60;
+            MeasurementTime = time;
         }
         return;
     }

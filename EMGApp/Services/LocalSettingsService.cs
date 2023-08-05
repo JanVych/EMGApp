@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using EMGApp.Contracts.Services;
+﻿using EMGApp.Contracts.Services;
 using EMGApp.Core.Contracts.Services;
 using EMGApp.Core.Helpers;
 using EMGApp.Helpers;
@@ -7,7 +6,6 @@ using EMGApp.Models;
 
 using Microsoft.Extensions.Options;
 
-using Windows.ApplicationModel;
 using Windows.Storage;
 
 namespace EMGApp.Services;

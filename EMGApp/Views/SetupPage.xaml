@@ -145,11 +145,10 @@
                 <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
                     <StackPanel x:Name="sRate" Style="{StaticResource StackPanelSettingsCardA}">
                         <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Sample rate"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal"/>
                     </StackPanel>
                     <StackPanel x:Name="sRate2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="sRate" RelativePanel.AlignVerticalCenterWithPanel="True">
-                        <NumberBox Value="{x:Bind ViewModel.SampleRate, Mode=TwoWay}" MaxHeight="35" Minimum="100" Maximum="10000"/>
+                        <NumberBox Value="{x:Bind ViewModel.SampleRate, Mode=TwoWay}" MaxHeight="35" Minimum="1000" Maximum="6000"/>
                         <TextBlock Text="Hz" MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </StackPanel>
                 </RelativePanel>
@@ -157,7 +156,6 @@
                 <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
                     <StackPanel x:Name="wsTime" Style="{StaticResource StackPanelSettingsCardA}">
                         <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Window shift time"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal"/>
                     </StackPanel>
                     <StackPanel x:Name="wsTime2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="wsTime" RelativePanel.AlignVerticalCenterWithPanel="True">
@@ -168,11 +166,11 @@
 
                 <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
                     <StackPanel x:Name="dfcType" Style="{StaticResource StackPanelSettingsCardA}">
-                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Dominant calculation method"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="dsad sdf dsfgdgdfg"/>
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Calculation method"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="Method for calculating dominant frequencies"/>
                     </StackPanel>
                     <ComboBox x:Name="dfcType2" RelativePanel.Below="dfcType" RelativePanel.AlignVerticalCenterWithPanel="True"
-                              Margin="10,10,10,10" PlaceholderText="select" Width="200"
+                              Margin="10,10,10,10" PlaceholderText="select" Width="140"
                               SelectedValuePath="Key" DisplayMemberPath="Value"
                               SelectedIndex="{x:Bind ViewModel.DominantFrequencyClaculationTypeIndex, Mode=TwoWay}" 
                               ItemsSource="{x:Bind ViewModel.DominantFrequencyCalculationTypeStrings, Mode=OneTime}"/>
@@ -183,7 +181,6 @@
                 <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
                     <StackPanel x:Name="mtFixed" Style="{StaticResource StackPanelSettingsCardA}">
                         <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Fixed measurement time"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal"/>
                     </StackPanel>
                     <ToggleSwitch x:Name="mtFixed2" Margin="10,0,10,0"
                                   RelativePanel.Below="mtFixed" RelativePanel.AlignVerticalCenterWithPanel="True"
@@ -193,15 +190,19 @@
                 <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
                     <StackPanel x:Name="mTime" Style="{StaticResource StackPanelSettingsCardA}">
                         <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Measurement Time"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="Value between 10 seconds and 5 minutes"/>
                     </StackPanel>
                     <StackPanel x:Name="mTime2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="mTime" RelativePanel.AlignVerticalCenterWithPanel="True">
                         <NumberBox MaxHeight="35"
+                                   Width="80"
                                    Value="{x:Bind ViewModel.MeasurementTime, Mode=TwoWay}"  
                                    Minimum="{x:Bind ViewModel.MinimumMeasurementTime, Mode=TwoWay}" 
                                    Maximum="{x:Bind ViewModel.MaximumMeasurementTime, Mode=TwoWay}"/>
-                        <ComboBox MaxHeight="35" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                        <ComboBox MaxHeight="35"
+                                  Margin="10,0,10,0" 
+                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  Width="80"
                                   SelectedIndex="{x:Bind ViewModel.MeasurementTimeTypeIndex, Mode=TwoWay}">
                             <x:String>sec</x:String>
                             <x:String>min</x:String>
@@ -219,7 +220,7 @@
                 <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
                     <StackPanel x:Name="nFilter" Style="{StaticResource StackPanelSettingsCardA}">
                         <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Notch filter"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal 684dd"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="Filter out a specific frequency"/>
                     </StackPanel>
                     <StackPanel x:Name="nFilter2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="nFilter" RelativePanel.AlignVerticalCenterWithPanel="True">
@@ -231,7 +232,7 @@
                 <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
                     <StackPanel x:Name="lpFilter" Style="{StaticResource StackPanelSettingsCardA}">
                         <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Low pass filter"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal qqwed wedwed"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="Filter out all higher frequencies"/>
                     </StackPanel>
                     <StackPanel x:Name="lpFilter2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="lpFilter" RelativePanel.AlignVerticalCenterWithPanel="True">
@@ -243,7 +244,7 @@
                 <RelativePanel Style="{StaticResource RelativePanelSettingsCard}">
                     <StackPanel x:Name="hpFilter" Style="{StaticResource StackPanelSettingsCardA}">
                         <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="High pass filter"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal wedwed"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="Filter out all lower frequencies"/>
                     </StackPanel>
                     <StackPanel x:Name="hpFilter2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="hpFilter" RelativePanel.AlignVerticalCenterWithPanel="True">
@@ -257,7 +258,6 @@
                 <RelativePanel Style="{StaticResource RelativePanelSettingsCard}" Margin="0,0,0,30">
                     <StackPanel x:Name="cFrequency" Style="{StaticResource StackPanelSettingsCardA}">
                         <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Corner frequency"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="blabalbal 684dd"/>
                     </StackPanel>
                     <StackPanel x:Name="cFrequency2" Margin="10,10,10,10" Orientation="Horizontal"
                                 RelativePanel.Below="cFrequency" RelativePanel.AlignVerticalCenterWithPanel="True">
@@ -278,20 +278,27 @@
                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                   Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
 
-                <TextBlock Grid.Column="0" Text="Filter by" Margin="10,10,0,10"
-                         HorizontalAlignment="Center" VerticalAlignment="Center"
-                         Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                <TextBlock Grid.Column="0" 
+                           Text="Filter by" 
+                           Margin="10,10,0,10"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Style="{StaticResource BodyStrongTextBlockStyle}"/>
 
-                <ComboBox Grid.Column="1" Width="120" Height="35" Margin="10,10,0,10"
+                <ComboBox Grid.Column="1" 
+                          Width="120" Height="35" 
+                          Margin="10,10,0,10"
                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                          ItemsSource="{x:Bind ViewModel.FilterItems, Mode=OneTime}"
                           SelectedItem="{x:Bind ViewModel.SelectedFilterItem, Mode=TwoWay }">
                     <Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="SelectionChanged">
                             <Core:InvokeCommandAction Command="{x:Bind ViewModel.SelectedFilterChangedCommand}"/>
                         </Core:EventTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
-
+                    <x:String>Name</x:String>
+                    <x:String>Age</x:String>
+                    <x:String>Gender</x:String>
+                    <x:String>Height</x:String>
+                    <x:String>Weight</x:String>
                 </ComboBox>
                 <TextBox Grid.Column="2" x:Name="filterTextBox" Width="130" Height="35" Margin="10,10,0,10"
                                 HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -324,7 +331,7 @@
 
             </Grid>
             <ListView Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                      ItemsSource="{x:Bind ViewModel.Patients, Mode=OneWay}"
+                      ItemsSource="{x:Bind ViewModel.Patients, Mode=TwoWay}"
                       SelectedIndex="{x:Bind ViewModel.SelectedPatientIndex, Mode=TwoWay}">
                 <ListView.Header>
                     <Grid Style="{StaticResource DataGridHeader}" Padding="11,0,3,0">

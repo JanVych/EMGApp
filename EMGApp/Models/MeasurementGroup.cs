@@ -1,4 +1,6 @@
-﻿namespace EMGApp.Models;
+﻿using System.Globalization;
+
+namespace EMGApp.Models;
 public class MeasurementGroup
 {
     public long? MeasurementId
@@ -63,12 +65,12 @@ public class MeasurementGroup
     //
     public double SpectralResolution => SampleRate / (double)WindowLength;
     public double WindowShiftSeconds => (double)WindowShiftMilliseconds / 1000;
-    public int FrequencyDataSize => (int)Math.Round(CornerFrequency / SpectralResolution);
+    public int SpectrumDataSize => (int)Math.Round(CornerFrequency / SpectralResolution);
     public int MeasuremntMaxTime => DataSize / SampleRate;
     public int NumberOfSamplesOnWindowShift => WindowShiftMilliseconds * SampleRate / 1000;
     public int DominantValuesSize => DataSize / NumberOfSamplesOnWindowShift - (int)Math.Ceiling(WindowLength / (double)NumberOfSamplesOnWindowShift) + 1;
     public string? MeasurementDateTimeString => MeasurementDateTime?.ToString("MM/dd/yyyy HH:mm");
-    public string? MeasurementDateString => MeasurementDateTime?.ToString("dddd MM/dd/yyyy");
+    public string? MeasurementDateString => MeasurementDateTime?.ToString("dddd MM/dd/yyyy", new CultureInfo("en-US"));
     public string? MeasurementDayTimeString => MeasurementDateTime?.ToString("HH:mm");
     public string? DominantFrequencyCalculationTypeString => DominantFrequencyCalculationTypeStrings[DominantFrequencyCalculationType];
     public int DeviceNumber

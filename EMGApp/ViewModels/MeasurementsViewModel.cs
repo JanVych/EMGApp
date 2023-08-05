@@ -110,27 +110,27 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
     public IEnumerable<ICartesianAxis> FrequencySpectrumXAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "Frequency [Hz]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    } = new Axis[] { new Axis { Name = "Frequency [Hz]", NamePaint = new SolidColorPaint(SKColors.Gray), NameTextSize = 15} };
     public IEnumerable<ICartesianAxis> FrequencySpectrumYAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "Spectral density [µV]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    } = new Axis[] { new Axis { Name = "Spectral density [µV]", NamePaint = new SolidColorPaint(SKColors.Gray), NameTextSize = 15} };
     public IEnumerable<ICartesianAxis> EMGSignalXAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "Window time [ms]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    } = new Axis[] { new Axis { Name = "Window time [ms]", NamePaint = new SolidColorPaint(SKColors.Gray), NameTextSize = 15 } };
     public IEnumerable<ICartesianAxis> EMGSignalYAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "EMG [µV]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    } = new Axis[] { new Axis { Name = "EMG [µV]", NamePaint = new SolidColorPaint(SKColors.Gray), NameTextSize = 15 } };
     public IEnumerable<ICartesianAxis> DominatValuesXAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "Time [s]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    } = new Axis[] { new Axis { Name = "Time [s]", NamePaint = new SolidColorPaint(SKColors.Gray), NameTextSize = 15 } };
     public IEnumerable<ICartesianAxis> DominantValuesYAxes
     {
         get; set;
-    } = new Axis[] { new Axis { Name = "Dominant frequency [Hz]", NamePaint = new SolidColorPaint(SKColors.Gray) } };
+    } = new Axis[] { new Axis { Name = "Dominant frequency [Hz]", NamePaint = new SolidColorPaint(SKColors.Gray), NameTextSize = 15 } };
 
     public MeasurementsViewModel(IMeasurementService measurementService, IDataService dataService, INavigationService navigationService)
     {
@@ -239,9 +239,9 @@ public partial class MeasurementsViewModel : ObservableRecipient, INavigationAwa
                 }
 
                 var frequencySpectrumData = _measurementService.CalculateFrequencySpecturm(ObservedMeasurement, OMDataIndex);
-                var frequencySpectrumPoints = new ObservablePoint[ObservedMeasurement.FrequencyDataSize];
+                var frequencySpectrumPoints = new ObservablePoint[ObservedMeasurement.SpectrumDataSize];
 
-                for (var i = 0; i < ObservedMeasurement.FrequencyDataSize; i++)
+                for (var i = 0; i < ObservedMeasurement.SpectrumDataSize; i++)
                 {
                     frequencySpectrumPoints[i] = (new ObservablePoint(i * ObservedMeasurement.SpectralResolution, frequencySpectrumData[i]));
                 }

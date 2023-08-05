@@ -274,10 +274,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         var m = CurrentMeasurement;
         MeasurementData data;
         var fData = _measurementService.CalculateFrequencySpecturm(m, CMDataIndex);
-        var pData = new ObservablePoint[CurrentMeasurement.FrequencyDataSize];
+        var pData = new ObservablePoint[CurrentMeasurement.SpectrumDataSize];
         if (fData != Array.Empty<double>()) 
         {
-            for (var i = 0; i < CurrentMeasurement.FrequencyDataSize; i++)
+            for (var i = 0; i < CurrentMeasurement.SpectrumDataSize; i++)
             {
                 pData[i] = new ObservablePoint(i * CurrentMeasurement.SpectralResolution, fData[i]);
             }

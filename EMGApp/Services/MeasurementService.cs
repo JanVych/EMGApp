@@ -71,8 +71,8 @@ public class MeasurementService : IMeasurementService
         var data = CalculateFrequencySpecturm(CurrentMeasurement, CMDataIndex);
         var dominantValue = CalculateDominantValue(CurrentMeasurement, CMDataIndex, data);
 
-        var pData = new ObservablePoint[CurrentMeasurement.FrequencyDataSize];
-        for (var i = 0; i < CurrentMeasurement.FrequencyDataSize; i++)
+        var pData = new ObservablePoint[CurrentMeasurement.SpectrumDataSize];
+        for (var i = 0; i < CurrentMeasurement.SpectrumDataSize; i++)
         {
             pData[i] = new ObservablePoint(i * CurrentMeasurement.SpectralResolution, data[i]);
         }
@@ -102,8 +102,8 @@ public class MeasurementService : IMeasurementService
 
         var fftComplex = FftSharp.Transform.FFT(rawData);
 
-        var data = new double[measurement.FrequencyDataSize];
-        for (var i = 0; i < measurement.FrequencyDataSize; i++)
+        var data = new double[measurement.SpectrumDataSize];
+        for (var i = 0; i < measurement.SpectrumDataSize; i++)
         {
             data[i] = Math.Sqrt(fftComplex[i].Real * fftComplex[i].Real + fftComplex[i].Imaginary * fftComplex[i].Imaginary);
         }
@@ -114,6 +114,7 @@ public class MeasurementService : IMeasurementService
 
         return data;
     }
+
     public ObservablePoint? CalculateDominantValue(MeasurementGroup measurement, int mIndex, double[] data)
     {
         var mData = measurement.MeasurementsData[mIndex];
@@ -180,10 +181,10 @@ public class MeasurementService : IMeasurementService
     {
         double sum = 0;
         double sumI = 0;
-        for (var i = 0; i < measurement.FrequencyDataSize; i++)
+        for (var i = 0; i < measurement.SpectrumDataSize; i++)
         {
             sum += data[i];
-            sumI += data[i] * i + 1;
+            sumI += data[i] * i;
         }
         var mean = (1.0 / sum) * measurement.SpectralResolution * sumI;
         return mean;
@@ -191,22 +192,22 @@ public class MeasurementService : IMeasurementService
     private double CalculateMedianValue(MeasurementGroup measurement, double[] data)
     {
         double sum = 0;
-        double sumP = 0;
+        double probabilitySum = 0;
         double lowIndex = 0;
         double deltaHigh = 0;
         double deltaLow = 0;
-        for (var i = 0; i < measurement.FrequencyDataSize; i++)
+        for (var i = 0; i < measurement.SpectrumDataSize; i++)
         {
             sum += data[i];
         }
-        for (var i = 0; i < measurement.FrequencyDataSize; i++)
+        for (var i = 0; i < measurement.SpectrumDataSize; i++)
         {
-            sumP += data[i] / sum;
-            if (sumP > 0.5 && i > 0) 
+            probabilitySum += data[i] / sum;
+            if (probabilitySum > 0.5 && i > 0) 
             {
                 lowIndex = i - 1;
-                deltaHigh = sumP - 0.5;
-                deltaLow = 0.5 - (sumP - (data[i] / sum));
+                deltaHigh = probabilitySum - 0.5;
+                deltaLow = 0.5 - (probabilitySum - (data[i] / sum));
                 break;
             }
         }
@@ -223,7 +224,7 @@ public class MeasurementService : IMeasurementService
     private void LowPassFilter(MeasurementGroup measurement, double[] data)
     {
         var index = Math.Round(measurement.LowPassFilter / (double)measurement.SpectralResolution);
-        for (var i = measurement.FrequencyDataSize - 1; i > index; i--)
+        for (var i = measurement.SpectrumDataSize - 1; i > index; i--)
         {
             data[i] = 0;
         }

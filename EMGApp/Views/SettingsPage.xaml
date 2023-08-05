@@ -51,6 +51,13 @@
                         </RadioButton.CommandParameter>
                     </RadioButton>
                 </StackPanel>
+                <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
+                    <TextBlock Text="Language"/>
+                    <ComboBox Margin="0,18,0,0"
+                              SelectedIndex="0">
+                        <x:String>english</x:String>
+                    </ComboBox>
+                </StackPanel>
             </StackPanel>
 
             <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
@@ -62,7 +69,7 @@
                     x:Uid="Settings_AboutDescription"
                     Margin="{StaticResource XSmallTopMargin}"
                     Style="{ThemeResource BodyTextBlockStyle}" />
-                <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" Margin="{StaticResource SettingsPageHyperlinkButtonMargin}" />
+                <!--<HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" Margin="{StaticResource SettingsPageHyperlinkButtonMargin}" />-->
             </StackPanel>
         </StackPanel>
     </Grid>
